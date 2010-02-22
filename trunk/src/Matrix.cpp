@@ -46,7 +46,7 @@ template <class T> class Matrix : public virtual IMatrix<T> {
         string toString(){
             ostringstream oss;
             
-            oss << "[ " << endl;
+            oss << "[" << endl;
             for(int i = 0; i < getM(); i++){
                 for(int j = 0; j < getN(); j++){
                     oss << (*this)(i, j) << " ";
