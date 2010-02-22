@@ -1,67 +1,48 @@
+#pragma once
 #include "IRowChecksumMatrix.hpp"
 #include "Matrix.cpp"
 #include "Vector.cpp"
+#include "ColumnChecksumMatrix.cpp"
 #include <stdlib.h>
 
-template <class T> class RowChecksumMatrix : public IRowChecksumMatrix<T> {
-	IMatrix<T>* M;
+template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public ColumnChecksumMatrix<T>, public IRowChecksumMatrix<T> {
 	IVector<T>* rowSummationVector;
 	int* corruptedRows;
 
-    public:
-		RowChecksumMatrix(IMatrix<T>& M) {
-			this->M = &M;
-			rowSummationVector = new Vector<T>(M.getM());
-			corruptedRows = new int[M.getM()];
+	void init() {
+		rowSummationVector = new Vector<T>(this->getM());
+		corruptedRows = new int[this->getM()];
 
-			for(int i = 0; i < M.getM(); i++){
-				for(int j = 0; j < M.getN(); j++){
-					(*rowSummationVector)(i) += M(i, j);
-				}
+		for(int i = 0; i < this->getM(); i++){
+			for(int j = 0; j < this->getN() - 1; j++){
+				(*rowSummationVector)(i) += (*this)(i, j);
 			}
 		}
+	}
 
-		~RowChecksumMatrix(){
+    public:
+		RowChecksumMatrix(IColumnChecksumMatrix<T>& M) : ColumnChecksumMatrix<T>(M) {
+			init();
+		}
+
+		RowChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN() + 1) {
+			init();
+		}
+
+		~RowChecksumMatrix() {
 			delete rowSummationVector;
 			delete [] corruptedRows;
 		}
 
-        int getM(){
-            return M->getM();
+        T& operator()(int i, int j) {
+            return j == this->getN() - 1 ? (*rowSummationVector)(i) : this->getData()[i * (this->getN() - 1) + j];
         }
 
-        int getN(){
-            return M->getN() + 1;
-        }
-
-        T* getData(){
-            return M->getData();
-        }
-
-        T& operator()(int i, int j){
-            return j == M->getN() ? (*rowSummationVector)(i) : (*M)(i, j);
-        }
-
-        string toString() {
-            ostringstream oss;
-
-            oss << "[" << endl;
-            for(int i = 0; i < getM(); i++){
-                for(int j = 0; j < getN(); j++){
-                    oss << (*this)(i, j) << " ";
-                }
-                oss << endl;
-            }
-            oss << "]" << endl;
-
-            return oss.str();
-        }
-
-		IVector<T>& getRowSummationVector(){
+        IVector<T>& getRowSummationVector() {
         	return *rowSummationVector;
         }
 
-        int rowErrorDetection(int* corruptedRows){
+        int rowErrorDetection(int* corruptedRows) {
         	T sum;
         	int nb;
 
