@@ -32,7 +32,6 @@ int main(int argc, char* argv[]) {
         proc.transpose(A, L);
         cout << "Lt = " << A.toString() << endl;
 
-        cout << "A Faire : implémenter LU()" << endl;
         proc.mult(A, L, U);
         proc.mult(L, A, 0.);
         proc.mult(U, A, 0.);

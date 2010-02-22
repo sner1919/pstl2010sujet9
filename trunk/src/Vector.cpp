@@ -1,3 +1,4 @@
+#pragma once
 #include "IVector.hpp"
 #include "Matrix.cpp"
 
