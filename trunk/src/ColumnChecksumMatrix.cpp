@@ -5,7 +5,7 @@
 #include "RowChecksumMatrix.cpp"
 #include <stdlib.h>
 
-template <class T> class ColumnChecksumMatrix : public Matrix<T>, public IColumnChecksumMatrix<T> {
+template <class T> class ColumnChecksumMatrix : public ColumnChecksumMatrix<T>, public IColumnChecksumMatrix<T> {
 	IVector<T>* columnSummationVector;
 	int* corruptedColumns;
 
@@ -21,13 +21,13 @@ template <class T> class ColumnChecksumMatrix : public Matrix<T>, public IColumn
 	}
 
     public:
-		ColumnChecksumMatrix(IRowChecksumMatrix<T>& M) : RowChecksumMatrix<T>(M) {
+		ColumnChecksumMatrix(IRowChecksumMatrix<T>& M) : RowChecksumMatrix<T>((IMatrix<T>) M) {
 			init();
 		}
 
-		ColumnChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN()) {
-			init();
-		}
+//		ColumnChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN()) {
+//			init();
+//		}
 
 		~ColumnChecksumMatrix() {
 			delete columnSummationVector;
