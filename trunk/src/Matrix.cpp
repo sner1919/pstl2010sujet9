@@ -9,46 +9,46 @@ template <class T> class Matrix : public virtual IMatrix<T> {
         bool dataAllocation;
         
     public:
-        Matrix(int m, int n){
+        Matrix(int m, int n) {
             this->data = new T[m * n];
             this->m = m;
             this->n = n;
             dataAllocation = true;
         }
 
-        Matrix(T* data, int m, int n){
+        Matrix(T* data, int m, int n) {
             this->data = data;
             this->m = m;
             this->n = n;
             dataAllocation = false;
         }
         
-        ~Matrix(){
+        ~Matrix() {
         	if(dataAllocation) delete [] data;
         }
         
-        int getM(){
+        int getM() {
             return m;
         }
         
-        int getN(){
+        int getN() {
             return n;
         }
         
-        T* getData(){
+        T* getData() {
             return data;
         }
 
-        T& operator()(int i, int j){
-            return data[i * n + j];
+        T& operator()(int i, int j) {
+            return data[(i - 1) * n + (j - 1)];
         }
         
-        string toString(){
+        string toString() {
             ostringstream oss;
             
             oss << "[" << endl;
-            for(int i = 0; i < getM(); i++){
-                for(int j = 0; j < getN(); j++){
+            for(int i = 1; i <= getM(); i++){
+                for(int j = 1; j <= getN(); j++){
                     oss << (*this)(i, j) << " ";
                 }
                 oss << endl;

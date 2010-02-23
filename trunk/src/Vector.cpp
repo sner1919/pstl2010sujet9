@@ -11,7 +11,7 @@ template <class T> class Vector : public Matrix<T>, public IVector<T> {
 		}
 
         T& operator()(int i){
-            return Matrix<T>::operator()(i, 0);
+            return Matrix<T>::operator()(i, 1);
         }
 };
 

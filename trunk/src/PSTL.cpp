@@ -2,6 +2,7 @@
 #include "Processor.cpp"
 #include "RowChecksumMatrix.cpp"
 #include "ColumnChecksumMatrix.cpp"
+#include "FullChecksumMatrix.cpp"
 #include <iostream>
 using namespace std;
 
@@ -42,18 +43,22 @@ int main(int argc, char* argv[]) {
         cout << "L = " << L.toString();
         cout << "U = " << U.toString() << endl;
 
+        ColumnChecksumMatrix<double> Uc(U);
+        cout << "Uc = " << Uc.toString();
+
         RowChecksumMatrix<double> Ur(U);
         cout << "Ur = " << Ur.toString();
-        Ur(1, 2) = 10;
-        cout << "Ur(1, 2) = 10" << endl;
-        cout << "Ur = " << Ur.toString() << endl;
-        cout << "Ur.getRowSummationVector() = " << Ur.getRowSummationVector().toString() << endl;
-
-        ColumnChecksumMatrix<double> Lc(L);
-        cout << "Lc = " << Lc.toString();
 
         ColumnChecksumMatrix<double> Urc(Ur);
         cout << "Urc = " << Urc.toString();
+
+        FullChecksumMatrix<double> Uf(U);
+        cout << "Uf = " << Uf.toString();
+
+        U(1, 2) = 10;
+        cout << "U(1, 2) = 10" << endl;
+        cout << "Uf = " << Uf.toString() << endl;
+        cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
     }
     catch(const std::exception& e)
     {
