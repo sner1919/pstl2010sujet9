@@ -9,6 +9,11 @@ template <class T> class Matrix : public virtual IMatrix<T> {
         bool dataAllocation;
         
     public:
+        /*
+         * Crée une matrice (en allouant la mémoire pour son contenu).
+         * @param m le nombre de lignes
+         * @param n le nombre de colonnes
+         */
         Matrix(int m, int n) {
             this->data = new T[m * n];
             this->m = m;
@@ -16,6 +21,11 @@ template <class T> class Matrix : public virtual IMatrix<T> {
             dataAllocation = true;
         }
 
+        /*
+         * Crée une matrice à partir d'un contenu existant (utilisation de la même zone mémoire).
+         * @param m le nombre de lignes
+         * @param n le nombre de colonnes
+         */
         Matrix(T* data, int m, int n) {
             this->data = data;
             this->m = m;
@@ -43,6 +53,15 @@ template <class T> class Matrix : public virtual IMatrix<T> {
             return data[(i - 1) * n + (j - 1)];
         }
         
+        bool operator==(IMatrix<T>& M) {
+        	for(int i = 1; i <= getM(); i++){
+				for(int j = 1; j <= getN(); j++){
+					if((*this)(i, j) != M(i, j)) return false;
+				}
+			}
+        	return true;
+        }
+
         string toString() {
             ostringstream oss;
             
