@@ -2,10 +2,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <iostream>
-#include "clapack.h"
-extern "C" {
-#include "cblas.h"
-}
+#include "/home/moi/numerics/ATLAS3.8.0/include/clapack.h"
+#include "/home/moi/numerics/ATLAS3.8.0/include/cblas.h"
 
 
 template <class T> class Calculator2 : public ICalculator<T> {
@@ -51,10 +49,23 @@ template <class T> class Calculator2 : public ICalculator<T> {
 				 && A.getM() == U.getM() && A.getM() == U.getN()))  throw domain_error("décomposition LU impossible");
 			ipvt = new int[A.getM()];
 			mult(U,A,1.);
-			dgetrf_(U.getM(),U.getN(),U.getData(),U.getM(),&ipvt, &info);
-			for(int i= 0;i < A.getM(); i++){
-				cout << ipvt[i] << " ";
+			clapack_dgetrf(U.getM(),U.getN(),U.getData(),U.getM(),&ipvt, &info);
+			for(int i= 0;i < U.getM(); i++){
+				for(int j=0; j < U.getN(); j++){
+					if(i < j){
+						L(i,j) = U(i,j);
+						U(i,j) = 0;
+					}
+					else if(i == j){
+						L(i,j) == 1;
+					}
+					else
+					{
+						L(i,j) = 0;
+					}
+				}
 			}
+
 
 		}
 };
