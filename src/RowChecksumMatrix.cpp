@@ -12,11 +12,7 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
 		RowChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN() + 1), M(M) {
 			rowSummationVector = new Vector<T>(this->getM());
 
-			for(int i = 1; i <= this->getM(); i++){
-				for(int j = 1; j < this->getN(); j++){
-					(*rowSummationVector)(i) += (*this)(i, j);
-				}
-			}
+			for(int i = 1; i <= this->getM(); i++) (*rowSummationVector)(i) = computeRowSum(i);
 		}
 
 		~RowChecksumMatrix() {
@@ -31,21 +27,12 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
         	return *rowSummationVector;
         }
 
-        int rowErrorDetection(int* corruptedRows) {
+        T computeRowSum(int i) {
         	T sum;
-        	int nb;
 
-        	corruptedRows = new int[this->getM()];
-        	for(int i = 1; i <= this->getM(); i++){
-        		sum = 0;
-				for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
-				if((*this)(i, this->getN()) != sum){
-					corruptedRows[nb] = i;
-					nb++;
-				}
-			}
+        	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
 
-        	return nb;
+        	return sum;
         }
 };
 

@@ -2,16 +2,42 @@
 #include "IFullChecksumMatrix.hpp"
 #include "ColumnChecksumMatrix.cpp"
 #include "RowChecksumMatrix.cpp"
-#include "Vector.cpp"
 #include <stdlib.h>
 
-template <class T> class FullChecksumMatrix : public RowChecksumMatrix<T>, public ColumnChecksumMatrix<T>, public IFullChecksumMatrix<T> {
+template <class T> class FullChecksumMatrix : public virtual Matrix<T>, public IFullChecksumMatrix<T> {
+	IRowChecksumMatrix<T>* RCM;
+	IColumnChecksumMatrix<T>* CCM;
+
 	public:
-		FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN() + 1), RowChecksumMatrix<T>(M), ColumnChecksumMatrix<T>((*this)) {
+		FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN() + 1), RCM(new RowChecksumMatrix<T>(M)), CCM(new ColumnChecksumMatrix<T>(*RCM)) {
 
 		}
 
+        ~FullChecksumMatrix() {
+
+        }
+
         T& operator()(int i, int j) {
-            return ColumnChecksumMatrix<T>::operator()(i, j);
+            return CCM->operator()(i, j);
+        }
+
+        IVector<T>& getRowSummationVector() {
+        	return RCM->getRowSummationVector();
+        }
+
+        T computeRowSum(int i) {
+        	return RCM->computeRowSum(i);
+        }
+
+        IVector<T>& getColumnSummationVector() {
+        	return CCM->getColumnSummationVector();
+        }
+
+        T computeColumnSum(int j) {
+        	return CCM->computeColumnSum(j);
+        }
+
+        void errorCorrection() {
+
         }
 };
