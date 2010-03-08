@@ -25,21 +25,21 @@ clean :
 $(BINDIR)/PSTL : $(BINDIR)/PSTL.o $(OBJ)
 	$(LINK)
 
-$(BINDIR)/PSTLTest : $(BINDIR)/PSTLTest.o $(OBJTEST)
+$(BINDIR)/tests/PSTLTest : $(BINDIR)/PSTLTest.o $(OBJTEST)
 	$(LINK)
 	
 # +++++++++++++++++++ Fichiers objets +++++++++++++++++++
 $(BINDIR)/%.o : $(SRCDIR)/%.cpp
 	$(PREPROCESS_AND_COMPIL)
 
-$(BINDIR)/%Test.o : $(SRCDIR)/tests/%Test.cpp
+$(BINDIR)/tests/%.o : $(SRCDIR)/tests/%.cpp
 	$(PREPROCESS_AND_COMPIL)
 
 # +++++++++++++++++++ Dépendances habituelles +++++++++++++++++++
 %.cpp : %.hpp
 	
 # +++++++++++++++++++ Dépendances spécifiques +++++++++++++++++++
-$(SRCDIR)/Matrix.hpp : $(SRCDIR)/interfaces/IMatrix.hpp
+$(BINDIR)/Matrix.o : $(SRCDIR)/Matrix.cpp $(SRCDIR)/Matrix.hpp $(IFACEDIR)/IMatrix.hpp
 
 $(IFACEDIR)/IVector.hpp : $(IFACEDIR)/IMatrix.hpp
 $(SRCDIR)/Vector.cpp : $(IFACEDIR)/IVector.hpp $(SRCDIR)/Matrix.cpp
