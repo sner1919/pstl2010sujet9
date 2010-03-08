@@ -1,4 +1,3 @@
-#pragma once
 #include "Vector.hpp"
 
 template <class T>
