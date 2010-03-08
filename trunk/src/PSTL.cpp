@@ -1,8 +1,9 @@
-#include "Calculator.cpp"
-#include "Processor.cpp"
+#include "Matrix.cpp"
 #include "RowChecksumMatrix.cpp"
 #include "ColumnChecksumMatrix.cpp"
 #include "FullChecksumMatrix.cpp"
+#include "Calculator.cpp"
+#include "Processor.cpp"
 #include <iostream>
 using namespace std;
 
