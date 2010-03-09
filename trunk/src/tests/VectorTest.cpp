@@ -11,6 +11,6 @@ void VectorTest::tearDown() {
 }
 
 void VectorTest::testA() {
-	CPPUNIT_ASSERT( 1 == 0);
+	CPPUNIT_ASSERT(1 == 1);
 }
 

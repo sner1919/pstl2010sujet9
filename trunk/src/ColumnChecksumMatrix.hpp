@@ -1,6 +1,6 @@
 #pragma once
 #include "interfaces/IColumnChecksumMatrix.hpp"
-#include "Matrix.cpp"
+#include "Matrix.hpp"
 #include "Vector.hpp"
 #include <stdlib.h>
 
@@ -9,30 +9,21 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
 		IVector<T>* columnSummationVector;
 
 	public:
-		ColumnChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN()), M(M) {
-			columnSummationVector = new Vector<T>(this->getN());
+		/*
+		 * Crée une ColumnChecksumMatrix à partir d'une matrice existante (utilisation de la même zone mémoire).
+		 * @param M la matrice
+		 */
+		ColumnChecksumMatrix(IMatrix<T>& M);
 
-			for(int j = 1; j <= this->getN(); j++) (*columnSummationVector)(j) = computeColumnSum(j);
-		}
+		~ColumnChecksumMatrix();
 
-		~ColumnChecksumMatrix() {
-			delete columnSummationVector;
-		}
+		// redéfinition de Matrix<T>
+        T& operator()(int i, int j);
 
-        T& operator()(int i, int j) {
-            return i == this->getM() ? (*columnSummationVector)(j) : M(i, j);
-        }
+        // implémentation de IColumnChecksumMatrix<T>
+        IVector<T>& getColumnSummationVector();
 
-        IVector<T>& getColumnSummationVector() {
-        	return *columnSummationVector;
-        }
-
-        T computeColumnSum(int j) {
-        	T sum;
-
-        	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j);
-
-        	return sum;
-        }
+        // implémentation de IColumnChecksumMatrix<T>
+        T computeColumnSum(int j);
 };
 

@@ -24,7 +24,7 @@ template <class T> class IMatrix {
 
 		/*
 		 * Donne un élément contenu dans la matrice.
-		 * remarque : redéfinition de l'opérateur "()"
+		 * remarque : surcharge de l'opérateur "()"
 		 * @param i l'indice de ligne
 		 * @param j l'indice de colonne
 		 * @return l'élément à l'indice i, j
