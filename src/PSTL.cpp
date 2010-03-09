@@ -1,15 +1,17 @@
-#include "Matrix.cpp"
-#include "RowChecksumMatrix.cpp"
-#include "ColumnChecksumMatrix.cpp"
-#include "FullChecksumMatrix.cpp"
-#include "Calculator.cpp"
-#include "Processor.cpp"
+#include "Matrix.hpp"
+#include "Vector.hpp"
+#include "RowChecksumMatrix.hpp"
+#include "ColumnChecksumMatrix.hpp"
+#include "FullChecksumMatrix.hpp"
+#include "Calculator.hpp"
+#include "Processor.hpp"
 #include <iostream>
 using namespace std;
 
 int main(int argc, char* argv[]) {
     try{
-    	Processor<double> proc(new Calculator<double>());
+    	Calculator<double> calculator;
+    	Processor<double> proc(calculator);
         /* ---------- allocation statique de mémoire ---------- */
         double LData[2][2] = {{1., 0.}, {1.5, 1.}};
         double UData[2][2] = {{4., 3.}, {0., -1.5}};

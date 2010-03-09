@@ -1,43 +1,38 @@
 #pragma once
 #include "interfaces/IFullChecksumMatrix.hpp"
-#include "RowChecksumMatrix.cpp"
-#include "ColumnChecksumMatrix.cpp"
+#include "RowChecksumMatrix.hpp"
+#include "ColumnChecksumMatrix.hpp"
 #include <stdlib.h>
+#include <vector>
 
 template <class T> class FullChecksumMatrix : public virtual Matrix<T>, public IFullChecksumMatrix<T> {
 		IRowChecksumMatrix<T>* RCM;
 		IColumnChecksumMatrix<T>* CCM;
 
 	public:
-		FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN() + 1), RCM(new RowChecksumMatrix<T>(M)), CCM(new ColumnChecksumMatrix<T>(*RCM)) {
+		/*
+		 * Crée une FullChecksumMatrix à partir d'une matrice existante (utilisation de la même zone mémoire).
+		 * @param M la matrice
+		 */
+		FullChecksumMatrix(IMatrix<T>& M);
 
-		}
+        ~FullChecksumMatrix();
 
-        ~FullChecksumMatrix() {
+        // redéfinition de Matrix<T>
+        T& operator()(int i, int j);
 
-        }
+        // implémentation de IFullChecksumMatrix<T>
+        IVector<T>& getRowSummationVector();
 
-        T& operator()(int i, int j) {
-            return CCM->operator()(i, j);
-        }
+        // implémentation de IFullChecksumMatrix<T>
+        T computeRowSum(int i);
 
-        IVector<T>& getRowSummationVector() {
-        	return RCM->getRowSummationVector();
-        }
+        // implémentation de IFullChecksumMatrix<T>
+        IVector<T>& getColumnSummationVector();
 
-        T computeRowSum(int i) {
-        	return RCM->computeRowSum(i);
-        }
+        // implémentation de IFullChecksumMatrix<T>
+        T computeColumnSum(int j);
 
-        IVector<T>& getColumnSummationVector() {
-        	return CCM->getColumnSummationVector();
-        }
-
-        T computeColumnSum(int j) {
-        	return CCM->computeColumnSum(j);
-        }
-
-        void errorCorrection() {
-
-        }
+        // implémentation de IFullChecksumMatrix<T>
+        void errorCorrection();
 };

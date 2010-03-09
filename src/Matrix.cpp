@@ -1,4 +1,3 @@
-#pragma once
 #include "Matrix.hpp"
 
 template <class T>

@@ -1,7 +1,7 @@
 # +++++++++++++++++++ Variables +++++++++++++++++++
 CXX = g++
-CXXFLAGS = -Wall
-LDFLAGS = -lcppunit
+CXXFLAGS = -Wall ${DEBUGFLAG} #rq : ${DEBUGFLAG} ajouté à la configuration de construction "Debug" dans eclipse cdt
+LDFLAGS =
 LDLIBS =
 INCLUDES =
 PREPROCESS_AND_COMPIL = $(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
@@ -9,15 +9,15 @@ LINK = $(CXX) $(LDFLAGS) $(LDLIBS) $^ -o $@
 SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
-OBJ = $(BINDIR)/Vector.o $(BINDIR)/Matrix.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o
-OBJTEST = $(OBJ) $(BINDIR)/MatrixTest.o $(BINDIR)/VectorTest.o
-PROGS = $(BINDIR)/PSTL $(BINDIR)/PSTLTest
+OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o
+OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/VectorTest.o
+PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
 # +++++++++++++++++++ Cibles habituelles +++++++++++++++++++
 all : $(PROGS)
 
 clean :
-	rm -f $(PROGS) $(BINDIR)/*.o
+	rm -f $(PROGS) $(BINDIR)/*.o $(BINDIR)/tests/*.o
 
 .PHONY: all clean
 
@@ -25,8 +25,8 @@ clean :
 $(BINDIR)/PSTL : $(BINDIR)/PSTL.o $(OBJ)
 	$(LINK)
 
-$(BINDIR)/tests/PSTLTest : $(BINDIR)/PSTLTest.o $(OBJTEST)
-	$(LINK)
+$(BINDIR)/tests/PSTLTest : $(BINDIR)/tests/PSTLTest.o $(OBJTEST)
+	$(LINK) -lcppunit
 	
 # +++++++++++++++++++ Fichiers objets +++++++++++++++++++
 $(BINDIR)/%.o : $(SRCDIR)/%.cpp
@@ -34,26 +34,31 @@ $(BINDIR)/%.o : $(SRCDIR)/%.cpp
 
 $(BINDIR)/tests/%.o : $(SRCDIR)/tests/%.cpp
 	$(PREPROCESS_AND_COMPIL)
-
-# +++++++++++++++++++ Dépendances habituelles +++++++++++++++++++
-%.cpp : %.hpp
 	
-# +++++++++++++++++++ Dépendances spécifiques +++++++++++++++++++
-$(BINDIR)/Matrix.o : $(SRCDIR)/Matrix.cpp $(SRCDIR)/Matrix.hpp $(IFACEDIR)/IMatrix.hpp
+# +++++++++++++++++++ Dépendances +++++++++++++++++++
+IMatrixDep = $(IFACEDIR)/IMatrix.hpp
+IVectorDep = $(IFACEDIR)/IVector.hpp $(IMatrixDep)
+IRowChecksumMatrixDep = $(IFACEDIR)/IRowChecksumMatrix.hpp $(IMatrixDep) $(IVectorDep)
+IColumnChecksumMatrixDep = $(IFACEDIR)/IColumnChecksumMatrix.hpp $(IMatrixDep) $(IVectorDep)
+IFullChecksumMatrixDep = $(IFACEDIR)/IFullChecksumMatrix.hpp $(IRowChecksumMatrixDep) $(IColumnChecksumMatrixDep)
+ICalculatorDep = $(IFACEDIR)/ICalculator.hpp $(IMatrixDep)
 
-$(IFACEDIR)/IVector.hpp : $(IFACEDIR)/IMatrix.hpp
-$(SRCDIR)/Vector.cpp : $(IFACEDIR)/IVector.hpp $(SRCDIR)/Matrix.cpp
+MatrixDep = $(SRCDIR)/Matrix.hpp $(IMatrixDep)
+VectorDep = $(SRCDIR)/Vector.hpp $(IVectorDep) $(MatrixDep)
+RowChecksumMatrixDep = $(SRCDIR)/RowChecksumMatrix.hpp $(IRowChecksumMatrixDep) $(MatrixDep) $(VectorDep)
+ColumnChecksumMatrixDep = $(SRCDIR)/ColumnChecksumMatrix.hpp $(IColumnChecksumMatrixDep) $(MatrixDep) $(VectorDep)
+FullChecksumMatrixDep = $(SRCDIR)/FullChecksumMatrix.hpp $(IFullChecksumMatrixDep) $(RowChecksumMatrixDep) $(ColumnChecksumMatrixDep)
+CalculatorDep = $(SRCDIR)/Calculator.hpp $(ICalculatorDep)
+Calculator2Dep = $(SRCDIR)/Calculator2.hpp $(ICalculatorDep)
+ProcessorDep = $(SRCDIR)/Processor.hpp $(ICalculatorDep)
 
-$(IFACEDIR)/IRowChecksumMatrix.hpp : $(IFACEDIR)/IMatrix.hpp $(IFACEDIR)/IVector.hpp
-$(SRCDIR)/RowChecksumMatrix.cpp : $(IFACEDIR)/IRowChecksumMatrix.hpp $(SRCDIR)/Matrix.cpp $(SRCDIR)/Vector.cpp
+$(BINDIR)/Matrix.o : $(MatrixDep)
+$(BINDIR)/Vector.o : $(VectorDep)
+$(BINDIR)/RowChecksumMatrix.o : $(RowChecksumMatrixDep)
+$(BINDIR)/ColumnChecksumMatrix.o : $(ColumnChecksumMatrixDep)
+$(BINDIR)/FullChecksumMatrix.o : $(FullChecksumMatrixDep)
+$(BINDIR)/Calculator.o : $(CalculatorDep)
+$(BINDIR)/Calculator2.o : $(Calculator2Dep)
+$(BINDIR)/Processor.o : $(ProcessorDep)
 
-$(IFACEDIR)/IColumnChecksumMatrix.hpp : $(IFACEDIR)/IMatrix.hpp $(IFACEDIR)/IVector.hpp
-$(SRCDIR)/ColumnChecksumMatrix.cpp : $(IFACEDIR)/IColumnChecksumMatrix.hpp $(SRCDIR)/Matrix.cpp $(SRCDIR)/Vector.cpp
-
-$(IFACEDIR)/IFullChecksumMatrix.hpp : $(IFACEDIR)/IRowChecksumMatrix.hpp $(IFACEDIR)/IColumnChecksumMatrix.hpp
-$(SRCDIR)/FullChecksumMatrix.cpp : $(IFACEDIR)/IFullChecksumMatrix.hpp $(IFACEDIR)/IRowChecksumMatrix.hpp $(IFACEDIR)/IColumnChecksumMatrix.hpp
-
-$(IFACEDIR)/ICalculator.hpp : $(IFACEDIR)/IMatrix.hpp
-$(SRCDIR)/Calculator.cpp : $(IFACEDIR)/ICalculator.hpp
-
-$(SRCDIR)/Processor.cpp : $(IFACEDIR)/ICalculator.hpp
+$(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(IMatrixDep)

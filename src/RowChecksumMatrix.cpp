@@ -1,38 +1,34 @@
-#pragma once
-#include "interfaces/IRowChecksumMatrix.hpp"
-#include "Matrix.cpp"
-#include "Vector.hpp"
-#include <stdlib.h>
+#include "RowChecksumMatrix.hpp"
 
-template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public virtual IRowChecksumMatrix<T> {
-		IMatrix<T>& M;
-		IVector<T>* rowSummationVector;
+template <class T>
+RowChecksumMatrix<T>::RowChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN() + 1), M(M) {
+	rowSummationVector = new Vector<T>(this->getM());
 
-	public:
-		RowChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN() + 1), M(M) {
-			rowSummationVector = new Vector<T>(this->getM());
+	for(int i = 1; i <= this->getM(); i++) (*rowSummationVector)(i) = computeRowSum(i);
+}
 
-			for(int i = 1; i <= this->getM(); i++) (*rowSummationVector)(i) = computeRowSum(i);
-		}
+template <class T>
+RowChecksumMatrix<T>::~RowChecksumMatrix() {
+	delete (Vector<T>*) rowSummationVector;
+}
 
-		~RowChecksumMatrix() {
-			delete rowSummationVector;
-		}
+template <class T>
+T& RowChecksumMatrix<T>::operator()(int i, int j) {
+	return j == this->getN() ? (*rowSummationVector)(i) : M(i, j);
+}
 
-        T& operator()(int i, int j) {
-            return j == this->getN() ? (*rowSummationVector)(i) : M(i, j);
-        }
+template <class T>
+IVector<T>& RowChecksumMatrix<T>::getRowSummationVector() {
+	return *rowSummationVector;
+}
 
-        IVector<T>& getRowSummationVector() {
-        	return *rowSummationVector;
-        }
+template <class T>
+T RowChecksumMatrix<T>::computeRowSum(int i) {
+	T sum;
 
-        T computeRowSum(int i) {
-        	T sum;
+	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
 
-        	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
+	return sum;
+}
 
-        	return sum;
-        }
-};
-
+template class RowChecksumMatrix<double>;
