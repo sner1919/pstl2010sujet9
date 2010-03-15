@@ -9,7 +9,7 @@ LINK = $(CXX) $(LDFLAGS) $(LDLIBS) $^ -o $@
 SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
-OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o
+OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
 OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
@@ -42,6 +42,7 @@ IRowChecksumMatrixDep = $(IFACEDIR)/IRowChecksumMatrix.hpp $(IMatrixDep) $(IVect
 IColumnChecksumMatrixDep = $(IFACEDIR)/IColumnChecksumMatrix.hpp $(IMatrixDep) $(IVectorDep)
 IFullChecksumMatrixDep = $(IFACEDIR)/IFullChecksumMatrix.hpp $(IRowChecksumMatrixDep) $(IColumnChecksumMatrixDep)
 ICalculatorDep = $(IFACEDIR)/ICalculator.hpp $(IMatrixDep)
+IErrorGeneratorDep = $(IFACEDIR)/IErrorGenerator.hpp $(IMatrixDep)
 
 MatrixDep = $(SRCDIR)/Matrix.hpp $(IMatrixDep)
 VectorDep = $(SRCDIR)/Vector.hpp $(IVectorDep) $(MatrixDep)
@@ -50,7 +51,8 @@ ColumnChecksumMatrixDep = $(SRCDIR)/ColumnChecksumMatrix.hpp $(IColumnChecksumMa
 FullChecksumMatrixDep = $(SRCDIR)/FullChecksumMatrix.hpp $(IFullChecksumMatrixDep) $(RowChecksumMatrixDep) $(ColumnChecksumMatrixDep)
 CalculatorDep = $(SRCDIR)/Calculator.hpp $(ICalculatorDep)
 Calculator2Dep = $(SRCDIR)/Calculator2.hpp $(ICalculatorDep)
-ProcessorDep = $(SRCDIR)/Processor.hpp $(ICalculatorDep)
+ProcessorDep = $(SRCDIR)/Processor.hpp $(ICalculatorDep) $(FullChecksumMatrixDep)
+ErrorGeneratorDep = $(SRCDIR)/ErrorGenerator.hpp $(IErrorGeneratorDep)
 
 $(BINDIR)/Matrix.o : $(MatrixDep)
 $(BINDIR)/Vector.o : $(VectorDep)
@@ -60,6 +62,7 @@ $(BINDIR)/FullChecksumMatrix.o : $(FullChecksumMatrixDep)
 $(BINDIR)/Calculator.o : $(CalculatorDep)
 $(BINDIR)/Calculator2.o : $(Calculator2Dep)
 $(BINDIR)/Processor.o : $(ProcessorDep)
+$(BINDIR)/ErrorGenerator.o : $(ErrorGeneratorDep)
 
 $(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(MatrixDep)
 $(BINDIR)/tests/FullChecksumMatrixTest.o : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)

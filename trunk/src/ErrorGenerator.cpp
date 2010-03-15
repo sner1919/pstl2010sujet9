@@ -1,14 +1,14 @@
 #include "ErrorGenerator.hpp"
-#include <stdlib.h>
-#include <time.h>
 
 template <class T>
-void ErrorGenerator::generateError(IMatrix<T> M, int nb, int iMin, int iMax, int jMin, int jMax){
+void ErrorGenerator<T>::generateError(IMatrix<T>& M, int nb, int iMin, int iMax, int jMin, int jMax){
+	int iErreur, jErreur;
+	srand(time(NULL));
+
 	for(int i = 0; i < nb; i++){
-		srand ( time(NULL) );
 		iErreur = rand() % (iMax - iMin) + iMin;
 		jErreur = rand() % (jMax - jMin) + jMin;
-		M(iErreur,jErreur) = rand()/(T)RAND_MAX;
+		M(iErreur, jErreur) = rand() / RAND_MAX;
 	}
 }
 

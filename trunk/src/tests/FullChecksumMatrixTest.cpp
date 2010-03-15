@@ -249,3 +249,12 @@ void FullChecksumMatrixTest::testFull() {
 	}
 }
 
+void FullChecksumMatrixTest::testPerf() {/*
+	clock_t endwait;
+	clock_t endwait;
+	srand(time(NULL));
+
+	Matrix<double> M(3000, 3000);
+	cout << "temps "(temps_final - temps_initial) / CLOCKS_PER_SEC * 1000;*/
+
+}

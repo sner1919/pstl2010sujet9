@@ -25,4 +25,6 @@ class FullChecksumMatrixTest : public CppUnit::TestFixture {
 		void testRowColumn();
 
 		void testFull();
+
+		void testPerf();
 };

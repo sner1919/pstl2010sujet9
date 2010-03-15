@@ -8,8 +8,8 @@ void Calculator<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
 
 	for(int i = 1; i <= Res.getM(); i++){
 		for(int j = 1; j <= Res.getN(); j++){
-			Res(i, j) = 0.;
-			for(int k = 1; k <= Res.getN(); k++) Res(i, j) = Res(i, j) + A(i, k) * B(k, j);
+			Res(i, j) = 0;
+			for(int k = 1; k <= A.getN(); k++) Res(i, j) += A(i, k) * B(k, j);
 		}
 	}
 }
@@ -34,7 +34,7 @@ void Calculator<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
 
 	for(int i = 1; i <= Res.getM(); i++){
 		for(int j = 1; j <= Res.getN(); j++){
-			Res(i, j) = 0.;
+			Res(i, j) = 0;
 			Res(i, j) = A(i, j) + B(i, j);
 		}
 	}
