@@ -100,7 +100,7 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 		}
 
 		// deux erreurs non adjacentes
-		//     - 2 colonnes et 2 lignes non valides (on suppose qu'il n'y a que 2 erreurs : il pourrait y en avoir 3 ou 4).
+		//     - 2 colonnes et 2 lignes non valides (ici on suppose qu'il n'y a que 2 erreurs : il pourrait y en avoir 3 ou 4).
 		//     - 4 équations à 2 inconnue, mais 2 possibilités pour les 2 inconnues => 2 solutions => on ne corrige pas
 		else if(r.size() == 2 && c.size() == 2){
 			return false;

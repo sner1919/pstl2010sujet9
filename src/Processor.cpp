@@ -1,11 +1,16 @@
 #include "Processor.hpp"
+#include "FullChecksumMatrix.hpp"
 
 template <class T>
 Processor<T>::Processor(ICalculator<T>& calculator) : calculator(calculator){}
 
 template <class T>
 void Processor<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
-	calculator.mult(Res, A, B);
+	FullChecksumMatrix<T> Resf(Res);
+	ColumnChecksumMatrix<T> Ac(A);
+	RowChecksumMatrix<T> Br(B);
+	calculator.mult(Resf, Ac, Br);
+	Resf.errorCorrection();
 }
 
 template <class T>

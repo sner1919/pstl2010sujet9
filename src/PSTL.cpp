@@ -7,9 +7,7 @@
 #include "Processor.hpp"
 #include "ErrorGenerator.hpp"
 #include <iostream>
-#include <boost/thread/thread.hpp>
 using namespace std;
-using namespace boost;
 
 int main(int argc, char* argv[]) {
     try{
@@ -62,9 +60,11 @@ int main(int argc, char* argv[]) {
         FullChecksumMatrix<double> Uf(U);
         cout << "Uf = " << Uf.toString() << endl;
 
-        thread errorsThread(generator.generateError(U,2,0,U.getM(),0,U.getN()));
-        thread::yield();
-        errorsThread.join();
+        cout << "U(1, 2) = 10" << endl;
+
+        Uf(1, 2) = 10;
+
+        generator.generateError(U, 2, 1, U.getM(), 1, U.getN());
         //cout << "U(1, 2) = 10" << endl;
         //Uf(1, 2) = 10;
         cout << "Uf = " << Uf.toString();
@@ -73,6 +73,8 @@ int main(int argc, char* argv[]) {
         cout << "Uf = " << Uf.toString() << endl;
 
         cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
+
+        cout << "CLOCKS_PER_SEC :" << CLOCKS_PER_SEC << endl;
     }
     catch(const std::exception& e)
     {

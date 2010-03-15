@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <cblas.h>
 #include "clapack.h"
+// aptitude install libatlas-base-dev
 
 
 template <class T> class Calculator2 : public ICalculator<T> {
