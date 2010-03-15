@@ -5,12 +5,16 @@
 #include "FullChecksumMatrix.hpp"
 #include "Calculator.hpp"
 #include "Processor.hpp"
+#include "ErrorGenerator.hpp"
 #include <iostream>
+#include <boost/thread/thread.hpp>
 using namespace std;
+using namespace boost;
 
 int main(int argc, char* argv[]) {
     try{
     	Calculator<double> calculator;
+    	ErrorGenerator<double> generator;
     	Processor<double> proc(calculator);
         /* ---------- allocation statique de mémoire ---------- */
         double LData[2][2] = {{1., 0.}, {1.5, 1.}};
@@ -58,8 +62,11 @@ int main(int argc, char* argv[]) {
         FullChecksumMatrix<double> Uf(U);
         cout << "Uf = " << Uf.toString() << endl;
 
-        cout << "U(1, 2) = 10" << endl;
-        U(1, 2) = 10;
+        thread errorsThread(generator.generateError(U,2,0,U.getM(),0,U.getN()));
+        thread::yield();
+        errorsThread.join();
+        //cout << "U(1, 2) = 10" << endl;
+        //Uf(1, 2) = 10;
         cout << "Uf = " << Uf.toString();
         cout << "Uf.errorCorrection()" << endl;
         Uf.errorCorrection();
