@@ -1,7 +1,7 @@
 #include "interfaces/ICalculator.hpp"
 #include <stdexcept>
-#include "/home/moi/numerics/ATLAS3.8.0/include/clapack.h"
-#include "/home/moi/numerics/ATLAS3.8.0/include/cblas.h"
+#include <cblas.h>
+#include "clapack.h"
 
 
 template <class T> class Calculator2 : public ICalculator<T> {

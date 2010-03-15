@@ -1,6 +1,6 @@
 # +++++++++++++++++++ Variables +++++++++++++++++++
 CXX = g++
-CXXFLAGS = -Wall ${DEBUGFLAG} #rq : ${DEBUGFLAG} ajouté à la configuration de construction "Debug" dans eclipse cdt
+CXXFLAGS = -W -Wall ${DEBUGFLAG} #rq : ${DEBUGFLAG} ajouté à la configuration de construction "Debug" dans eclipse cdt
 LDFLAGS =
 LDLIBS =
 INCLUDES =
@@ -10,7 +10,7 @@ SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
 OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o
-OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/VectorTest.o
+OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
 # +++++++++++++++++++ Cibles habituelles +++++++++++++++++++
@@ -61,4 +61,5 @@ $(BINDIR)/Calculator.o : $(CalculatorDep)
 $(BINDIR)/Calculator2.o : $(Calculator2Dep)
 $(BINDIR)/Processor.o : $(ProcessorDep)
 
-$(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(IMatrixDep)
+$(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(MatrixDep)
+$(BINDIR)/tests/FullChecksumMatrixTest.o : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)

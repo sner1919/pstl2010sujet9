@@ -4,7 +4,10 @@ template <class T>
 RowChecksumMatrix<T>::RowChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN() + 1), M(M) {
 	rowSummationVector = new Vector<T>(this->getM());
 
-	for(int i = 1; i <= this->getM(); i++) (*rowSummationVector)(i) = computeRowSum(i);
+	for(int i = 1; i <= this->getM(); i++){
+		(*rowSummationVector)(i) = 0;
+		(*rowSummationVector)(i) = computeRowSum(i);
+	}
 }
 
 template <class T>
@@ -24,11 +27,11 @@ IVector<T>& RowChecksumMatrix<T>::getRowSummationVector() {
 
 template <class T>
 T RowChecksumMatrix<T>::computeRowSum(int i) {
-	T sum;
+	T sum = 0;
 
 	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
 
-	return sum;
+	return sum - (*this)(i, this->getN());
 }
 
 template class RowChecksumMatrix<double>;

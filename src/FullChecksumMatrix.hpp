@@ -34,5 +34,5 @@ template <class T> class FullChecksumMatrix : public virtual Matrix<T>, public I
         T computeColumnSum(int j);
 
         // implémentation de IFullChecksumMatrix<T>
-        void errorCorrection();
+        bool errorCorrection();
 };
