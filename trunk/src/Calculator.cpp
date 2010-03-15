@@ -52,7 +52,7 @@ void Calculator<T>::transpose(IMatrix<T>& Res, IMatrix<T>& A){
 	}
 }
 
-// Hypothèse la matrice *this est LU décomposable
+// Hypothèse la matrice A est LU décomposable
 template <class T>
 void Calculator<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 	// Vérifications

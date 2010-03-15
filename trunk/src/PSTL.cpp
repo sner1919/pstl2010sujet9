@@ -56,11 +56,15 @@ int main(int argc, char* argv[]) {
         cout << "Urc = " << Urc.toString();
 
         FullChecksumMatrix<double> Uf(U);
-        cout << "Uf = " << Uf.toString();
-
-        U(1, 2) = 10;
-        cout << "U(1, 2) = 10" << endl;
         cout << "Uf = " << Uf.toString() << endl;
+
+        cout << "U(1, 2) = 10" << endl;
+        U(1, 2) = 10;
+        cout << "Uf = " << Uf.toString();
+        cout << "Uf.errorCorrection()" << endl;
+        Uf.errorCorrection();
+        cout << "Uf = " << Uf.toString() << endl;
+
         cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
     }
     catch(const std::exception& e)

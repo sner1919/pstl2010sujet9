@@ -20,7 +20,7 @@ void Calculator2<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, T x){
 
 template <class T>
 void Calculator2<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
-	dgeadd_(A.getData(),A.getM(),CblasNoTrans,B.getData(),B.getM(),
+	cblas_dgemadd(A.getData(),A.getM(),CblasNoTrans,B.getData(),B.getM(),
 			CblasNoTrans,Res.getData(),Res.getM(),Res.getM(),Res.getN());
 }
 
@@ -50,7 +50,7 @@ void Calculator2<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 				U(i,j) = 0;
 			}
 			else if(i == j){
-				L(i,j) == 1;
+				L(i,j) = 1;
 			}
 			else
 			{
@@ -59,3 +59,5 @@ void Calculator2<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 		}
 	}
 }
+
+template class Calculator2<double>;

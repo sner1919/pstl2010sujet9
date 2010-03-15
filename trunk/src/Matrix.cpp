@@ -43,11 +43,14 @@ T& Matrix<T>::operator()(int i, int j) {
 
 template <class T>
 bool Matrix<T>::operator==(IMatrix<T>& M) {
+	if(getM() != M.getM() || getN() != M.getN()) return false;
+
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
 			if((*this)(i, j) != M(i, j)) return false;
 		}
 	}
+
 	return true;
 }
 
