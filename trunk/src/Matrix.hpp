@@ -2,6 +2,8 @@
 #include "interfaces/IMatrix.hpp"
 #include <sstream>
 #include <stdexcept>
+#include "math.h"
+#include "stdio.h"
 
 template <class T>
 class Matrix : public virtual IMatrix<T> {
