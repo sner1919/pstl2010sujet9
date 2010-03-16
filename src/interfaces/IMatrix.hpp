@@ -44,4 +44,12 @@ template <class T> class IMatrix {
 		 * @return la représentation sous la forme d'une chaine
 		 */
         virtual string toString() = 0;
+
+		/*
+		 * Donne un identifiant unique pour un couple d'indices i, j.
+		 * @param i l'indice de ligne
+		 * @param j l'indice de colonne
+		 * @return l'identifiant pour la position à l'indice i, j
+		 */
+        virtual int locationId(int i, int j) = 0;
 };
