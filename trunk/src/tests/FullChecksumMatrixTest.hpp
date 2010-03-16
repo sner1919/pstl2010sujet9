@@ -1,8 +1,6 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include "../FullChecksumMatrix.hpp"
-#include <ctime>
-#include <cstdlib>
 
 class FullChecksumMatrixTest : public CppUnit::TestFixture {
 		CPPUNIT_TEST_SUITE(FullChecksumMatrixTest);
@@ -25,6 +23,4 @@ class FullChecksumMatrixTest : public CppUnit::TestFixture {
 		void testRowColumn();
 
 		void testFull();
-
-		void testPerf();
 };

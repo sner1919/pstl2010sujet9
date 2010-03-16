@@ -47,7 +47,10 @@ bool Matrix<T>::operator==(IMatrix<T>& M) {
 
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
-			if((*this)(i, j) != M(i, j)) return false;
+			if((*this)(i, j) != M(i, j)){
+				cout << (*this)(i, j) << " != " << M(i, j) << endl;
+				return false;
+			}
 		}
 	}
 
@@ -68,6 +71,11 @@ string Matrix<T>::toString() {
 	oss << "]" << endl;
 
 	return oss.str();
+}
+
+template <class T>
+int Matrix<T>::locationId(int i, int j) {
+	return (i - 1) * getN() + j;
 }
 
 template class Matrix<double>;

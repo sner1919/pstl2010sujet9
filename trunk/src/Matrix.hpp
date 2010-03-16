@@ -44,4 +44,7 @@ class Matrix : public virtual IMatrix<T> {
 
         // implémentation de IMatrix<T>
         string toString();
+
+        // implémentation de IMatrix<T>
+        int locationId(int i, int j);
 };

@@ -1,6 +1,7 @@
 #include "interfaces/IErrorGenerator.hpp"
 #include <ctime>
 #include <cstdlib>
+#include <vector>
 
 template <class T> class ErrorGenerator : public IErrorGenerator<T> {
 public:

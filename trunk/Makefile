@@ -10,7 +10,7 @@ SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
 OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
-OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o
+OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o $(BINDIR)/tests/BenchmarkTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
 # +++++++++++++++++++ Cibles habituelles +++++++++++++++++++
@@ -66,3 +66,4 @@ $(BINDIR)/ErrorGenerator.o : $(ErrorGeneratorDep)
 
 $(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(MatrixDep)
 $(BINDIR)/tests/FullChecksumMatrixTest.o : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)
+$(BINDIR)/tests/BenchmarkTest.o : $(SRCDIR)/tests/BenchmarkTest.hpp $(FullChecksumMatrixDep) $(CalculatorDep) $(ErrorGeneratorDep)
