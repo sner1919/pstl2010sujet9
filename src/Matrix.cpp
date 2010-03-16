@@ -47,7 +47,12 @@ bool Matrix<T>::operator==(IMatrix<T>& M) {
 
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
-			if((*this)(i, j) != M(i, j)){
+			T a = (*this)(i, j);
+			T b = M(i, j);
+			if(fabs(a - b) > 1){
+				printf("a : %lf\n", a);
+				printf("b : %lf\n", b);
+				cout << fabs(a - b) << endl;
 				cout << (*this)(i, j) << " != " << M(i, j) << endl;
 				return false;
 			}
