@@ -1,0 +1,142 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8x]{inputenc}
+\usepackage[francais]{babel}
+
+% Title Page
+\title{Projet : Implémentation d'un produit de matrices tolérant
+aux fautes
+}
+\author{Mikael Caçote et Georges Abou Haydar}
+\date{15 Mars 2010}
+
+\begin{document}
+\maketitle
+\renewcommand{\abstractname}{Introduction}
+\renewcommand{\labelitemi}{$\bullet$}
+\renewcommand{\labelitemii}{$\cdot$}
+\begin{abstract}
+ Avec des gravures de plus en plus fine, les processeurs engendrent de plus en plus de fautes non détectées qui peuvent complètement invalider des calculs. Face à ce problème, différentes approches sont possibles. Dans le cadre de ce projet, nous nous intéresserons à l'approche ABFT (Algorithm-based Fault Tolerant) pour des algorithmes de calcul numérique et plus particulièrement pour le produit matriciel. La méthode s'appuie sur une extension de la taille des matrices afin de calculer des valeurs au fur et à mesure des calcul qui servent à vérifier l'intégrité des résultats. Un article fondateur K.-H. Huang, J.A. Abraham explique son principe. 
+\end{abstract}
+
+\section{Principe}
+\paragraph*{}
+Des vecteurs de sommation sont ajoutés à la matrice avant l’exécution des opérations
+par le processeur.\newline
+Ces valeurs nous permettent ensuite de corriger les erreurs engendrées par le processeur.
+\paragraph*{}
+Trois nouveaux types de matrices créés à partir d’une matrice $ m \times n $ initiale :
+\begin{itemize}
+ \item « Row Checksum Matrix » : un vecteur colonne de sommation des lignes est
+ajouté à la matrice (matrice de taille $ m \times (n+1) $).
+ \item « Column Checksum Matrix » : un vecteur ligne de sommation des colonnes est
+  ajouté à la matrice (matrice de taille $ (m+1) \times n $).
+ \item « Full Checksum Matrix » : un vecteur colonne de sommation des lignes et un
+  vecteur ligne de sommation des colonnes est ajouté à la matrice (matrice de
+  taille $ (m+1) \times (n+1) $). C’est une « Column Checksum Matrix » d’une « Row
+  Checksum Matrix » .
+\end{itemize}
+
+\paragraph*{}
+Les opérations deviennent :
+\begin{itemize}
+  \item Produit Matriciel : $ A \times B = C $
+    \begin{itemize}
+      \item  On effectue le calcul $ A_c $\footnote{$A_c$ est la ColumnChecksumMatrix de $A$}
+	$\times B_r $\footnote{$B_r$ est la RowChecksumMatrix de $B$}$ = C_f $\footnote{$C_f$ est la FullChecksumMatrix de $C$}
+      \item On effectue la correction d’erreurs sur $C_f$
+      \item On recupère la partie information de $C_f$ sachant que cette partie est égale à $C$
+    \end{itemize}
+  \item Produit scalaire : $ A \times b = C $
+    \begin{itemize}
+      \item On effectue le calcul $ A_f \times b = C_f $
+      \item On effectue la correction d’erreurs sur $C_f$
+      \item On recupère la partie information de $C_f$ sachant que cette partie est égale à $C$
+    \end{itemize}
+ \item Somme : $ A + B = C $
+    \begin{itemize}
+      \item On effectue le calcul $ A_f + B_f = C_f $
+      \item On effectue la correction d’erreurs sur $C_f$
+      \item On recupère la partie information de $C_f$ sachant que cette partie est égale à $C$
+    \end{itemize}
+ \item Transposition : $ A^t = C $
+    \begin{itemize}
+      \item On effectue le calcul $A_f^t = C_f$
+      \item On effectue la correction d’erreurs sur $C_f$
+      \item On recupère la partie information de $C_f$ sachant que cette partie est égale à $C$
+    \end{itemize}
+ \item Décomposition LU : trouver $L$ et $U$ tel que $ A = L \times U $\footnote{Si $A$ est décomposable $A_f$ l'est aussi}
+    \begin{itemize}
+      \item On décompose $A_f$ est on obtient $L_c$ et $U_r$
+      \item On effectue la correction d’erreurs sur $L_c$ et $U_r$
+      \item On recupère la partie information de $L_c$ sachant que cette partie est égale à $L$
+      \item On recupère la partie information de $U_r$ sachant que cette partie est égale à $U$
+    \end{itemize}
+\end{itemize}
+
+\section{Architecture}
+\begin{itemize}
+  \item Interfaces (répertoire/interfaces) :
+    \begin{itemize}
+      \item $IMatrix<T>$ : manipulation de matrices
+      \item $IVector<T>$ : manipulation de vecteurs
+      \item $IRowChecksumMatrix<T>$ : manipulation de « Row Checksum Matrix »
+      \item $IColumnChecksumMatrix<T>$ : manipulation de « Column Checksum Matrix »
+      \item $IFullChecksumMatrix<T>$ : manipulation de « Full Checksum Matrix »
+      \item $ICalculator<T>$ : opérations sur les matrices
+      \item $IErrorGenerator<T>$ : génération d’erreurs dans les matrices
+    \end{itemize}
+  \item Classes (répertoire) :
+    \begin{itemize}
+      \item $Matrix<T>$ : réalisation de $IMatrix<T>$
+      \item $Vector<T>$ : réalisation de $IVector<T>$
+      \item $RowChecksumMatrix<T>$ : réalisation de $IRowChecksumMatrix<T>$
+      \item $ColumnChecksumMatrix<T>$ : réalisation de $IColumnChecksumMatrix<T>$
+      \item $FullChecksumMatrix<T>$ : réalisation de $IFullChecksumMatrix<T>$
+      \item $Calculator<T>$ : réalisation de $ICalculator<T>$
+      \item $Calculator2<T>$ : autre réalisation de $ICalculator<T>$
+      \item $ErrorGenerator<T>$ : réalisation de $IErrorGenerator<T>$
+      \item $Processor<T>$ : simulation des opérations réalisées par le processeur. Utilise
+      un $ICalculator<T>$ pour les calculs et génère des erreurs pendant ce temps
+      avec un $IErrorGenerator<T>$. La correction d’erreur est ensuite réalisée
+      grâce à la méthode $IColumnChecksumMatrix<T>::errorCorrection()$.
+      \item $PSTL$ : point d’entrée du programme
+
+
+    \end{itemize}
+  \item Classes de test (répertoire/tests) :
+\end{itemize}
+
+\section{Correction d'erreur}
+\paragraph*{}
+  Les lignes et les colonnes sont de la forme \[ x_1 + x_2 + x_3 + \ldots + x_n = c \]
+  avec $c$ le checksum dans le vecteur de sommation.\newline
+  Cette équation peut être réécrite sous la forme  \[ x_1 + x_2 + x_3 + \ldots + x_n - c = 0 \]
+\paragraph*{}
+  Les lignes et colonnes qui ne satisfont pas à cette égalité sont non valides et on sait
+  qu’elles contiennent des erreurs.
+\paragraph*{}
+  Le travail consiste alors à résoudre un système contenant un nombre d’équations égal au
+  nombre de lignes et de colonnes non valides, et contenant un nombre d’inconnues égal
+  au nombre d’intersections entre ces lignes et colonnes.
+
+\subsection{Une erreur}
+On a 1 ligne et une colonne non valides.
+Donc 2 équations à 1 inconnues $\Rightarrow$ 1 solution $\Rightarrow$ On peut corriger
+\subsection{Deux erreurs}
+\begin{itemize}
+  \item Même ligne :
+    \begin{itemize}
+      \item Elles s’annulent :\newline On a 2 colonnes non valides.\newline
+      Donc 2 équations à 2m inconnues $\Rightarrow$ plusieurs solutions $\Rightarrow$ correction non OK
+      \item Elles ne s’annulent pas :\newline On a 2 colonnes et une ligne non valides.\newline
+      Donc 3 équations à 2 inconnues $\Rightarrow$ 1 solution $\Rightarrow$ correction OK
+    \end{itemize}
+  \item Même colonne : même principe
+  \item Non adjacentes : \newline On a 2 lignes et 2 colonnes non valides \newline
+  On suppose qu'il n'y a que 2 erreurs (il pourrait y en avoir 3 ou 4).\newline
+  Donc 4 équations à 2 inconnues, mais deux possibilités pour les deux inconnues
+  (les cases non adjacentes) $\Rightarrow$ 2 solutions $\Rightarrow$ correction non OK
+
+\end{itemize}
+
+\end{document}          
