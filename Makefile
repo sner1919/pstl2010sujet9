@@ -2,14 +2,14 @@
 CXX = g++
 CXXFLAGS = -W -Wall ${DEBUGFLAG} #rq : ${DEBUGFLAG} ajouté à la configuration de construction "Debug" dans eclipse cdt
 LDFLAGS =
-LDLIBS =
+LDLIBS = -latlas -lblas
 INCLUDES =
 PREPROCESS_AND_COMPIL = $(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 LINK = $(CXX) $(LDFLAGS) $(LDLIBS) $^ -o $@
 SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
-OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/Calculator.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
+OBJ = $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/CalculatorNaive.o $(BINDIR)/CalculatorAtlas.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
 OBJTEST = $(OBJ) $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o $(BINDIR)/tests/BenchmarkTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
@@ -49,8 +49,8 @@ VectorDep = $(SRCDIR)/Vector.hpp $(IVectorDep) $(MatrixDep)
 RowChecksumMatrixDep = $(SRCDIR)/RowChecksumMatrix.hpp $(IRowChecksumMatrixDep) $(MatrixDep) $(VectorDep)
 ColumnChecksumMatrixDep = $(SRCDIR)/ColumnChecksumMatrix.hpp $(IColumnChecksumMatrixDep) $(MatrixDep) $(VectorDep)
 FullChecksumMatrixDep = $(SRCDIR)/FullChecksumMatrix.hpp $(IFullChecksumMatrixDep) $(RowChecksumMatrixDep) $(ColumnChecksumMatrixDep)
-CalculatorDep = $(SRCDIR)/Calculator.hpp $(ICalculatorDep)
-Calculator2Dep = $(SRCDIR)/Calculator2.hpp $(ICalculatorDep)
+CalculatorNaiveDep = $(SRCDIR)/CalculatorNaive.hpp $(ICalculatorDep)
+CalculatorAtlasDep = $(SRCDIR)/CalculatorAtlas.hpp $(ICalculatorDep)
 ProcessorDep = $(SRCDIR)/Processor.hpp $(ICalculatorDep) $(FullChecksumMatrixDep)
 ErrorGeneratorDep = $(SRCDIR)/ErrorGenerator.hpp $(IErrorGeneratorDep)
 
@@ -59,11 +59,11 @@ $(BINDIR)/Vector.o : $(VectorDep)
 $(BINDIR)/RowChecksumMatrix.o : $(RowChecksumMatrixDep)
 $(BINDIR)/ColumnChecksumMatrix.o : $(ColumnChecksumMatrixDep)
 $(BINDIR)/FullChecksumMatrix.o : $(FullChecksumMatrixDep)
-$(BINDIR)/Calculator.o : $(CalculatorDep)
-$(BINDIR)/Calculator2.o : $(Calculator2Dep)
+$(BINDIR)/CalculatorNaive.o : $(CalculatorNaiveDep)
+$(BINDIR)/CalculatorAtlas.o : $(CalculatorAtlasDep)
 $(BINDIR)/Processor.o : $(ProcessorDep)
 $(BINDIR)/ErrorGenerator.o : $(ErrorGeneratorDep)
 
 $(BINDIR)/tests/MatrixTest.o : $(SRCDIR)/tests/MatrixTest.hpp $(MatrixDep)
 $(BINDIR)/tests/FullChecksumMatrixTest.o : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)
-$(BINDIR)/tests/BenchmarkTest.o : $(SRCDIR)/tests/BenchmarkTest.hpp $(FullChecksumMatrixDep) $(CalculatorDep) $(ErrorGeneratorDep)
+$(BINDIR)/tests/BenchmarkTest.o : $(SRCDIR)/tests/BenchmarkTest.hpp $(FullChecksumMatrixDep) $(CalculatorNaiveDep) $(CalculatorAtlasDep) $(ErrorGeneratorDep)

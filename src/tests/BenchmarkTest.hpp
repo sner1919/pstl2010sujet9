@@ -1,7 +1,8 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include "../FullChecksumMatrix.hpp"
-#include "../Calculator.hpp"
+#include "../CalculatorNaive.hpp"
+#include "../CalculatorAtlas.hpp"
 #include "../ErrorGenerator.hpp"
 #include <sys/time.h>
 

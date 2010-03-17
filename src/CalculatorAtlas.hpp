@@ -1,7 +1,14 @@
 #include "interfaces/ICalculator.hpp"
 #include <stdexcept>
+#include <cblas.h>
+#include "clapack.h"
+// aptitude install libatlas-base-dev
 
-template <class T> class Calculator : public ICalculator<T> {
+
+template <class T> class CalculatorAtlas : public ICalculator<T> {
+		int* ipvt;
+		int info;
+
 	public:
 		// implémentation de ICalculator<T>
 		void mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B);
