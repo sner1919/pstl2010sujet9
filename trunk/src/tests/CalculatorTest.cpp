@@ -23,7 +23,7 @@ void FullChecksumMatrixTest::setUp() {
 }
 
 void FullChecksumMatrixTest::tearDown() {
-	delete [] L->getData();
+	delete [] LData;
 	delete [] UData;
 	delete [] LDataBis;
 

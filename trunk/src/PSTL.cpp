@@ -3,7 +3,7 @@
 #include "RowChecksumMatrix.hpp"
 #include "ColumnChecksumMatrix.hpp"
 #include "FullChecksumMatrix.hpp"
-#include "Calculator.hpp"
+#include "CalculatorNaive.hpp"
 #include "Processor.hpp"
 #include "ErrorGenerator.hpp"
 #include <iostream>
@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     try{
-    	Calculator<double> calculator;
+    	CalculatorNaive<double> calculator;
     	ErrorGenerator<double> generator;
     	Processor<double> proc(calculator);
         /* ---------- allocation statique de mémoire ---------- */

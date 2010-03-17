@@ -9,9 +9,9 @@ void BenchmarkTest::tearDown() {
 }
 
 void BenchmarkTest::testPerf() {
-	Calculator<double> calculator;
+	CalculatorNaive<double> calculator;
 	ErrorGenerator<double> generator;
-	int n = 400;
+	int n = 100;
 	Matrix<double> A(n, n);
 	Matrix<double> B(n, n);
 	Matrix<double> C1(n, n);

@@ -1,7 +1,7 @@
-#include "Calculator.hpp"
+#include "CalculatorNaive.hpp"
 
 template <class T>
-void Calculator<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
+void CalculatorNaive<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
 	// Vérifications
 	if(!(A.getN() == B.getM()
 		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
@@ -15,7 +15,7 @@ void Calculator<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
 }
 
 template <class T>
-void Calculator<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, T x){
+void CalculatorNaive<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, T x){
 	// Vérifications
 	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
 
@@ -27,7 +27,7 @@ void Calculator<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, T x){
 }
 
 template <class T>
-void Calculator<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
+void CalculatorNaive<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
 	// Vérifications
 	if(!(A.getM() == B.getM() && A.getM() == Res.getM()
 		 && A.getN() == B.getN() && A.getN() == Res.getN()))  throw domain_error("addition impossible");
@@ -41,7 +41,7 @@ void Calculator<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
 }
 
 template <class T>
-void Calculator<T>::transpose(IMatrix<T>& Res, IMatrix<T>& A){
+void CalculatorNaive<T>::transpose(IMatrix<T>& Res, IMatrix<T>& A){
 	// Vérifications
 	if(!(A.getM() == Res.getN() && A.getN() == Res.getM()))  throw domain_error("transposition impossible");
 
@@ -54,7 +54,7 @@ void Calculator<T>::transpose(IMatrix<T>& Res, IMatrix<T>& A){
 
 // Hypothèse la matrice A est LU décomposable
 template <class T>
-void Calculator<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
+void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 	// Vérifications
 	if(!(A.getM() == A.getN()
 		 && A.getM() == L.getM() && A.getM() == L.getN()
@@ -84,4 +84,4 @@ void Calculator<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 	delete [] c;
 }
 
-template class Calculator<double>;
+template class CalculatorNaive<double>;
