@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-using namespace std;
+#include "../settings.hpp"
 
 template <class T> class IMatrix {
     public:
@@ -8,19 +8,19 @@ template <class T> class IMatrix {
 		 * Donne le nombre de lignes de la matrice.
 		 * @return le nombre de lignes
 		 */
-        virtual int getM() = 0;
+        virtual int getM() const = 0;
 
 		/*
 		 * Donne le nombre de colonnes de la matrice.
 		 * @return le nombre de colonnes
 		 */
-        virtual int getN() = 0;
+        virtual int getN() const = 0;
 
 		/*
 		 * Donne les données contenues dans la matrice.
 		 * @return les données sous la forme d'un tableau, où les données sont rangées lignes par lignes
 		 */
-        virtual T* getData() = 0;
+        virtual T* getData() const = 0;
 
 		/*
 		 * Donne un élément contenu dans la matrice.
@@ -29,7 +29,15 @@ template <class T> class IMatrix {
 		 * @param j l'indice de colonne
 		 * @return l'élément à l'indice i, j
 		 */
-        virtual T& operator()(int i, int j) = 0;
+        virtual T& operator()(int i, int j) const = 0;
+
+		/*
+		 * Affecte (par copie) le contenu d'une autre matrice à celle-ci.
+		 * remarque : redéfinition de l'opérateur "="
+		 * @param M la seconde matrice
+		 * @return *this
+		 */
+        virtual IMatrix<T>& operator=(const IMatrix<T>& M) = 0;
 
 		/*
 		 * Indique si cette matrice est égale à une autre.
@@ -37,13 +45,13 @@ template <class T> class IMatrix {
 		 * @param M la seconde matrice
 		 * @return vrai si les deux matrices sont égales
 		 */
-        virtual bool operator==(IMatrix<T>& M) = 0;
+        virtual bool operator==(const IMatrix<T>& M) const = 0;
 
 		/*
 		 * Donne un représentation textuelle de la matrice.
 		 * @return la représentation sous la forme d'une chaine
 		 */
-        virtual string toString() = 0;
+        virtual string toString() const = 0;
 
 		/*
 		 * Donne un identifiant unique pour un couple d'indices i, j.
@@ -51,5 +59,22 @@ template <class T> class IMatrix {
 		 * @param j l'indice de colonne
 		 * @return l'identifiant pour la position à l'indice i, j
 		 */
-        virtual int locationId(int i, int j) = 0;
+        virtual int locationId(int i, int j) const = 0;
+
+		/*
+		 * Donne la distance entre cette matrice et une autre.
+		 * La distance entre deux matrices est le nombre d'éléments en lesquels elles diffèrent.
+		 * (Huang and Abraham : Algorithm-Based Fault Tolerance for Matrix Operations)
+		 * @param M la seconde matrice
+		 * @return la distance
+		 */
+        virtual int distance(const IMatrix<T>& M) const = 0;
+
+		/*
+		 * Donne le poids de la matrice.
+		 * Le poids d'une matrice est le nombre d'éléments non-nulls de celle-ci.
+		 * (Huang and Abraham : Algorithm-Based Fault Tolerance for Matrix Operations)
+		 * @return le poids
+		 */
+        virtual int weight() const = 0;
 };

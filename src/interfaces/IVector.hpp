@@ -9,5 +9,5 @@ template <class T> class IVector : public virtual IMatrix<T> {
 		 * @param i l'indice
 		 * @return l'élément à l'indice i
 		 */
-		virtual T& operator()(int i) = 0;
+		virtual T& operator()(int i) const = 0;
 };

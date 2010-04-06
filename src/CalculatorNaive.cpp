@@ -1,7 +1,7 @@
 #include "CalculatorNaive.hpp"
 
 template <class T>
-void CalculatorNaive<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
+void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
 	// Vérifications
 	if(!(A.getN() == B.getM()
 		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
@@ -15,50 +15,43 @@ void CalculatorNaive<T>::mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B){
 }
 
 template <class T>
-void CalculatorNaive<T>::mult(IMatrix<T>& Res,IMatrix<T>& A, T x){
+void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) const {
 	// Vérifications
 	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
 
 	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j<= Res.getN(); j++){
-			Res(i, j) = A(i, j) * x;
-		}
+		for(int j = 1; j<= Res.getN(); j++) Res(i, j) = A(i, j) * x;
 	}
 }
 
 template <class T>
-void CalculatorNaive<T>::add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B){
+void CalculatorNaive<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
 	// Vérifications
 	if(!(A.getM() == B.getM() && A.getM() == Res.getM()
-		 && A.getN() == B.getN() && A.getN() == Res.getN()))  throw domain_error("addition impossible");
+		 && A.getN() == B.getN() && A.getN() == Res.getN())) throw domain_error("addition impossible");
 
 	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++){
-			Res(i, j) = 0;
-			Res(i, j) = A(i, j) + B(i, j);
-		}
+		for(int j = 1; j <= Res.getN(); j++) Res(i, j) = A(i, j) + B(i, j);
 	}
 }
 
 template <class T>
-void CalculatorNaive<T>::transpose(IMatrix<T>& Res, IMatrix<T>& A){
+void CalculatorNaive<T>::transpose(IMatrix<T>& Res, const IMatrix<T>& A) const {
 	// Vérifications
-	if(!(A.getM() == Res.getN() && A.getN() == Res.getM()))  throw domain_error("transposition impossible");
+	if(!(A.getM() == Res.getN() && A.getN() == Res.getM())) throw domain_error("transposition impossible");
 
 	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++){
-			Res(j, i) = A(i, j);
-		}
+		for(int j = 1; j <= Res.getN(); j++) Res(j, i) = A(i, j);
 	}
 }
 
-// Hypothèse la matrice A est LU décomposable
+// Algorithme d'après "Huang and Abraham : Algorithm-Based Fault Tolerance for Matrix Operations"
 template <class T>
-void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
+void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const {
 	// Vérifications
 	if(!(A.getM() == A.getN()
 		 && A.getM() == L.getM() && A.getM() == L.getN()
-		 && A.getM() == U.getM() && A.getM() == U.getN()))  throw domain_error("décomposition LU impossible");
+		 && A.getM() == U.getM() && A.getM() == U.getN())) throw domain_error("décomposition LU impossible");
 
 	T** c = new T*[A.getM()];
 	for(int i = 1; i <= A.getM(); i++){
@@ -84,4 +77,4 @@ void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A){
 	delete [] c;
 }
 
-template class CalculatorNaive<double>;
+template class CalculatorNaive<PSTL_TYPE>;

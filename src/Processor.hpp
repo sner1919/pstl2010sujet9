@@ -1,7 +1,10 @@
 #include "interfaces/ICalculator.hpp"
+#include "FullChecksumMatrix.hpp"
+#include "ErrorGenerator.hpp"
 
 template <class T> class Processor : public ICalculator<T> {
 		ICalculator<T>& calculator;
+		IErrorGenerator<T>& generator;
     
     public:
 		/*
@@ -9,22 +12,22 @@ template <class T> class Processor : public ICalculator<T> {
 		 * et tenter de les corriger.
 		 * @param calculator le calculateur qui va être utilisé par le processeur
 		 */
-		Processor(ICalculator<T>& calculator);
+		Processor(ICalculator<T>& calculator, IErrorGenerator<T>& generator);
 
 		// implémentation de ICalculator<T>
-		void mult(IMatrix<T>& Res, IMatrix<T>& A, IMatrix<T>& B);
+		void mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const;
 
 		// implémentation de ICalculator<T>
-		void mult(IMatrix<T>& Res,IMatrix<T>& A, T x);
+		void mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) const;
 
 		// implémentation de ICalculator<T>
-		void add(IMatrix<T>& Res,IMatrix<T>& A, IMatrix<T>& B);
+		void add(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const;
 
 		// implémentation de ICalculator<T>
-		void transpose(IMatrix<T>& Res, IMatrix<T>& A);
+		void transpose(IMatrix<T>& Res, const IMatrix<T>& A) const;
 
 		// implémentation de ICalculator<T>
-		void LU(IMatrix<T>& L, IMatrix<T>& U, IMatrix<T>& A);
+		void LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const;
 };
 
 

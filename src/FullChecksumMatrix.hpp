@@ -10,6 +10,12 @@ template <class T> class FullChecksumMatrix : public virtual Matrix<T>, public I
 		IColumnChecksumMatrix<T>* CCM;
 
 	public:
+        /*
+         * Crée une copie d'une FullChecksumMatrix existante.
+         * @param M la FullChecksumMatrix existante
+         */
+		FullChecksumMatrix(const IFullChecksumMatrix<T>& M);
+
 		/*
 		 * Crée une FullChecksumMatrix à partir d'une matrice existante (utilisation de la même zone mémoire).
 		 * @param M la matrice
@@ -19,19 +25,19 @@ template <class T> class FullChecksumMatrix : public virtual Matrix<T>, public I
         ~FullChecksumMatrix();
 
         // redéfinition de Matrix<T>
-        T& operator()(int i, int j);
+        T& operator()(int i, int j) const;
 
         // implémentation de IFullChecksumMatrix<T>
-        IVector<T>& getRowSummationVector();
+        IVector<T>& getRowSummationVector() const;
 
         // implémentation de IFullChecksumMatrix<T>
-        T computeRowSum(int i);
+        T computeRowSum(int i) const;
 
         // implémentation de IFullChecksumMatrix<T>
-        IVector<T>& getColumnSummationVector();
+        IVector<T>& getColumnSummationVector() const;
 
         // implémentation de IFullChecksumMatrix<T>
-        T computeColumnSum(int j);
+        T computeColumnSum(int j) const;
 
         // implémentation de IFullChecksumMatrix<T>
         bool errorCorrection();

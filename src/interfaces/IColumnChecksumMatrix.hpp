@@ -8,12 +8,12 @@ template <class T> class IColumnChecksumMatrix : public virtual IMatrix<T> {
 		 * Donne le vecteur de sommation des colonnes de la matrice.
 		 * return le vecteur de sommation
 		 */
-        virtual IVector<T>& getColumnSummationVector() = 0;
+        virtual IVector<T>& getColumnSummationVector() const = 0;
 
         /*
 		 * Effectue la sommation d'une colonne de la matrice.
 		 * @param j l'indice de la colonne
 		 * return le résultat de la sommation
 		 */
-        virtual T computeColumnSum(int j) = 0;
+        virtual T computeColumnSum(int j) const = 0;
 };
