@@ -6,6 +6,12 @@ template <class T>
 class Vector : public Matrix<T>, public IVector<T> {
 	public:
 		/*
+		 * Crée une copie d'un vecteur existant.
+		 * @param V le vecteur existant
+		 */
+		Vector(const IVector<T>& V);
+
+		/*
 		 * Crée un vecteur (en allouant la mémoire pour son contenu).
 		 * @param m le nombre d'éléments
 		 */
@@ -19,5 +25,5 @@ class Vector : public Matrix<T>, public IVector<T> {
 		Vector(T* data, int m);
 
         // implémentation de IVector<T>
-        T& operator()(int i);
+        T& operator()(int i) const;
 };

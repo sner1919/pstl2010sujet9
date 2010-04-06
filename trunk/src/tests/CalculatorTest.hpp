@@ -1,28 +1,34 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/extensions/HelperMacros.h>
-#include "../Calculator.hpp"
+#include "../Matrix.hpp"
+#include "../CalculatorNaive.hpp"
 #include "../CalculatorAtlas.hpp"
 #include <vector>
 
 class CalculatorTest : public CppUnit::TestFixture {
 		CPPUNIT_TEST_SUITE(CalculatorTest);
-		CPPUNIT_TEST(testMatrix);
-		CPPUNIT_TEST(testRowColumn);
-		CPPUNIT_TEST(testFull);
+		CPPUNIT_TEST(testMult);
+		CPPUNIT_TEST(testSMult);
+		CPPUNIT_TEST(testAdd);
+		CPPUNIT_TEST(testTranspose);
+		CPPUNIT_TEST(testLU);
 		CPPUNIT_TEST_SUITE_END();
 
-		double *LData, *UData, *AData;
-		Matrix<double> *L, *U, *A;
-		vector<ICalculator<double>> calcs;
+		IMatrix<PSTL_TYPE> *L, *U, *A;
+		vector< ICalculator<PSTL_TYPE>* > calc;
 
 	public:
 		void setUp();
 
 		void tearDown();
 
-		void testMatrix();
+		void testMult();
 
-		void testRowColumn();
+		void testSMult();
 
-		void testFull();
+		void testAdd();
+
+		void testTranspose();
+
+		void testLU();
 };

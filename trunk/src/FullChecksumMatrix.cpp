@@ -1,7 +1,12 @@
 #include "FullChecksumMatrix.hpp"
 
 template <class T>
-FullChecksumMatrix<T>::FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M.getData(), M.getM() + 1, M.getN() + 1),
+FullChecksumMatrix<T>::FullChecksumMatrix(const IFullChecksumMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN()) {
+	Matrix<T>::operator=(M);
+}
+
+template <class T>
+FullChecksumMatrix<T>::FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M, M.getM() + 1, M.getN() + 1),
 RCM(new RowChecksumMatrix<T>(M)), CCM(new ColumnChecksumMatrix<T>(*RCM)) {}
 
 template <class T>
@@ -11,17 +16,17 @@ FullChecksumMatrix<T>::~FullChecksumMatrix() {
 }
 
 template <class T>
-T& FullChecksumMatrix<T>::operator()(int i, int j) {
+T& FullChecksumMatrix<T>::operator()(int i, int j) const {
 	return CCM->operator()(i, j);
 }
 
 template <class T>
-IVector<T>& FullChecksumMatrix<T>::getRowSummationVector() {
+IVector<T>& FullChecksumMatrix<T>::getRowSummationVector() const {
 	return RCM->getRowSummationVector();
 }
 
 template <class T>
-T FullChecksumMatrix<T>::computeRowSum(int i) {
+T FullChecksumMatrix<T>::computeRowSum(int i) const {
 	// RCM ne contient pas la dernière ligne
 	T sum = 0;
 
@@ -31,12 +36,12 @@ T FullChecksumMatrix<T>::computeRowSum(int i) {
 }
 
 template <class T>
-IVector<T>& FullChecksumMatrix<T>::getColumnSummationVector() {
+IVector<T>& FullChecksumMatrix<T>::getColumnSummationVector() const {
 	return CCM->getColumnSummationVector();
 }
 
 template <class T>
-T FullChecksumMatrix<T>::computeColumnSum(int j) {
+T FullChecksumMatrix<T>::computeColumnSum(int j) const {
 	return CCM->computeColumnSum(j);
 }
 
@@ -112,4 +117,4 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 	return true;
 }
 
-template class FullChecksumMatrix<double>;
+template class FullChecksumMatrix<PSTL_TYPE>;

@@ -15,5 +15,5 @@ template <class T> class IErrorGenerator {
 		 * @param jMin l'indice de colonne minimal
 		 * @param jMax l'indice de colonne maximal
 		 */
-		virtual void generateError(IMatrix<T>& M, int nb, int iMin, int iMax, int jMin, int jMax) = 0;
+		virtual void generateError(IMatrix<T>& M, int nb, int iMin, int iMax, int jMin, int jMax) const = 0;
 };

@@ -1,7 +1,7 @@
 #include "ErrorGenerator.hpp"
 
 template <class T>
-void ErrorGenerator<T>::generateError(IMatrix<T>& M, int nb, int iMin, int iMax, int jMin, int jMax){
+void ErrorGenerator<T>::generateError(IMatrix<T>& M, int nb, int iMin, int iMax, int jMin, int jMax) const {
 	int l, c, id;
 	bool contains;
 	vector<int> ids;
@@ -27,5 +27,5 @@ void ErrorGenerator<T>::generateError(IMatrix<T>& M, int nb, int iMin, int iMax,
 	}
 }
 
-template class ErrorGenerator<double>;
+template class ErrorGenerator<PSTL_TYPE>;
 
