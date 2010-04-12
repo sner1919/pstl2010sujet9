@@ -4,17 +4,12 @@
 #include "Vector.hpp"
 #include <stdlib.h>
 
-template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public IColumnChecksumMatrix<T> {
-		IVector<T>* columnSummationVector;
+template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public virtual IColumnChecksumMatrix<T> {
+		IMatrix<T>& matrix;
+		IVector<T>& columnSummationVector;
 
 	public:
         /*
-         * Crée une copie d'une ColumnChecksumMatrix existante.
-         * @param M la ColumnChecksumMatrix existante
-         */
-		ColumnChecksumMatrix(const IColumnChecksumMatrix<T>& M);
-
-		/*
 		 * Crée une ColumnChecksumMatrix à partir d'une matrice existante (utilisation de la même zone mémoire).
 		 * @param M la matrice
 		 */
@@ -26,8 +21,14 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
         T& operator()(int i, int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
+        IMatrix<T>& getColumnMatrix() const;
+
+        // implémentation de IColumnChecksumMatrix<T>
         IVector<T>& getColumnSummationVector() const;
 
         // implémentation de IColumnChecksumMatrix<T>
         T computeColumnSum(int j) const;
+
+        // implémentation de IColumnChecksumMatrix<T>
+        bool columnErrorDetection() const;
 };

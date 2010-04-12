@@ -4,17 +4,19 @@
 #include "Vector.hpp"
 #include <stdlib.h>
 
-template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public IRowChecksumMatrix<T> {
-		IVector<T>* rowSummationVector;
+template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public virtual IRowChecksumMatrix<T> {
+		IMatrix<T>& matrix;
+		IVector<T>& rowSummationVector;
 
 	public:
         /*
-         * Crée une copie d'une RowChecksumMatrix existante.
-         * @param M la RowChecksumMatrix existante
-         */
-		RowChecksumMatrix(const IRowChecksumMatrix<T>& M);
+		 * Crée une RowChecksumMatrix à partir d'une RowChecksumMatrix existante (utilisation de la même zone mémoire).
+		 * Permet à FullChecksumMatrix d'hériter d'une RowChecksumMatrix qu'elle a créé
+		 * @param RCM la RowChecksumMatrix
+		 */
+		RowChecksumMatrix(RowChecksumMatrix<T>& RCM);
 
-		 /*
+        /*
 		 * Crée une RowChecksumMatrix à partir d'une matrice existante (utilisation de la même zone mémoire).
 		 * @param M la matrice
 		 */
@@ -26,8 +28,14 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public IR
         T& operator()(int i, int j) const;
 
         // implémentation de IRowChecksumMatrix<T>
+        IMatrix<T>& getRowMatrix() const;
+
+        // implémentation de IRowChecksumMatrix<T>
         IVector<T>& getRowSummationVector() const;
 
         // implémentation de IRowChecksumMatrix<T>
         T computeRowSum(int i) const;
+
+        // implémentation de IRowChecksumMatrix<T>
+        bool rowErrorDetection() const;
 };

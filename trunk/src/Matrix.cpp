@@ -1,36 +1,20 @@
 #include "Matrix.hpp"
 
 template <class T>
-Matrix<T>::Matrix(IMatrix<T>& M, int m, int n) {
-	this->M = &M;
-	this->m = m;
-	this->n = n;
-	dataAllocation = false;
-	if(data) cout << "coucou";
-	else cout << "tata";
+Matrix<T>::Matrix(const Matrix<T>& M) : m(M.getM()), n(M.getN()), dataAllocation(M.getDataAllocation()) {
+	if(dataAllocation){
+		data = new T[m * n];
+		copy(M.getData(), M.getData() + m * n, data);
+	}else{
+		data = M.getData();
+	}
 }
 
 template <class T>
-Matrix<T>::Matrix(const IMatrix<T>& M) {
-	Matrix<T>::Matrix(M.getM(), M.getN());
-	*this = M;
-}
+Matrix<T>::Matrix(int m, int n) : m(m), n(n), data(new T[m * n]), dataAllocation(true) {}
 
 template <class T>
-Matrix<T>::Matrix(int m, int n) {
-	this->data = new T[m * n];
-	this->m = m;
-	this->n = n;
-	dataAllocation = true;
-}
-
-template <class T>
-Matrix<T>::Matrix(T* data, int m, int n) {
-	this->data = data;
-	this->m = m;
-	this->n = n;
-	dataAllocation = false;
-}
+Matrix<T>::Matrix(T* data, int m, int n) : m(m), n(n), data(data), dataAllocation(false) {}
 
 template <class T>
 Matrix<T>::~Matrix() {
@@ -49,21 +33,23 @@ int Matrix<T>::getN() const {
 
 template <class T>
 T* Matrix<T>::getData() const {
-	return data ? data : M->getData();
+	return data;
+}
+
+template <class T>
+bool Matrix<T>::getDataAllocation() const {
+	return dataAllocation;
 }
 
 template <class T>
 T& Matrix<T>::operator()(int i, int j) const {
-	return data ? data[(i - 1) * n + (j - 1)] : (*M)(i, j);
+	return data[(i - 1) * n + (j - 1)];
 }
 
 template <class T>
 IMatrix<T>& Matrix<T>::operator=(const IMatrix<T>& M) {
 	// Vérifications
 	if(getM() != M.getM() || getN() != M.getN()) throw domain_error("affectation impossible");
-
-	// si on fait ça on ne peut pas réutiliser cette methode avec les RCM, CCM et FCM
-	// copy(M.getData(), M.getData() + M.getM() * M.getN(), data);
 
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++) (*this)(i, j) = M(i, j);

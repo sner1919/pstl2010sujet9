@@ -1,7 +1,7 @@
 #include "Vector.hpp"
 
 template <class T>
-Vector<T>::Vector(const IVector<T>& V) : Matrix<T>(V) {}
+Vector<T>::Vector(const Vector<T>& V) : Matrix<T>(V) {}
 
 template <class T>
 Vector<T>::Vector(int m) : Matrix<T>(m, 1) {}

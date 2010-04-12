@@ -5,7 +5,7 @@
 template <class T> class Processor : public ICalculator<T> {
 		ICalculator<T>& calculator;
 		IErrorGenerator<T>& generator;
-    
+
     public:
 		/*
 		 * Crée un processeur qui va effectuer des calculs avec des erreurs

@@ -12,8 +12,8 @@ void MatrixTest::testAll() {
 
     // constructeurs
     Matrix<PSTL_TYPE> L(LData[0], 2, 2);
+    Matrix<PSTL_TYPE> L2(2, 2);
     Matrix<PSTL_TYPE> U(UData[0], 2, 2);
-    Matrix<PSTL_TYPE> LBis(2, 2);
 
     // getM(), getN()
 	CPPUNIT_ASSERT(L.getM() == 2);
@@ -22,35 +22,79 @@ void MatrixTest::testAll() {
 	// getData()
 	CPPUNIT_ASSERT(L.getData() == LData[0]);
 
+	// getDataAllocation()
+	CPPUNIT_ASSERT(!L.getDataAllocation());
+	CPPUNIT_ASSERT(!U.getDataAllocation());
+	CPPUNIT_ASSERT(L2.getDataAllocation());
+
+	// operator==
+	CPPUNIT_ASSERT(L == L);
+	CPPUNIT_ASSERT(!(L == L2));
+	CPPUNIT_ASSERT(!(L == U));
+
+	// operator=
+	L2 = (IMatrix<PSTL_TYPE>&) U;
+	CPPUNIT_ASSERT(L2 == U);
+	CPPUNIT_ASSERT(!(L == L2));
+
 	// operator()
 	CPPUNIT_ASSERT(L(1,1) == 1.);
 	CPPUNIT_ASSERT(L(1,2) == 0.);
 	CPPUNIT_ASSERT(L(2,1) == 1.5);
 	CPPUNIT_ASSERT(L(2,2) == 1.);
+	L2(1,1) = 1.;
+	L2(1,2) = 0.;
+	L2(2,1) = 1.5;
+	L2(2,2) = 1.;
+	CPPUNIT_ASSERT(L2(1,1) == 1.);
+	CPPUNIT_ASSERT(L2(1,2) == 0.);
+	CPPUNIT_ASSERT(L2(2,1) == 1.5);
+	CPPUNIT_ASSERT(L2(2,2) == 1.);
+	CPPUNIT_ASSERT(L == L2);
 
-	LBis(1,1) = 1.;
-	LBis(1,2) = 0.;
-	LBis(2,1) = 1.5;
-	LBis(2,2) = 1.;
+	// distance()
+	CPPUNIT_ASSERT(L.distance(L) == 0);
+	CPPUNIT_ASSERT(L.distance(L2) == 0); CPPUNIT_ASSERT(L2.distance(L) == 0);
+	CPPUNIT_ASSERT(L.distance(U) == 4); CPPUNIT_ASSERT(U.distance(L) == 4);
+	L2(2,2) = 0.;
+	CPPUNIT_ASSERT(L.distance(L2) == 1); CPPUNIT_ASSERT(L2.distance(L) == 1);
 
-	// operator==
-	CPPUNIT_ASSERT(L == L);
-	CPPUNIT_ASSERT(L == LBis);
-	CPPUNIT_ASSERT(!(L == U));
+	// weight()
+	CPPUNIT_ASSERT(L.weight() == 3);
+	CPPUNIT_ASSERT(L2.weight() == 2);
+	CPPUNIT_ASSERT(U.weight() == 3);
 
 	// toString()
 	CPPUNIT_ASSERT(L.toString().compare("[\n1 0 \n1.5 1 \n]\n") == 0);
 
-	// distance()
-	CPPUNIT_ASSERT(L.distance(L) == 0);
-	CPPUNIT_ASSERT(L.distance(LBis) == 0);
-	CPPUNIT_ASSERT(L.distance(U) == 4);
-	LBis(2,2) = 0.;
-	CPPUNIT_ASSERT(L.distance(LBis) == 1);
+	// locationId()
+	for(int i = 1; i <= L.getM(); i++){
+		for(int j = 1; j <= L.getN(); j++){
+			for(int k = 1; k <= L.getM(); k++){
+					for(int l = 1; l <= L.getN(); l++){
+						if(!(i == k && j == l)) CPPUNIT_ASSERT(L.locationId(i, j) != L.locationId(k, l));
+					}
+			}
+		}
+	}
 
-	// weight()
-	CPPUNIT_ASSERT(L.weight() == 3);
-	CPPUNIT_ASSERT(LBis.weight() == 2);
-	CPPUNIT_ASSERT(U.weight() == 3);
+	// Contructeur par recopie
+    Matrix<PSTL_TYPE> L3(L2);
+	CPPUNIT_ASSERT(L3.getDataAllocation());
+	CPPUNIT_ASSERT(L3 == L2);
+	L3(1,1) = 5.;
+	CPPUNIT_ASSERT(L3(1,1) == 5. && L2(1,1) == 1.);
+	L3(1,1) = 1.;
+	CPPUNIT_ASSERT(L3 == L2);
+
+
+    Matrix<PSTL_TYPE> L4(L);
+	CPPUNIT_ASSERT(!L4.getDataAllocation());
+	CPPUNIT_ASSERT(L4 == L);
+	L4(1,1) = 5.;
+	CPPUNIT_ASSERT(L4 == L);
+	CPPUNIT_ASSERT(L4(1,1) == 5. && L(1,1) == 5.);
+	L4(1,1) = 1.;
+	CPPUNIT_ASSERT(L4 == L);
 }
 
