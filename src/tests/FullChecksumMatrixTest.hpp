@@ -9,9 +9,9 @@ class FullChecksumMatrixTest : public CppUnit::TestFixture {
 		CPPUNIT_TEST(testFull);
 		CPPUNIT_TEST_SUITE_END();
 
-		PSTL_TYPE *LData;
-		Matrix<PSTL_TYPE> *L, *U, *LBis;
-		FullChecksumMatrix<PSTL_TYPE> *Lf, *Uf, *LBisf;
+		PSTL_TYPE *UData;
+		Matrix<PSTL_TYPE> *L, *L2, *U;
+		FullChecksumMatrix<PSTL_TYPE> *Lf, *L2f, *Uf;
 
 	public:
 		void setUp();

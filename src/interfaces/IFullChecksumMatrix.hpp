@@ -2,11 +2,11 @@
 #include "IRowChecksumMatrix.hpp"
 #include "IColumnChecksumMatrix.hpp"
 
-template <class T> class IFullChecksumMatrix : public IRowChecksumMatrix<T>, public IColumnChecksumMatrix<T> {
+template <class T> class IFullChecksumMatrix : public virtual IRowChecksumMatrix<T>, public virtual IColumnChecksumMatrix<T> {
     public:
 		/*
 		 * Effectue la correction d'erreurs de la matrice.
-		 * @return true si la correction a pu être effectuée, false sinon
+		 * @return false si une erreur a été detectée mais n'a pas pu être corrigée
 		 */
 		virtual bool errorCorrection() = 0;
 };

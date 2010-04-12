@@ -23,6 +23,12 @@ template <class T> class IMatrix {
         virtual T* getData() const = 0;
 
 		/*
+		 * Indique si la mémoire a été allouée pour le contenu de la matrice à sa création.
+		 * @return vrai si la mémoire a été allouée, faux sinon
+		 */
+        virtual bool getDataAllocation() const = 0;
+
+		/*
 		 * Donne un élément contenu dans la matrice.
 		 * remarque : surcharge de l'opérateur "()"
 		 * @param i l'indice de ligne
@@ -32,7 +38,7 @@ template <class T> class IMatrix {
         virtual T& operator()(int i, int j) const = 0;
 
 		/*
-		 * Affecte (par copie) le contenu d'une autre matrice à celle-ci.
+		 * Affecte le contenu d'une autre matrice au contenu de celle-ci.
 		 * remarque : redéfinition de l'opérateur "="
 		 * @param M la seconde matrice
 		 * @return *this

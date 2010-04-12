@@ -49,26 +49,27 @@ void CalculatorNaive<T>::transpose(IMatrix<T>& Res, const IMatrix<T>& A) const {
 template <class T>
 void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const {
 	// Vérifications
-	if(!(A.getM() == A.getN()
-		 && A.getM() == L.getM() && A.getM() == L.getN()
-		 && A.getM() == U.getM() && A.getM() == U.getN())) throw domain_error("décomposition LU impossible");
+	if(!(A.getM() == L.getM() && A.getN() == U.getN()
+		 && A.getM() == A.getN())) throw domain_error("décomposition LU impossible");
 
 	T** c = new T*[A.getM()];
-	for(int i = 1; i <= A.getM(); i++){
+	for(int i = 1; i <= A.getM(); i++) {
 		c[i-1] = new T[A.getM()];
 		for(int j = 1; j <= A.getM(); j++) c[i-1][j-1] = A(i, j);
 	}
 
-	for(int k = 1; k <= A.getM(); k++){
-		for(int i = 1; i <= A.getM(); i++){
+	for(int k = 1; k <= L.getN(); k++) {
+		for(int i = 1; i <= A.getM(); i++) {
 			if(k > i) U(k, i) = 0;
 			else U(k, i) = c[k-1][i-1];
 
 			if(i < k) L(i, k) = 0;
 			else if(i == k) L(i, k) = 1;
-			else L(i, k) = c[i-1][k-1] * (1 / U(k, k));
+			else L(i, k) = c[i-1][k-1] / U(k, k);
+		}
 
-			for(int j = 1; j <= A.getM(); j++) c[i-1][j-1] = c[i-1][j-1] + L(i, k) * -U(k, j);
+		for(int i = 1; i <= A.getM(); i++) {
+			for(int j = 1; j <= A.getM(); j++) c[i-1][j-1] += L(i, k) * -U(k, j);
 		}
 	}
 

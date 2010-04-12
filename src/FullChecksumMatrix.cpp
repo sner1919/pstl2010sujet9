@@ -1,48 +1,17 @@
 #include "FullChecksumMatrix.hpp"
 
 template <class T>
-FullChecksumMatrix<T>::FullChecksumMatrix(const IFullChecksumMatrix<T>& M) : Matrix<T>(M.getData(), M.getM(), M.getN()) {
-	Matrix<T>::operator=(M);
-}
+FullChecksumMatrix<T>::FullChecksumMatrix(IMatrix<T>& M) :
+Matrix<T>(M.getData(), M.getM() + 1, M.getN() + 1),
+ColumnChecksumMatrix<T>(*(new RowChecksumMatrix<T>(M))),
+RowChecksumMatrix<T>(dynamic_cast<RowChecksumMatrix<T>&>(this->getColumnMatrix())) {}
 
 template <class T>
-FullChecksumMatrix<T>::FullChecksumMatrix(IMatrix<T>& M) : Matrix<T>(M, M.getM() + 1, M.getN() + 1),
-RCM(new RowChecksumMatrix<T>(M)), CCM(new ColumnChecksumMatrix<T>(*RCM)) {}
-
-template <class T>
-FullChecksumMatrix<T>::~FullChecksumMatrix() {
-	delete RCM;
-	delete CCM;
-}
+FullChecksumMatrix<T>::~FullChecksumMatrix() {}
 
 template <class T>
 T& FullChecksumMatrix<T>::operator()(int i, int j) const {
-	return CCM->operator()(i, j);
-}
-
-template <class T>
-IVector<T>& FullChecksumMatrix<T>::getRowSummationVector() const {
-	return RCM->getRowSummationVector();
-}
-
-template <class T>
-T FullChecksumMatrix<T>::computeRowSum(int i) const {
-	// RCM ne contient pas la dernière ligne
-	T sum = 0;
-
-	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
-
-	return sum - (*this)(i, this->getN());
-}
-
-template <class T>
-IVector<T>& FullChecksumMatrix<T>::getColumnSummationVector() const {
-	return CCM->getColumnSummationVector();
-}
-
-template <class T>
-T FullChecksumMatrix<T>::computeColumnSum(int j) const {
-	return CCM->computeColumnSum(j);
+	return ColumnChecksumMatrix<T>::operator()(i, j);
 }
 
 template <class T>
@@ -54,11 +23,11 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 	vector<int> c;
 
 	for(int i = 1; i <= this->getM(); i++){
-		if(computeRowSum(i) != 0) r.push_back(i);
+		if(this->computeRowSum(i) != 0) r.push_back(i);
 	}
 
 	for(int j = 1; j <= this->getN(); j++){
-		if(computeColumnSum(j) != 0) c.push_back(j);
+		if(this->computeColumnSum(j) != 0) c.push_back(j);
 	}
 
 	if(r.size() + c.size() > 0){
@@ -66,7 +35,7 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 		//     - 1 colonne et 1 ligne non valides.
 		//     - 2 équations à 1 inconnue => OK
 		if(r.size() == 1 && c.size() == 1){
-			(*this)(r[0], c[0]) += (c[0] == this->getN() ? 1 : -1) * computeRowSum(r[0]);
+			(*this)(r[0], c[0]) += (c[0] == this->getN() ? 1 : -1) * this->computeRowSum(r[0]);
 			return true;
 		}
 
@@ -89,7 +58,7 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 		//     - 3 équations à 2 inconnue => OK
 		else if(r.size() == 1 && c.size() == 2){
 			for (vector<int>::iterator j = c.begin(); j != c.end(); j++) {
-				(*this)(r[0], *j) += (r[0] == this->getM() ? 1 : -1) * computeColumnSum(*j);
+				(*this)(r[0], *j) += (r[0] == this->getM() ? 1 : -1) * this->computeColumnSum(*j);
 			}
 			return true;
 		}
@@ -99,7 +68,7 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 		//     - 3 équations à 2 inconnue => OK
 		else if(r.size() == 2 && c.size() == 1){
 			for (vector<int>::iterator i = r.begin(); i != r.end(); i++) {
-				(*this)(*i, c[0]) += (c[0] == this->getN() ? 1 : -1) * computeRowSum(*i);
+				(*this)(*i, c[0]) += (c[0] == this->getN() ? 1 : -1) * this->computeRowSum(*i);
 			}
 			return true;
 		}

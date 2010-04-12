@@ -8,25 +8,16 @@
 
 template <class T>
 class Matrix : public virtual IMatrix<T> {
-        union {T* data; IMatrix<T>* M;};
         int m, n;
+        T* data;
         bool dataAllocation;
-        
-	protected:
-        /*
-         * Crée une matrice à partir d'une matrice existante (utilisation de la même zone mémoire).
-         * @param M la matrice existante
-         * @param m le nombre de lignes
-         * @param n le nombre de colonnes
-         */
-        Matrix(IMatrix<T>& M, int m, int n);
 
     public:
         /*
          * Crée une copie d'une matrice existante.
          * @param M la matrice existante
          */
-        Matrix(const IMatrix<T>& M);
+        Matrix(const Matrix<T>& M);
 
         /*
          * Crée une matrice (en allouant la mémoire pour son contenu).
@@ -53,6 +44,9 @@ class Matrix : public virtual IMatrix<T> {
 
         // implémentation de IMatrix<T>
         T* getData() const;
+
+        // implémentation de IMatrix<T>
+        bool getDataAllocation() const;
 
         // implémentation de IMatrix<T>
         T& operator()(int i, int j) const;

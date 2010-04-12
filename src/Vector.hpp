@@ -3,13 +3,13 @@
 #include "Matrix.hpp"
 
 template <class T>
-class Vector : public Matrix<T>, public IVector<T> {
+class Vector : public Matrix<T>, public virtual IVector<T> {
 	public:
 		/*
 		 * Crée une copie d'un vecteur existant.
 		 * @param V le vecteur existant
 		 */
-		Vector(const IVector<T>& V);
+		Vector(const Vector<T>& V);
 
 		/*
 		 * Crée un vecteur (en allouant la mémoire pour son contenu).

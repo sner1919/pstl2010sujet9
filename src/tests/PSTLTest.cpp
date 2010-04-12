@@ -1,6 +1,5 @@
 #include <cppunit/ui/text/TestRunner.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
-// aptitude install libcppunit-dev
 
 int main( int argc, char **argv) {
 	CppUnit::TextUi::TestRunner runner;

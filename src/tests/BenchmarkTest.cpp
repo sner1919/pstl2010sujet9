@@ -11,6 +11,7 @@ void BenchmarkTest::tearDown() {
 void BenchmarkTest::testPerf() {
 	CalculatorNaive<PSTL_TYPE> calculator;
 	ErrorGenerator<PSTL_TYPE> generator;
+	pthread_t th;
 	int n = 50;
 	Matrix<PSTL_TYPE> A(n, n);
 	Matrix<PSTL_TYPE> B(n, n);
@@ -30,7 +31,7 @@ void BenchmarkTest::testPerf() {
 	RowChecksumMatrix<PSTL_TYPE> Br(B);
 	calculator.mult(C1f, Ac, Br);
 	gettimeofday(&end, NULL);
-	cout << "durée produit matriciel (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	cout << endl << "durée produit matriciel (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	for(int i = 1; i <= n + 1; i++){
@@ -46,7 +47,8 @@ void BenchmarkTest::testPerf() {
 	CPPUNIT_ASSERT(C1f == C2f);
 
 	// correction 1 erreurs
-	generator.generateError(C1f, 1, 1, n, 1, n);
+	th = generator.generateError(C1f, 1, 1, n, 1, n);
+	pthread_join(th, NULL);
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();
@@ -55,7 +57,8 @@ void BenchmarkTest::testPerf() {
 	CPPUNIT_ASSERT(C1f == C2f);
 
 	// correction 2 erreurs (même ligne)
-	generator.generateError(C1f, 2, 1, 1, 1, n);
+	th = generator.generateError(C1f, 2, 1, 1, 1, n);
+	pthread_join(th, NULL);
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();

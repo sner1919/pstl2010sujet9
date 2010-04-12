@@ -132,6 +132,8 @@ int main(int argc, char* argv[]) {
 
         FullChecksumMatrix<PSTL_TYPE> Uf(U);
         cout << "Uf = " << Uf.toString() << endl;
+        cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
+        cout << "Uf.getColumnSummationVector() = " << Uf.getColumnSummationVector().toString() << endl;
 
         cout << "generateError()" << endl;
         gen.generateError(Uf, 1, 1, Uf.getM(), 1, Uf.getN());
@@ -140,17 +142,15 @@ int main(int argc, char* argv[]) {
         Uf.errorCorrection();
         cout << "Uf = " << Uf.toString() << endl;
 
-        cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
-
         cout << "CLOCKS_PER_SEC :" << CLOCKS_PER_SEC << endl;
 
         cout << "The maximum value for type float is:  "
              << numeric_limits<float>::max( )
              << endl;
-        cout << "The maximum value for type PSTL_TYPE is:  "
-             << numeric_limits<PSTL_TYPE>::max( )
+        cout << "The maximum value for type double is:  "
+             << numeric_limits<double>::max( )
              << endl;
-        cout << "The maximum value for type float is:  "
+        cout << "The maximum value for type int is:  "
              << numeric_limits<int>::max( )
              << endl;
         cout << "The maximum value for type short int is:  "
