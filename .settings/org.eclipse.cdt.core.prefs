@@ -1,0 +1,7 @@
+#Tue Mar 09 00:55:02 CET 2010
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.720827188/DEBUGFLAG/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.720827188/DEBUGFLAG/operation=append
+environment/project/cdt.managedbuild.config.gnu.exe.debug.720827188/DEBUGFLAG/value=-ggdb
+environment/project/cdt.managedbuild.config.gnu.exe.debug.720827188/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.720827188/appendContributed=true
