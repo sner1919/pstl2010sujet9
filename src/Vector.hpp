@@ -25,5 +25,5 @@ class Vector : public Matrix<T>, public virtual IVector<T> {
 		Vector(T* data, int m);
 
         // implémentation de IVector<T>
-        T& operator()(int i) const;
+		T& operator()(int i) const;
 };

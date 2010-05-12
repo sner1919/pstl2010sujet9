@@ -17,5 +17,5 @@ template <class T> class CalculatorNaive : public virtual ICalculator<T> {
 		void transpose(IMatrix<T>& Res, const IMatrix<T>& A) const;
 
 		// implémentation de ICalculator<T>
-		void LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const;
+		void LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const;
 };

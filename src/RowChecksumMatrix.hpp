@@ -25,7 +25,7 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
 		~RowChecksumMatrix();
 
 		// redéfinition de Matrix<T>
-        T& operator()(int i, int j) const;
+		T& operator()(int i, int j) const;
 
         // implémentation de IRowChecksumMatrix<T>
         IMatrix<T>& getRowMatrix() const;
