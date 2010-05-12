@@ -18,7 +18,7 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
 		~ColumnChecksumMatrix();
 
 		// redéfinition de Matrix<T>
-        T& operator()(int i, int j) const;
+		T& operator()(int i, int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
         IMatrix<T>& getColumnMatrix() const;

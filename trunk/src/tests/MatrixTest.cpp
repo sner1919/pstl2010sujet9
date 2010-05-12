@@ -96,5 +96,31 @@ void MatrixTest::testAll() {
 	CPPUNIT_ASSERT(L4(1,1) == 5. && L(1,1) == 5.);
 	L4(1,1) = 1.;
 	CPPUNIT_ASSERT(L4 == L);
+
+	// fromDouble(), toDouble()
+    double t[2][2] = {{4., 3.}, {2., 1.}};
+    L4.fromDouble(*t, true);
+	CPPUNIT_ASSERT(L4(1,1) == 4.);
+	CPPUNIT_ASSERT(L4(1,2) == 3.);
+	CPPUNIT_ASSERT(L4(2,1) == 2.);
+	CPPUNIT_ASSERT(L4(2,2) == 1.);
+    L4.fromDouble(*t, false);
+	CPPUNIT_ASSERT(L4(1,1) == 4.);
+	CPPUNIT_ASSERT(L4(1,2) == 2.);
+	CPPUNIT_ASSERT(L4(2,1) == 3.);
+	CPPUNIT_ASSERT(L4(2,2) == 1.);
+
+    double* t2 = new double[4];
+    L4.toDouble(t2, true);
+	CPPUNIT_ASSERT(t2[0] == 4.);
+	CPPUNIT_ASSERT(t2[1] == 2.);
+	CPPUNIT_ASSERT(t2[2] == 3.);
+	CPPUNIT_ASSERT(t2[3] == 1.);
+    L4.toDouble(t2, false);
+	CPPUNIT_ASSERT(t2[0] == 4.);
+	CPPUNIT_ASSERT(t2[1] == 3.);
+	CPPUNIT_ASSERT(t2[2] == 2.);
+	CPPUNIT_ASSERT(t2[3] == 1.);
+	delete t2;
 }
 

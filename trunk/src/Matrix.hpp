@@ -58,14 +58,20 @@ class Matrix : public virtual IMatrix<T> {
         bool operator==(const IMatrix<T>& M) const;
 
         // implémentation de IMatrix<T>
+        string toString() const;
+
+        // implémentation de IMatrix<T>
+        void fromDouble(double* t, bool rowMajor);
+
+        // implémentation de IMatrix<T>
+        void toDouble(double* t, bool rowMajor) const;
+
+        // implémentation de IMatrix<T>
+        int locationId(int i, int j) const;
+
+        // implémentation de IMatrix<T>
         int distance(const IMatrix<T>& M) const;
 
         // implémentation de IMatrix<T>
         int weight() const;
-
-        // implémentation de IMatrix<T>
-        string toString() const;
-
-        // implémentation de IMatrix<T>
-        int locationId(int i, int j) const;
 };

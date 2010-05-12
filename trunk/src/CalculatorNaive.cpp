@@ -46,8 +46,9 @@ void CalculatorNaive<T>::transpose(IMatrix<T>& Res, const IMatrix<T>& A) const {
 }
 
 // Algorithme d'après "Huang and Abraham : Algorithm-Based Fault Tolerance for Matrix Operations"
+// Hypothèse : la matrice A est LU décomposable (sans pivotements).
 template <class T>
-void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const {
+void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const {
 	// Vérifications
 	if(!(A.getM() == L.getM() && A.getN() == U.getN()
 		 && A.getM() == A.getN())) throw domain_error("décomposition LU impossible");
@@ -55,7 +56,12 @@ void CalculatorNaive<T>::LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) c
 	T** c = new T*[A.getM()];
 	for(int i = 1; i <= A.getM(); i++) {
 		c[i-1] = new T[A.getM()];
-		for(int j = 1; j <= A.getM(); j++) c[i-1][j-1] = A(i, j);
+		for(int j = 1; j <= A.getM(); j++) {
+			c[i-1][j-1] = A(i, j);
+
+			// matrice de permutation
+			P(i, j) = i == j ? 1 : 0;
+		}
 	}
 
 	for(int k = 1; k <= L.getN(); k++) {

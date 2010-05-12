@@ -88,6 +88,7 @@ int main(int argc, char* argv[]) {
         PSTL_TYPE LData[2][2] = {{1., 0.}, {1.5, 1.}};
         PSTL_TYPE UData[2][2] = {{4., 3.}, {0., -1.5}};
         /* ---------------------------------------------------- */
+        Matrix<PSTL_TYPE> P(2, 2);
         Matrix<PSTL_TYPE> L(LData[0], 2, 2);
         Matrix<PSTL_TYPE> LBis(L);
         Matrix<PSTL_TYPE> U(UData[0], 2, 2);
@@ -113,10 +114,11 @@ int main(int argc, char* argv[]) {
         proc.mult(A, L, U);
         proc.mult(L, A, 0.);
         proc.mult(U, A, 0.);
-        proc.LU(L, U, A);
-        cout << "A = L * U" << endl;
+        proc.LU(P, L, U, A);
+        cout << "A = P * L * U" << endl;
         cout << "avec A = " << A.toString();
         cout << "=>" << endl;
+        cout << "P = " << P.toString();
         cout << "L = " << L.toString();
         cout << "U = " << U.toString() << endl;
 

@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include "../settings.hpp"
 
 template <class T> class IMatrix {
@@ -54,7 +53,7 @@ template <class T> class IMatrix {
         virtual bool operator==(const IMatrix<T>& M) const = 0;
 
 		/*
-		 * Donne un représentation textuelle de la matrice.
+		 * Donne une représentation textuelle de la matrice.
 		 * @return la représentation sous la forme d'une chaine
 		 */
         virtual string toString() const = 0;
@@ -83,4 +82,18 @@ template <class T> class IMatrix {
 		 * @return le poids
 		 */
         virtual int weight() const = 0;
+
+		/*
+		 * Remplit la matrice à partir d'un tableau de flottants double précision.
+		 * @param t le tableau de flottants double précision
+		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
+		 */
+        virtual void fromDouble(double* t, bool rowMajor) = 0;
+
+		/*
+		 * Remplit un tableau de flottants double précision à partir de la matrice.
+		 * @param t le tableau de flottants double précision
+		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
+		 */
+        virtual void toDouble(double* t, bool rowMajor) const = 0;
 };

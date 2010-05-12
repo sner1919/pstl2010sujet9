@@ -35,11 +35,11 @@ template <class T> class ICalculator {
         virtual void transpose(IMatrix<T>& Res, const IMatrix<T>& A) const = 0;
 
 		/*
-		 * Effectue la décomposition LU d'une matrice (trouve L et U tq A = L * U).
-		 * Hypothèse : la matrice A est LU décomposable.
+		 * Effectue la décomposition LU d'une matrice (trouve P,  L et U tq A = P * L * U).
+		 * @param P la matrice qui va contenir P
 		 * @param L la matrice qui va contenir L
 		 * @param U la matrice qui va contenir U
 		 * @param A la matrice A
 		 */
-        virtual void LU(IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const = 0;
+        virtual void LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const = 0;
 };
