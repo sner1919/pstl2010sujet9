@@ -18,7 +18,7 @@ void BenchmarkTest::testPerf() {
 	CalculatorBlasLapack<PSTL_TYPE> calculatorIntelMKL(intelMKLAdapter);
 	ErrorGenerator<PSTL_TYPE> generator;
 	pthread_t th;
-	int n = 1000;
+	int n = 1500;
 	Matrix<PSTL_TYPE> A(n, n);
 	Matrix<PSTL_TYPE> B(n, n);
 	Matrix<PSTL_TYPE> C1(n, n);
