@@ -1,9 +1,12 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IVector.hpp"
 #include "Matrix.hpp"
 
 template <class T>
 class Vector : public Matrix<T>, public virtual IVector<T> {
+		bool line;
+
 	public:
 		/*
 		 * Crée une copie d'un vecteur existant.
@@ -14,16 +17,18 @@ class Vector : public Matrix<T>, public virtual IVector<T> {
 		/*
 		 * Crée un vecteur (en allouant la mémoire pour son contenu).
 		 * @param m le nombre d'éléments
+		 * @param line indique s'il s'agit d'un vecteur colonne
 		 */
-		Vector(int m);
+		Vector(int m, bool line);
 
 		/*
 		 * Crée un vecteur à partir d'un contenu existant (utilisation de la même zone mémoire).
          * @param data le contenu sous la forme d'un tableau
 		 * @param m le nombre d'éléments
+		 * @param line indique s'il s'agit d'un vecteur colonne
 		 */
-		Vector(T* data, int m);
+		Vector(T* data, int m, bool line);
 
         // implémentation de IVector<T>
-		T& operator()(int i) const;
+		PSTL_TYPE_UNION operator()(int i) const;
 };

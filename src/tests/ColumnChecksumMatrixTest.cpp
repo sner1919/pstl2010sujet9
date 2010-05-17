@@ -3,20 +3,20 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(ColumnChecksumMatrixTest);
 
 void ColumnChecksumMatrixTest::setUp() {
-    L = new Matrix<PSTL_TYPE>(2, 2);
+    L = new Matrix<double>(2, 2);
     (*L)(1, 1) = 1.; (*L)(1, 2) = 0.;
     (*L)(2, 1) = 1.5; (*L)(2, 2) = 1.;
 
-    L2 = new Matrix<PSTL_TYPE>(*L);
+    L2 = new Matrix<double>(*L);
 
-	UData = new PSTL_TYPE[4];
+	UData = new double[4];
     UData[0] = 4.; UData[1] = 3.;
     UData[2] = 0.; UData[3] = -1.5;
-    U = new Matrix<PSTL_TYPE>(UData, 2, 2);
+    U = new Matrix<double>(UData, 2, 2);
 
-    Lc = new ColumnChecksumMatrix<PSTL_TYPE>(*L);
-    L2c = new ColumnChecksumMatrix<PSTL_TYPE>(*L2);
-    Uc = new ColumnChecksumMatrix<PSTL_TYPE>(*U);
+    Lc = new ColumnChecksumMatrix<double>(*L);
+    L2c = new ColumnChecksumMatrix<double>(*L2);
+    Uc = new ColumnChecksumMatrix<double>(*U);
 }
 
 void ColumnChecksumMatrixTest::tearDown() {
@@ -32,9 +32,9 @@ void ColumnChecksumMatrixTest::tearDown() {
 }
 
 void ColumnChecksumMatrixTest::testMatrix() {
-	ColumnChecksumMatrix<PSTL_TYPE>& Lc = *this->Lc;
-	ColumnChecksumMatrix<PSTL_TYPE>& L2c = *this->L2c;
-	ColumnChecksumMatrix<PSTL_TYPE>& Uc = *this->Uc;
+	ColumnChecksumMatrix<double>& Lc = *this->Lc;
+	ColumnChecksumMatrix<double>& L2c = *this->L2c;
+	ColumnChecksumMatrix<double>& Uc = *this->Uc;
 
     // getM(), getN()
 	CPPUNIT_ASSERT(Lc.getM() == 3);
@@ -54,7 +54,7 @@ void ColumnChecksumMatrixTest::testMatrix() {
 	CPPUNIT_ASSERT(!(Lc == Uc));
 
 	// operator=
-	(IMatrix<PSTL_TYPE>&) L2c = Uc;
+	(IMatrix<double>&) L2c = Uc;
 	CPPUNIT_ASSERT(L2c == Uc);
 	CPPUNIT_ASSERT(*L2 == *U);
 	CPPUNIT_ASSERT(!(Lc == L2c));
@@ -112,7 +112,7 @@ void ColumnChecksumMatrixTest::testRow() {
 	CPPUNIT_ASSERT(&Lc->getColumnMatrix() == L);
 
 	// getColumnSummationVector()
-	CPPUNIT_ASSERT(Lc->getColumnSummationVector().toString().compare("[\n2.5 \n1 \n]\n") == 0);
+	CPPUNIT_ASSERT(Lc->getColumnSummationVector().toString().compare("[\n2.5 1 \n]\n") == 0);
 
 	// computeColumnSum()
 	CPPUNIT_ASSERT(Lc->computeColumnSum(1) == 0);

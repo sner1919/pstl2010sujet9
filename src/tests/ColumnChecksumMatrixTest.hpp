@@ -8,9 +8,9 @@ class ColumnChecksumMatrixTest : public CppUnit::TestFixture {
 		CPPUNIT_TEST(testRow);
 		CPPUNIT_TEST_SUITE_END();
 
-		PSTL_TYPE *UData;
-		Matrix<PSTL_TYPE> *L, *L2, *U;
-		ColumnChecksumMatrix<PSTL_TYPE> *Lc, *L2c, *Uc;
+		double *UData;
+		Matrix<double> *L, *L2, *U;
+		ColumnChecksumMatrix<double> *Lc, *L2c, *Uc;
 
 	public:
 		void setUp();

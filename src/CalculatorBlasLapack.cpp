@@ -1,7 +1,11 @@
 #include "CalculatorBlasLapack.hpp"
+#include <sys/time.h>
+#include <typeinfo>
 
 template <class T>
-CalculatorBlasLapack<T>::CalculatorBlasLapack(IBlasLapackAdapter& blasLapackAdapter) : blasLapackAdapter(blasLapackAdapter) {}
+CalculatorBlasLapack<T>::CalculatorBlasLapack(IBlasLapackAdapter& blasLapackAdapter, int MatrixType) : blasLapackAdapter(blasLapackAdapter), MatrixType(MatrixType) {
+	if(MatrixType == 1 && typeid(T) != typeid(double)) throw domain_error("le type 1 n'est compatible qu'avec les matrices de double");
+}
 
 template <class T>
 void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
@@ -9,20 +13,111 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 	if(!(A.getN() == B.getM()
 		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
 
-	double *res = new double[Res.getM() * Res.getN()], *a = new double[A.getM() * A.getN()], *b = new double[B.getM() * B.getN()];
+	struct timeval start, end;
+	double *res, *a, *b;
 
-	A.toDouble(a, true);
-	B.toDouble(b, true);
+	try {
 
-	blasLapackAdapter.dgemm(CblasRowMajor_, CblasNoTrans_, CblasNoTrans_,
-		A.getM(), B.getN(), A.getN(),
-		1., (const double *) a, A.getN(),
-		(const double *) b, B.getN(),
-		0., res, Res.getN());
+		IFullChecksumMatrix<T>& Resf = dynamic_cast<IFullChecksumMatrix<T>&>(Res);
+		const IColumnChecksumMatrix<T>& Ac = dynamic_cast<const IColumnChecksumMatrix<T>&>(A);
+		const IRowChecksumMatrix<T>& Br = dynamic_cast<const IRowChecksumMatrix<T>&>(B);
 
-	Res.fromDouble(res, true);
+		if(MatrixType == 0) {
+			gettimeofday(&start, NULL);
+			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
+			a = new double[(Ac.getM() - 1) * Ac.getN()];
+			b = new double[Br.getM() * (Br.getN() - 1)];
+			gettimeofday(&end, NULL);
+			cout << endl << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
-	delete res; delete a; delete b;
+			gettimeofday(&start, NULL);
+			Ac.getColumnMatrix().toDouble(a, true);
+			Br.getRowMatrix().toDouble(b, true);
+			gettimeofday(&end, NULL);
+			cout << "	- toDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		} else {
+			a = Ac.getColumnMatrix().getData();
+			b = Br.getRowMatrix().getData();
+			res = Resf.getRowMatrix().getData();
+		}
+
+		gettimeofday(&start, NULL);
+		blasLapackAdapter.dgemm(CblasRowMajor_, CblasNoTrans_, CblasNoTrans_,
+			Ac.getM() - 1, Br.getN() - 1, Ac.getN(),
+			1., a, Ac.getN(),
+			b, Br.getN() - 1,
+			0., res, Resf.getN() - 1);
+		cout << "	- dgemm : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+
+		if(MatrixType == 0) {
+			gettimeofday(&start, NULL);
+			Resf.getRowMatrix().fromDouble(res, true);
+			gettimeofday(&end, NULL);
+			cout << "	- fromDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		}
+
+		cout << Resf.getColumnSummationVector().getM() << endl;
+		cout << Resf.getColumnSummationVector().getN() << endl;
+		cout << Ac.getColumnSummationVector().getM() << endl;
+		cout << Ac.getColumnSummationVector().getN() << endl;
+		cout << Br.getM() << endl;
+		cout << Br.getN() << endl;
+		CalculatorNaiveMult<PSTL_TYPE_SUM, PSTL_TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
+		cout << "coucou" << endl;
+		cout << Resf.getRowSummationVector().getM() << endl;
+		cout << Resf.getRowSummationVector().getN() << endl;
+		cout << Ac.getColumnMatrix().getM() << endl;
+		cout << Ac.getColumnMatrix().getN() << endl;
+		cout << Br.getRowSummationVector().getM() << endl;
+		cout << Br.getRowSummationVector().getN() << endl;
+		CalculatorNaiveMult<PSTL_TYPE_SUM, T, PSTL_TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
+
+	} catch (bad_cast) {
+
+		if(MatrixType == 0) {
+			gettimeofday(&start, NULL);
+			res = new double[Res.getM() * Res.getN()];
+			a = new double[A.getM() * A.getN()];
+			b = new double[B.getM() * B.getN()];
+			gettimeofday(&end, NULL);
+			cout << endl << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+			gettimeofday(&start, NULL);
+			A.toDouble(a, true);
+			B.toDouble(b, true);
+			gettimeofday(&end, NULL);
+			cout << "	- toDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		} else {
+			a = A.getData();
+			b = B.getData();
+			res = Res.getData();
+		}
+
+		gettimeofday(&start, NULL);
+		blasLapackAdapter.dgemm(CblasRowMajor_, CblasNoTrans_, CblasNoTrans_,
+			A.getM(), B.getN(), A.getN(),
+			1., (const double *) a, A.getN(),
+			(const double *) b, B.getN(),
+			0., res, Res.getN());
+		gettimeofday(&end, NULL);
+		cout << "	- dgemm : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		if(MatrixType == 0) {
+			gettimeofday(&start, NULL);
+			Res.fromDouble(res, true);
+			gettimeofday(&end, NULL);
+			cout << "	- fromDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		}
+
+	}
+
+	if(MatrixType == 0) {
+		gettimeofday(&start, NULL);
+		delete res; delete a; delete b;
+		gettimeofday(&end, NULL);
+		cout << "	- delete : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	}
 }
 
 template <class T>
@@ -34,7 +129,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 
 	A.toDouble(a, true);
 
-	blasLapackAdapter.dscal(Res.getM() * Res.getN(), PSTL_TYPE_TO_DOUBLE(x), a, 1);
+	blasLapackAdapter.dscal(Res.getM() * Res.getN(), x, a, 1);
 
 	Res.fromDouble(a, true);
 
@@ -57,16 +152,6 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 	Res.fromDouble(b, true);
 
 	delete a; delete b;
-}
-
-template <class T>
-void CalculatorBlasLapack<T>::transpose(IMatrix<T>& Res, const IMatrix<T>& A) const {
-	// Vérifications
-	if(!(A.getM() == Res.getN() && A.getN() == Res.getM())) throw domain_error("transposition impossible");
-
-	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++) Res(j, i) = A(i, j);
-	}
 }
 
 template <class T>
@@ -114,4 +199,4 @@ void CalculatorBlasLapack<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, co
 	}
 }
 
-template class CalculatorBlasLapack<PSTL_TYPE>;
+template class CalculatorBlasLapack<double>;

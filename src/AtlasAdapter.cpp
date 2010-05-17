@@ -21,9 +21,9 @@ namespace {
 
 AtlasAdapter::AtlasAdapter() {
 	// open the library
-	api.handle[0] = dlopen("./lib/" macroToStr(CPU) "/atlas/libatlas.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[1] = dlopen("./lib/" macroToStr(CPU) "/atlas/libcblas.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[2] = dlopen("./lib/" macroToStr(CPU) "/atlas/libclapack.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[0] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libatlas.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[1] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libcblas.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[2] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libclapack.so", RTLD_LAZY | RTLD_GLOBAL);
 	for(int i = 0; i < 3; i++){
 		if (!api.handle[i]) {
 			cerr << "Cannot open library : " << dlerror() << '\n';

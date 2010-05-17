@@ -22,9 +22,9 @@ namespace {
 
 IntelMKLAdapter::IntelMKLAdapter() {
 	// open the library
-	api.handle[0] = dlopen("./lib/" macroToStr(CPU) "/intelmkl/libmkl_core.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[1] = dlopen("./lib/" macroToStr(CPU) "/intelmkl/libmkl_sequential.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[2] = dlopen("./lib/" macroToStr(CPU) "/intelmkl/libmkl_intel.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[0] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_core.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[1] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_sequential.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[2] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_intel.so", RTLD_LAZY | RTLD_GLOBAL);
 	for(int i = 0; i < 3; i++){
 		if (!api.handle[i]) {
 			cerr << "Cannot open library : " << dlerror() << '\n';

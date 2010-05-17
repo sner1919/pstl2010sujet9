@@ -22,7 +22,7 @@ namespace {
 
 GotoBlasAdapter::GotoBlasAdapter() {
 	// open the library
-	api.handle = dlopen("./lib/" macroToStr(CPU) "/gotoblas/libgoto2.so", RTLD_LAZY);
+	api.handle = dlopen("./lib/" MACRO_TO_STR(CPU) "/gotoblas/libgoto2.so", RTLD_LAZY);
 	if (!api.handle) {
 		cerr << "Cannot open library : " << dlerror() << '\n';
 		exit(1);

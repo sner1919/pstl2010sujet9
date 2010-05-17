@@ -7,13 +7,13 @@ void MatrixTest::setUp() {}
 void MatrixTest::tearDown() {}
 
 void MatrixTest::testAll() {
-    PSTL_TYPE LData[2][2] = {{1., 0.}, {1.5, 1.}};
-    PSTL_TYPE UData[2][2] = {{4., 3.}, {0., -1.5}};
+    double LData[2][2] = {{1., 0.}, {1.5, 1.}};
+    double UData[2][2] = {{4., 3.}, {0., -1.5}};
 
     // constructeurs
-    Matrix<PSTL_TYPE> L(LData[0], 2, 2);
-    Matrix<PSTL_TYPE> L2(2, 2);
-    Matrix<PSTL_TYPE> U(UData[0], 2, 2);
+    Matrix<double> L(LData[0], 2, 2);
+    Matrix<double> L2(2, 2);
+    Matrix<double> U(UData[0], 2, 2);
 
     // getM(), getN()
 	CPPUNIT_ASSERT(L.getM() == 2);
@@ -33,7 +33,7 @@ void MatrixTest::testAll() {
 	CPPUNIT_ASSERT(!(L == U));
 
 	// operator=
-	L2 = (IMatrix<PSTL_TYPE>&) U;
+	L2 = (IMatrix<double>&) U;
 	CPPUNIT_ASSERT(L2 == U);
 	CPPUNIT_ASSERT(!(L == L2));
 
@@ -79,7 +79,7 @@ void MatrixTest::testAll() {
 	}
 
 	// Contructeur par recopie
-    Matrix<PSTL_TYPE> L3(L2);
+    Matrix<double> L3(L2);
 	CPPUNIT_ASSERT(L3.getDataAllocation());
 	CPPUNIT_ASSERT(L3 == L2);
 	L3(1,1) = 5.;
@@ -88,7 +88,7 @@ void MatrixTest::testAll() {
 	CPPUNIT_ASSERT(L3 == L2);
 
 
-    Matrix<PSTL_TYPE> L4(L);
+    Matrix<double> L4(L);
 	CPPUNIT_ASSERT(!L4.getDataAllocation());
 	CPPUNIT_ASSERT(L4 == L);
 	L4(1,1) = 5.;

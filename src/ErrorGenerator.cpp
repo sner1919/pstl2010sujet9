@@ -63,5 +63,5 @@ pthread_t ErrorGenerator<T>::generateError(IMatrix<T>& M, int nb, int iMin, int 
 	return th;
 }
 
-template class ErrorGenerator<PSTL_TYPE>;
+template class ErrorGenerator<double>;
 

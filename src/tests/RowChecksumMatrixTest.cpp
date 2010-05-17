@@ -3,20 +3,20 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(RowChecksumMatrixTest);
 
 void RowChecksumMatrixTest::setUp() {
-    L = new Matrix<PSTL_TYPE>(2, 2);
+    L = new Matrix<double>(2, 2);
     (*L)(1, 1) = 1.; (*L)(1, 2) = 0.;
     (*L)(2, 1) = 1.5; (*L)(2, 2) = 1.;
 
-    L2 = new Matrix<PSTL_TYPE>(*L);
+    L2 = new Matrix<double>(*L);
 
-	UData = new PSTL_TYPE[4];
+	UData = new double[4];
     UData[0] = 4.; UData[1] = 3.;
     UData[2] = 0.; UData[3] = -1.5;
-    U = new Matrix<PSTL_TYPE>(UData, 2, 2);
+    U = new Matrix<double>(UData, 2, 2);
 
-    Lr = new RowChecksumMatrix<PSTL_TYPE>(*L);
-    L2r = new RowChecksumMatrix<PSTL_TYPE>(*L2);
-    Ur = new RowChecksumMatrix<PSTL_TYPE>(*U);
+    Lr = new RowChecksumMatrix<double>(*L);
+    L2r = new RowChecksumMatrix<double>(*L2);
+    Ur = new RowChecksumMatrix<double>(*U);
 }
 
 void RowChecksumMatrixTest::tearDown() {
@@ -32,9 +32,9 @@ void RowChecksumMatrixTest::tearDown() {
 }
 
 void RowChecksumMatrixTest::testMatrix() {
-	RowChecksumMatrix<PSTL_TYPE>& Lr = *this->Lr;
-	RowChecksumMatrix<PSTL_TYPE>& L2r = *this->L2r;
-	RowChecksumMatrix<PSTL_TYPE>& Ur = *this->Ur;
+	RowChecksumMatrix<double>& Lr = *this->Lr;
+	RowChecksumMatrix<double>& L2r = *this->L2r;
+	RowChecksumMatrix<double>& Ur = *this->Ur;
 
     // getM(), getN()
 	CPPUNIT_ASSERT(Lr.getM() == 2);
@@ -54,7 +54,7 @@ void RowChecksumMatrixTest::testMatrix() {
 	CPPUNIT_ASSERT(!(Lr == Ur));
 
 	// operator=
-	(IMatrix<PSTL_TYPE>&) L2r = Ur;
+	(IMatrix<double>&) L2r = Ur;
 	CPPUNIT_ASSERT(L2r == Ur);
 	CPPUNIT_ASSERT(*L2 == *U);
 	CPPUNIT_ASSERT(!(Lr == L2r));

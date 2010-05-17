@@ -1,4 +1,5 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IRowChecksumMatrix.hpp"
 #include "Matrix.hpp"
 #include "Vector.hpp"
@@ -6,7 +7,7 @@
 
 template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public virtual IRowChecksumMatrix<T> {
 		IMatrix<T>& matrix;
-		IVector<T>& rowSummationVector;
+		IVector<PSTL_TYPE_SUM>& rowSummationVector;
 
 	public:
         /*
@@ -25,16 +26,16 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
 		~RowChecksumMatrix();
 
 		// redéfinition de Matrix<T>
-		T& operator()(int i, int j) const;
+		PSTL_TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IRowChecksumMatrix<T>
         IMatrix<T>& getRowMatrix() const;
 
         // implémentation de IRowChecksumMatrix<T>
-        IVector<T>& getRowSummationVector() const;
+        IVector<PSTL_TYPE_SUM>& getRowSummationVector() const;
 
         // implémentation de IRowChecksumMatrix<T>
-        T computeRowSum(int i) const;
+        PSTL_TYPE_SUM computeRowSum(int i) const;
 
         // implémentation de IRowChecksumMatrix<T>
         bool rowErrorDetection() const;

@@ -3,20 +3,20 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(FullChecksumMatrixTest);
 
 void FullChecksumMatrixTest::setUp() {
-    L = new Matrix<PSTL_TYPE>(2, 2);
+    L = new Matrix<double>(2, 2);
     (*L)(1, 1) = 1.; (*L)(1, 2) = 0.;
     (*L)(2, 1) = 1.5; (*L)(2, 2) = 1.;
 
-    L2 = new Matrix<PSTL_TYPE>(*L);
+    L2 = new Matrix<double>(*L);
 
-	UData = new PSTL_TYPE[4];
+	UData = new double[4];
     UData[0] = 4.; UData[1] = 3.;
     UData[2] = 0.; UData[3] = -1.5;
-    U = new Matrix<PSTL_TYPE>(UData, 2, 2);
+    U = new Matrix<double>(UData, 2, 2);
 
-    Lf = new FullChecksumMatrix<PSTL_TYPE>(*L);
-    L2f = new FullChecksumMatrix<PSTL_TYPE>(*L2);
-    Uf = new FullChecksumMatrix<PSTL_TYPE>(*U);
+    Lf = new FullChecksumMatrix<double>(*L);
+    L2f = new FullChecksumMatrix<double>(*L2);
+    Uf = new FullChecksumMatrix<double>(*U);
 }
 
 void FullChecksumMatrixTest::tearDown() {
@@ -32,9 +32,9 @@ void FullChecksumMatrixTest::tearDown() {
 }
 
 void FullChecksumMatrixTest::testMatrix() {
-	FullChecksumMatrix<PSTL_TYPE>& Lf = *this->Lf;
-	FullChecksumMatrix<PSTL_TYPE>& L2f = *this->L2f;
-	FullChecksumMatrix<PSTL_TYPE>& Uf = *this->Uf;
+	FullChecksumMatrix<double>& Lf = *this->Lf;
+	FullChecksumMatrix<double>& L2f = *this->L2f;
+	FullChecksumMatrix<double>& Uf = *this->Uf;
 
     // getM(), getN()
 	CPPUNIT_ASSERT(Lf.getM() == 3);
@@ -54,7 +54,7 @@ void FullChecksumMatrixTest::testMatrix() {
 	CPPUNIT_ASSERT(!(Lf == Uf));
 
 	// operator=
-	(IMatrix<PSTL_TYPE>&) L2f = Uf;
+	(IMatrix<double>&) L2f = Uf;
 	CPPUNIT_ASSERT(L2f == Uf);
 	CPPUNIT_ASSERT(*L2 == *U);
 	CPPUNIT_ASSERT(!(Lf == L2f));
@@ -123,7 +123,7 @@ void FullChecksumMatrixTest::testRowColumn() {
 
 	// getRowSummationVector(), getColumnSummationVector()
 	CPPUNIT_ASSERT(Lf->getRowSummationVector().toString().compare("[\n1 \n2.5 \n]\n") == 0);
-	CPPUNIT_ASSERT(Lf->getColumnSummationVector().toString().compare("[\n2.5 \n1 \n3.5 \n]\n") == 0);
+	CPPUNIT_ASSERT(Lf->getColumnSummationVector().toString().compare("[\n2.5 1 3.5 \n]\n") == 0);
 
 	// computeRowSum(), computeColumnSum()
 	CPPUNIT_ASSERT(Lf->computeRowSum(1) == 0);
@@ -223,7 +223,7 @@ void FullChecksumMatrixTest::testFull() {
 
 	// deux erreurs même ligne (elles s'annulent)
 	for(int i = 1; i <= Lf->getM(); i++){
-		PSTL_TYPE x = rand();
+		double x = rand();
 
 		(*Lf)(i,1) += x;
 		(*Lf)(i,2) -= x;
@@ -254,7 +254,7 @@ void FullChecksumMatrixTest::testFull() {
 
 	// deux erreurs même colonne (elles s'annulent)
 	for(int j = 1; j <= Lf->getN(); j++){
-		PSTL_TYPE x = rand();
+		double x = rand();
 
 		(*Lf)(1,j) += x;
 		(*Lf)(2,j) -= x;
@@ -285,7 +285,7 @@ void FullChecksumMatrixTest::testFull() {
 
 	// deux erreurs même ligne (elles ne s'annulent pas)
 	for(int i = 1; i <= Lf->getM(); i++){
-		PSTL_TYPE x = rand();
+		double x = rand();
 
 		(*Lf)(i,1) += x;
 		(*Lf)(i,2) -= x + 1;
@@ -308,7 +308,7 @@ void FullChecksumMatrixTest::testFull() {
 
 	// deux erreurs même colonne (elles ne s'annulent pas)
 	for(int j = 1; j <= Lf->getN(); j++){
-		PSTL_TYPE x = rand();
+		double x = rand();
 
 		(*Lf)(1,j) += x;
 		(*Lf)(2,j) -= x + 1;
@@ -331,7 +331,7 @@ void FullChecksumMatrixTest::testFull() {
 
 	// deux erreurs non adjacentes
 	for(int i = 1; i <= Lf->getM(); i++){
-		PSTL_TYPE x = rand();
+		double x = rand();
 		int nextI = i % Lf->getM() + 1;
 		(*Lf)(i,1) += x;
 		(*Lf)(nextI,2) -= x + 1;

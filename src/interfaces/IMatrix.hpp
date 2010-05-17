@@ -1,5 +1,6 @@
 #pragma once
 #include "../settings.hpp"
+#include "../Types.hpp"
 
 template <class T> class IMatrix {
     public:
@@ -34,7 +35,7 @@ template <class T> class IMatrix {
 		 * @param j l'indice de colonne
 		 * @return l'élément à l'indice i, j
 		 */
-        virtual T& operator()(int i, int j) const = 0;
+        virtual PSTL_TYPE_UNION operator()(int i, int j) const = 0;
 
 		/*
 		 * Affecte le contenu d'une autre matrice au contenu de celle-ci.
@@ -51,12 +52,6 @@ template <class T> class IMatrix {
 		 * @return vrai si les deux matrices sont égales
 		 */
         virtual bool operator==(const IMatrix<T>& M) const = 0;
-
-		/*
-		 * Donne une représentation textuelle de la matrice.
-		 * @return la représentation sous la forme d'une chaine
-		 */
-        virtual string toString() const = 0;
 
 		/*
 		 * Donne un identifiant unique pour un couple d'indices i, j.
@@ -96,4 +91,11 @@ template <class T> class IMatrix {
 		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
 		 */
         virtual void toDouble(double* t, bool rowMajor) const = 0;
+
+
+		/*
+		 * Donne une représentation textuelle de la matrice.
+		 * @return la représentation sous la forme d'une chaine
+		 */
+        virtual string toString() const = 0;
 };

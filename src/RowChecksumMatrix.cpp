@@ -10,7 +10,7 @@ template <class T>
 RowChecksumMatrix<T>::RowChecksumMatrix(IMatrix<T>& M) :
 Matrix<T>(M.getData(), M.getM(), M.getN() + 1),
 matrix(M),
-rowSummationVector(*(new Vector<T>(this->getM()))) {
+rowSummationVector(*(new Vector<PSTL_TYPE_SUM>(this->getM(), false))) {
 	for(int i = 1; i <= this->getM(); i++) {
 		rowSummationVector(i) = 0;
 		rowSummationVector(i) = computeRowSum(i);
@@ -23,7 +23,7 @@ RowChecksumMatrix<T>::~RowChecksumMatrix() {
 }
 
 template <class T>
-T& RowChecksumMatrix<T>::operator()(int i, int j) const {
+PSTL_TYPE_UNION RowChecksumMatrix<T>::operator()(int i, int j) const {
 	return j == this->getN() ? rowSummationVector(i) : matrix(i, j);
 }
 
@@ -33,13 +33,13 @@ IMatrix<T>& RowChecksumMatrix<T>::getRowMatrix() const {
 }
 
 template <class T>
-IVector<T>& RowChecksumMatrix<T>::getRowSummationVector() const {
+IVector<PSTL_TYPE_SUM>& RowChecksumMatrix<T>::getRowSummationVector() const {
 	return rowSummationVector;
 }
 
 template <class T>
-T RowChecksumMatrix<T>::computeRowSum(int i) const {
-	T sum = 0;
+PSTL_TYPE_SUM RowChecksumMatrix<T>::computeRowSum(int i) const {
+	PSTL_TYPE_SUM sum = 0;
 
 	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j);
 
@@ -53,4 +53,4 @@ bool RowChecksumMatrix<T>::rowErrorDetection() const {
 	return false;
 }
 
-template class RowChecksumMatrix<PSTL_TYPE>;
+template class RowChecksumMatrix<double>;

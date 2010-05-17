@@ -1,4 +1,5 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/ICalculator.hpp"
 #include <stdexcept>
 
@@ -19,3 +20,10 @@ template <class T> class CalculatorNaive : public virtual ICalculator<T> {
 		// implémentation de ICalculator<T>
 		void LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const IMatrix<T>& A) const;
 };
+
+// permet de faire des opérations avec des types différents
+template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B);
+template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, T3 x);
+template <class T1, class T2, class T3> void CalculatorNaiveAdd(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B);
+template <class T1, class T2, class T3> void CalculatorNaiveTranspose(IMatrix<T1>& Res, const IMatrix<T2>& A);
+template <class T1, class T2, class T3, class T4> void CalculatorNaiveLU(IMatrix<T1>& P, IMatrix<T2>& L, IMatrix<T3>& U, const IMatrix<T4>& A);

@@ -1,4 +1,5 @@
 #pragma once
+#include "../settings.hpp"
 #include "IRowChecksumMatrix.hpp"
 #include "IColumnChecksumMatrix.hpp"
 

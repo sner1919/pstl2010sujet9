@@ -1,4 +1,5 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IErrorGenerator.hpp"
 #include <pthread.h>
 #include <ctime>

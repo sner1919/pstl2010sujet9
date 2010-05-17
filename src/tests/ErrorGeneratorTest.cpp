@@ -7,14 +7,14 @@ void ErrorGeneratorTest::setUp() {}
 void ErrorGeneratorTest::tearDown() {}
 
 void ErrorGeneratorTest::testAll() {
-	ErrorGenerator<PSTL_TYPE> g;
+	ErrorGenerator<double> g;
 	int nbEmplacements;
 
-    Matrix<PSTL_TYPE> L(2, 2);
+    Matrix<double> L(2, 2);
     L(1, 1) = 1.; L(1, 2) = 0.;
     L(2, 1) = 1.5; L(2, 2) = 1.;
 
-    Matrix<PSTL_TYPE> L2(L);
+    Matrix<double> L2(L);
 
     // generateError()
     for(int iMin = 1; iMin <= 2; iMin++) {
@@ -43,7 +43,7 @@ void ErrorGeneratorTest::testAll() {
 							}
 						}
 						CPPUNIT_ASSERT(distance == nb);
-						L = (IMatrix<PSTL_TYPE>&) L2;
+						L = (IMatrix<double>&) L2;
 					}
 				}
 		    }

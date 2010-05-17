@@ -42,8 +42,9 @@ bool Matrix<T>::getDataAllocation() const {
 }
 
 template <class T>
-T& Matrix<T>::operator()(int i, int j) const {
-	return data[(i - 1) * getN() + (j - 1)];
+PSTL_TYPE_UNION Matrix<T>::operator()(int i, int j) const {
+	PSTL_TYPE_UNION v(data[(i - 1) * getN() + (j - 1)]);
+	return v;
 }
 
 template <class T>
@@ -128,9 +129,10 @@ template <class T>
 void Matrix<T>::toDouble(double* t, bool rowMajor) const {
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
-			t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))] = PSTL_TYPE_TO_DOUBLE((*this)(i, j));
+			t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))] = (double) (*this)(i, j);
 		}
 	}
 }
 
-template class Matrix<PSTL_TYPE>;
+template class Matrix<double>;
+template class Matrix<PSTL_TYPE_SUM>;

@@ -4,14 +4,15 @@ template <class T>
 Vector<T>::Vector(const Vector<T>& V) : Matrix<T>(V) {}
 
 template <class T>
-Vector<T>::Vector(int m) : Matrix<T>(m, 1) {}
+Vector<T>::Vector(int m, bool line) : Matrix<T>(line ? 1 : m, line ? m : 1), line(line) {}
 
 template <class T>
-Vector<T>::Vector(T* data, int m) : Matrix<T>(data, m, 1) {}
+Vector<T>::Vector(T* data, int m, bool line) : Matrix<T>(data, line ? 1 : m, line ? m : 1), line(line) {}
 
 template <class T>
-T& Vector<T>::operator()(int i) const {
-	return Matrix<T>::operator()(i, 1);
+PSTL_TYPE_UNION Vector<T>::operator()(int i) const {
+	return Matrix<T>::operator()(line ? 1 : i, line ? i : 1);
 }
 
-template class Vector<PSTL_TYPE>;
+template class Vector<double>;
+template class Vector<PSTL_TYPE_SUM>;
