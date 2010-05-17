@@ -41,31 +41,6 @@
 	Multiprecision arithmetic library (C++ bindings)
 
 	GNU MP is a programmer's library for arbitrary precision arithmetic (ie, a bignum package). It can operate on signed integer, rational, and floating point numeric types.
-
-=================================== ATLAS ================================
-- libatlas-base-dev
-	Automatically Tuned Linear Algebra Software,generic static
-
-	ATLAS is an approach for the automatic generation and optimization of numerical software. Currently ATLAS supplies optimized versions for the complete set of linear algebra kernels known as the Basic Linear Algebra Subroutines (BLAS), and a subset of the linear algebra routines in the LAPACK library.
-
-	This package includes the static libraries and symbolic links needed for program development.
-
------------- dépendances installées automatiquement ------------
-- libatlas-headers
-	Automatically Tuned Linear Algebra Software,C header files
-
-	ATLAS is an approach for the automatic generation and optimization of numerical software. Currently ATLAS supplies optimized versions for the complete set of linear algebra kernels known as the Basic Linear Algebra Subroutines (BLAS), and a subset of the linear algebra routines in the LAPACK library.
-
-	This package provides the headers needed to compile against the libraries provided by ATLAS.
-
-- libatlas3gf-base
-	Automatically Tuned Linear Algebra Software,generic shared
-
-	ATLAS is an approach for the automatic generation and optimization of numerical software. Currently ATLAS supplies optimized versions for the complete set of linear algebra kernels known as the Basic Linear Algebra Subroutines (BLAS), and a subset of the linear algebra routines in the LAPACK library.
-
-	The libraries in this package are built without any processor extension instructions, and should run on all processors of this general architecture, albeit less than optimally.
-
-	On some architectures, multiple binary packages are provided to take advantage of certain commonly available processor instruction set extensions. The instruction extension set used is indicated in the package name, with 'base' denoting no extensions. In general, you will obtain the best performance by installing the package with the most advanced instruction extension set your machine is capable of running.
 */
 
 #include "Matrix.hpp"
@@ -81,20 +56,21 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     try{
-    	CalculatorNaive<PSTL_TYPE> calc;
-    	ErrorGenerator<PSTL_TYPE> gen;
-    	Processor<PSTL_TYPE> proc(calc, gen);
+    	CalculatorNaive<double> calc;
+    	ErrorGenerator<double> gen;
+    	Processor<double> proc(calc, gen);
         /* ---------- allocation statique de mémoire ---------- */
-        PSTL_TYPE LData[2][2] = {{1., 0.}, {1.5, 1.}};
-        PSTL_TYPE UData[2][2] = {{4., 3.}, {0., -1.5}};
+    	double LData[2][2] = {{1., 0.}, {1.5, 1.}};
+    	double UData[2][2] = {{4., 3.}, {0., -1.5}};
         /* ---------------------------------------------------- */
-        Matrix<PSTL_TYPE> P(2, 2);
-        Matrix<PSTL_TYPE> L(LData[0], 2, 2);
-        Matrix<PSTL_TYPE> LBis(L);
-        Matrix<PSTL_TYPE> U(UData[0], 2, 2);
-        Matrix<PSTL_TYPE> A(2, 2);
+        Matrix<double> P(2, 2);
+        Matrix<double> L(LData[0], 2, 2);
+        Matrix<double> LBis(L);
+        Matrix<double> U(UData[0], 2, 2);
+        Matrix<double> A(2, 2);
 
         cout << "L = " << L.toString() << endl;
+    	cout << "coucou" << endl;
         cout << "LBis = " << LBis.toString() << endl;
         cout << "U = " << U.toString() << endl;
 
@@ -122,17 +98,17 @@ int main(int argc, char* argv[]) {
         cout << "L = " << L.toString();
         cout << "U = " << U.toString() << endl;
 
-        ColumnChecksumMatrix<PSTL_TYPE> Uc(U);
+        ColumnChecksumMatrix<double> Uc(U);
         cout << "Uc = " << Uc.toString();
 
-        RowChecksumMatrix<PSTL_TYPE> Ur(U);
+        RowChecksumMatrix<double> Ur(U);
         cout << "Ur = " << Ur.toString();
         cout << "U = " << U.toString() << endl;
 
-        ColumnChecksumMatrix<PSTL_TYPE> Urc(Ur);
+        ColumnChecksumMatrix<double> Urc(Ur);
         cout << "Urc = " << Urc.toString();
 
-        FullChecksumMatrix<PSTL_TYPE> Uf(U);
+        FullChecksumMatrix<double> Uf(U);
         cout << "Uf = " << Uf.toString() << endl;
         cout << "Uf.getRowSummationVector() = " << Uf.getRowSummationVector().toString() << endl;
         cout << "Uf.getColumnSummationVector() = " << Uf.getColumnSummationVector().toString() << endl;

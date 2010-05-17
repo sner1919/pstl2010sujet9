@@ -1,3 +1,5 @@
+#pragma once
+#include "settings.hpp"
 #include "interfaces/ICalculator.hpp"
 #include "FullChecksumMatrix.hpp"
 #include "ErrorGenerator.hpp"

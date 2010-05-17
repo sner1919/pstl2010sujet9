@@ -1,6 +1,6 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IMatrix.hpp"
-#include <gmpxx.h>
 #include <sstream>
 #include <stdexcept>
 #include "math.h"
@@ -49,7 +49,7 @@ class Matrix : public virtual IMatrix<T> {
         bool getDataAllocation() const;
 
         // implémentation de IMatrix<T>
-        T& operator()(int i, int j) const;
+        PSTL_TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IMatrix<T>
         IMatrix<T>& operator=(const IMatrix<T>& M);

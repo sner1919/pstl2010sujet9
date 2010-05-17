@@ -1,3 +1,5 @@
+#pragma once
+#include "settings.hpp"
 #include "interfaces/IBlasLapackAdapter.hpp"
 #include <cstdlib>
 #include <dlfcn.h>

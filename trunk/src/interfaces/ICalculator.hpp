@@ -1,4 +1,5 @@
 #pragma once
+#include "../settings.hpp"
 #include "IMatrix.hpp"
 
 template <class T> class ICalculator {

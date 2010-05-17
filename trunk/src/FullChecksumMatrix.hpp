@@ -1,4 +1,5 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IFullChecksumMatrix.hpp"
 #include "RowChecksumMatrix.hpp"
 #include "ColumnChecksumMatrix.hpp"
@@ -16,7 +17,7 @@ template <class T> class FullChecksumMatrix : public ColumnChecksumMatrix<T>, pu
         ~FullChecksumMatrix();
 
         // redéfinition de Matrix<T>
-        T& operator()(int i, int j) const;
+        PSTL_TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IFullChecksumMatrix<T>
         bool errorCorrection();

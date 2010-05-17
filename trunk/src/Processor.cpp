@@ -67,4 +67,4 @@ void Processor<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const IMatrix
 	while(Lc.columnErrorDetection() || Ur.rowErrorDetection()) calculator.LU(Pf, Lc, Ur, Af);
 }
 
-template class Processor<PSTL_TYPE>;
+template class Processor<double>;

@@ -1,4 +1,5 @@
 #pragma once
+#include "settings.hpp"
 #include "interfaces/IColumnChecksumMatrix.hpp"
 #include "Matrix.hpp"
 #include "Vector.hpp"
@@ -6,7 +7,7 @@
 
 template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public virtual IColumnChecksumMatrix<T> {
 		IMatrix<T>& matrix;
-		IVector<T>& columnSummationVector;
+		IVector<PSTL_TYPE_SUM>& columnSummationVector;
 
 	public:
         /*
@@ -18,16 +19,16 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
 		~ColumnChecksumMatrix();
 
 		// redéfinition de Matrix<T>
-		T& operator()(int i, int j) const;
+		PSTL_TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
         IMatrix<T>& getColumnMatrix() const;
 
         // implémentation de IColumnChecksumMatrix<T>
-        IVector<T>& getColumnSummationVector() const;
+        IVector<PSTL_TYPE_SUM>& getColumnSummationVector() const;
 
         // implémentation de IColumnChecksumMatrix<T>
-        T computeColumnSum(int j) const;
+        PSTL_TYPE_SUM computeColumnSum(int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
         bool columnErrorDetection() const;

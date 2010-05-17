@@ -7,10 +7,12 @@ ColumnChecksumMatrix<T>(*(new RowChecksumMatrix<T>(M))),
 RowChecksumMatrix<T>(dynamic_cast<RowChecksumMatrix<T>&>(this->getColumnMatrix())) {}
 
 template <class T>
-FullChecksumMatrix<T>::~FullChecksumMatrix() {}
+FullChecksumMatrix<T>::~FullChecksumMatrix() {
+	delete dynamic_cast<RowChecksumMatrix<T>*>(&this->getColumnMatrix());
+}
 
 template <class T>
-T& FullChecksumMatrix<T>::operator()(int i, int j) const {
+PSTL_TYPE_UNION FullChecksumMatrix<T>::operator()(int i, int j) const {
 	return ColumnChecksumMatrix<T>::operator()(i, j);
 }
 
@@ -86,4 +88,4 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 	return true;
 }
 
-template class FullChecksumMatrix<PSTL_TYPE>;
+template class FullChecksumMatrix<double>;

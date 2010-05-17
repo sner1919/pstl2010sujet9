@@ -2,16 +2,7 @@
 
 template <class T>
 void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
-	// Vérifications
-	if(!(A.getN() == B.getM()
-		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
-
-	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++){
-			Res(i, j) = 0;
-			for(int k = 1; k <= A.getN(); k++) Res(i, j) += A(i, k) * B(k, j);
-		}
-	}
+	CalculatorNaiveMult<T, T, T>(Res, A, B);
 }
 
 template <class T>
@@ -20,7 +11,9 @@ void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) const {
 	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
 
 	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j<= Res.getN(); j++) Res(i, j) = A(i, j) * x;
+		for(int j = 1; j<= Res.getN(); j++) {
+			PSTL_TYPE_SUM aux = A(i, j); Res(i, j) = aux * x;
+		}
 	}
 }
 
@@ -31,7 +24,9 @@ void CalculatorNaive<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix
 		 && A.getN() == B.getN() && A.getN() == Res.getN())) throw domain_error("addition impossible");
 
 	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++) Res(i, j) = A(i, j) + B(i, j);
+		for(int j = 1; j <= Res.getN(); j++) {
+			PSTL_TYPE_SUM aux = A(i, j); Res(i, j) = aux + B(i, j);
+		}
 	}
 }
 
@@ -53,11 +48,11 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 	if(!(A.getM() == L.getM() && A.getN() == U.getN()
 		 && A.getM() == A.getN())) throw domain_error("décomposition LU impossible");
 
-	T** c = new T*[A.getM()];
+	PSTL_TYPE_SUM** c = new PSTL_TYPE_SUM*[A.getM()];
 	for(int i = 1; i <= A.getM(); i++) {
-		c[i-1] = new T[A.getM()];
+		c[i-1] = new PSTL_TYPE_SUM[A.getM()];
 		for(int j = 1; j <= A.getM(); j++) {
-			c[i-1][j-1] = A(i, j);
+			PSTL_TYPE_SUM aux = A(i, j); c[i-1][j-1] = aux;
 
 			// matrice de permutation
 			P(i, j) = i == j ? 1 : 0;
@@ -75,7 +70,9 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 		}
 
 		for(int i = 1; i <= A.getM(); i++) {
-			for(int j = 1; j <= A.getM(); j++) c[i-1][j-1] += L(i, k) * -U(k, j);
+			for(int j = 1; j <= A.getM(); j++){
+				PSTL_TYPE_SUM aux = L(i, k); c[i-1][j-1] += aux * -U(k, j);
+			}
 		}
 	}
 
@@ -84,4 +81,42 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 	delete [] c;
 }
 
-template class CalculatorNaive<PSTL_TYPE>;
+template class CalculatorNaive<double>;
+
+template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B) {
+	// Vérifications
+	if(!(A.getN() == B.getM()
+		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
+
+    mpf_set_default_prec(512);
+	PSTL_TYPE_SUM s;
+
+	for(int i = 1; i <= Res.getM(); i++) {
+		for(int j = 1; j <= Res.getN(); j++) {
+			s = 0;
+			for(int k = 1; k <= A.getN(); k++) {
+				PSTL_TYPE_SUM aux = A(i, k); s += aux * B(k, j);
+			}
+			Res(i, j) = s;
+		}
+	}
+}
+
+template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, T3 x) {
+
+}
+
+template <class T1, class T2, class T3> void CalculatorNaiveAdd(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B) {
+
+}
+
+template <class T1, class T2, class T3> void CalculatorNaiveTranspose(IMatrix<T1>& Res, const IMatrix<T2>& A) {
+
+}
+
+template <class T1, class T2, class T3, class T4> void CalculatorNaiveLU(IMatrix<T1>& P, IMatrix<T2>& L, IMatrix<T3>& U, const IMatrix<T4>& A) {
+
+}
+
+template void CalculatorNaiveMult(IMatrix<PSTL_TYPE_SUM>&, const IMatrix<PSTL_TYPE_SUM>&, const IMatrix<double>&);
+template void CalculatorNaiveMult(IMatrix<PSTL_TYPE_SUM>&, const IMatrix<double>&, const IMatrix<PSTL_TYPE_SUM>&);

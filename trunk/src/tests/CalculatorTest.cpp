@@ -1,54 +1,46 @@
 #include "CalculatorTest.hpp"
+#include <typeinfo>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CalculatorTest);
 
 void CalculatorTest::setUp() {
-    mpf_set_default_prec(128);
-
-    L = new Matrix<PSTL_TYPE>(2, 2);
+    L = new Matrix<double>(2, 2);
     (*L)(1, 1) = 1.; (*L)(1, 2) = 0.;
     (*L)(2, 1) = 1.5; (*L)(2, 2) = 1.;
 
-    U = new Matrix<PSTL_TYPE>(2, 2);
+    U = new Matrix<double>(2, 2);
     (*U)(1, 1) = 4.; (*U)(1, 2) = 3.;
     (*U)(2, 1) = 0.; (*U)(2, 2) = -1.5;
 
-    A = new Matrix<PSTL_TYPE>(2, 2);
+    A = new Matrix<double>(2, 2);
     (*A)(1, 1) = 4.; (*A)(1, 2) = 3.;
     (*A)(2, 1) = 6.; (*A)(2, 2) = 3.;
 
-    Ab = new Matrix<PSTL_TYPE>(3, 3);
+    Ab = new Matrix<double>(3, 3);
     (*Ab)(1, 1) = 4.; (*Ab)(1, 2) = 8.; (*Ab)(1, 3) = 7.;
     (*Ab)(2, 1) = -4.; (*Ab)(2, 2) = 1.; (*Ab)(2, 3) = 6.;
     (*Ab)(3, 1) = 8.; (*Ab)(3, 2) = 4.; (*Ab)(3, 3) = 3.;
 
-    Aux1 = new Matrix<PSTL_TYPE>(2, 2);
-    Aux2 = new Matrix<PSTL_TYPE>(2, 2);
-    Aux3 = new Matrix<PSTL_TYPE>(2, 2);
-    Aux4 = new Matrix<PSTL_TYPE>(2, 2);
+    Lc = new ColumnChecksumMatrix<double>(*L);
 
-    Aux1b = new Matrix<PSTL_TYPE>(3, 3);
-    Aux2b = new Matrix<PSTL_TYPE>(3, 3);
-    Aux3b = new Matrix<PSTL_TYPE>(3, 3);
-    Aux4b = new Matrix<PSTL_TYPE>(3, 3);
+    Ur = new RowChecksumMatrix<double>(*U);
 
-    g = new ErrorGenerator<PSTL_TYPE>;
+    Af = new FullChecksumMatrix<double>(*A);
+
+    g = new ErrorGenerator<double>;
 
     atlasAdapter = new AtlasAdapter;
     gotoBlasAdapter = new GotoBlasAdapter;
     intelMKLAdapter = new IntelMKLAdapter;
 
-    calculatorNaive = new CalculatorNaive<PSTL_TYPE>;
-    calculatorAtlas = new CalculatorBlasLapack<PSTL_TYPE>(*atlasAdapter);
-    calculatorGotoBlas = new CalculatorBlasLapack<PSTL_TYPE>(*gotoBlasAdapter);
-    calculatorIntelMKL = new CalculatorBlasLapack<PSTL_TYPE>(*intelMKLAdapter);
-    processor = new Processor<PSTL_TYPE>(*calculatorNaive, *g);
-
-    calc.push_back(calculatorNaive);
-    calc.push_back(calculatorAtlas);
-    calc.push_back(calculatorGotoBlas);
-    calc.push_back(calculatorIntelMKL);
-    calc.push_back(processor);
+    calc.push_back(new CalculatorNaive<double>);
+    calc.push_back(new Processor<double>(*calc[0], *g));
+    calc.push_back(new CalculatorBlasLapack<double>(*atlasAdapter, 0));
+    calc.push_back(new CalculatorBlasLapack<double>(*gotoBlasAdapter, 0));
+    calc.push_back(new CalculatorBlasLapack<double>(*intelMKLAdapter, 0));
+    calc.push_back(new CalculatorBlasLapack<double>(*atlasAdapter, 1));
+    calc.push_back(new CalculatorBlasLapack<double>(*gotoBlasAdapter, 1));
+    calc.push_back(new CalculatorBlasLapack<double>(*intelMKLAdapter, 1));
 }
 
 void CalculatorTest::tearDown() {
@@ -56,106 +48,135 @@ void CalculatorTest::tearDown() {
 	delete U;
 	delete A;
 	delete Ab;
-	delete Aux1;
-	delete Aux2;
-	delete Aux3;
-	delete Aux4;
-	delete Aux1b;
-	delete Aux2b;
-	delete Aux3b;
-	delete Aux4b;
+	delete Lc;
+	delete Ur;
+	delete Af;
 	delete g;
 	delete atlasAdapter;
 	delete gotoBlasAdapter;
 	delete intelMKLAdapter;
-	delete calculatorNaive;
-	delete calculatorAtlas;
-	delete calculatorGotoBlas;
-	delete calculatorIntelMKL;
-	delete processor;
+	delete dynamic_cast<CalculatorNaive<double>*>(calc[0]);
+	delete dynamic_cast<Processor<double>*>(calc[1]);
+	for(unsigned int i = 2; i < calc.size(); i++) delete dynamic_cast<CalculatorBlasLapack<double>*>(calc[i]);
 }
 
 void CalculatorTest::testMult() {
-	for(unsigned int i = 0; i < calc.size(); i++){
-		CPPUNIT_ASSERT(!(*Aux1 == *A));
-		calc[i]->mult(*Aux1, *L, *U);
-		CPPUNIT_ASSERT(*Aux1 == *A);
-		*Aux1 = *U;
+	Matrix<double> Aux1(2, 2);
+    FullChecksumMatrix<double> Aux1f(Aux1);
+
+	for(unsigned int k = 0; k < calc.size(); k++){
+		CPPUNIT_ASSERT(!(Aux1 == *A));
+		calc[k]->mult(Aux1, *L, *U);
+		CPPUNIT_ASSERT(Aux1 == *A);
+		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
+
+		CPPUNIT_ASSERT(!(Aux1f == *Af)); cout << " << " << endl;
+		cout << "k : " << k << endl;
+
+		cout << "Aux1f : " << Aux1f.toString() << endl;
+		cout << "Lc : " << Lc->toString() << endl;
+		cout << "Ur : " << Ur->toString() << endl;
+		calc[k]->mult(Aux1f, *Lc, *Ur);
+		cout << "+Aux1f : " << Aux1f.toString() << endl;
+		cout << "+Lc : " << Lc->toString() << endl;
+		cout << "+Ur : " << Ur->toString() << endl;
+		CPPUNIT_ASSERT(Aux1f == *Af);
+		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
+		cout << " >> " << endl;
 	}
 }
 
 void CalculatorTest::testSMult() {
-    (*Aux2)(1, 1) = 8.; (*Aux2)(1, 2) = 6.;
-    (*Aux2)(2, 1) = 12; (*Aux2)(2, 2) = 6.;
+	Matrix<double> Aux1(2, 2);
+    FullChecksumMatrix<double> Aux1f(Aux1);
+	Matrix<double> Aux2(2, 2);
+    Aux2(1, 1) = 8.; Aux2(1, 2) = 6.;
+    Aux2(2, 1) = 12.; Aux2(2, 2) = 6.;
+    FullChecksumMatrix<double> Aux2f(Aux2);
 
-	for(unsigned int i = 0; i < calc.size(); i++){
-		CPPUNIT_ASSERT(!(*Aux1 == *Aux2));
-		calc[i]->mult(*Aux1, *A, 2.);
-		CPPUNIT_ASSERT(*Aux1 == *Aux2);
-		*Aux1 = *U;
+	for(unsigned int k = 0; k < calc.size(); k++){
+		CPPUNIT_ASSERT(!(Aux1 == Aux2));
+		calc[k]->mult(Aux1, *A, 2.);
+		CPPUNIT_ASSERT(Aux1 == Aux2);
+		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
+
+		/*CPPUNIT_ASSERT(!(*Aux1f == *Aux2f));
+		calc[k]->mult(*Aux1f, *Af, 2.);
+		CPPUNIT_ASSERT(*Aux1f == *Aux2f);
+		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;*/
 	}
 }
 
 void CalculatorTest::testAdd() {
-    (*Aux2)(1, 1) = 5.; (*Aux2)(1, 2) = 3.;
-    (*Aux2)(2, 1) = 1.5; (*Aux2)(2, 2) = -0.5;
+	Matrix<double> Aux1(2, 2);
+    FullChecksumMatrix<double> Aux1f(Aux1);
+	Matrix<double> Aux2(2, 2);
+    Aux2(1, 1) = 5.; Aux2(1, 2) = 3.;
+    Aux2(2, 1) = 1.5; Aux2(2, 2) = -0.5;
+    FullChecksumMatrix<double> Aux2f(Aux2);
 
-	for(unsigned int i = 0; i < calc.size(); i++){
-		CPPUNIT_ASSERT(!(*Aux1 == *Aux2));
-		calc[i]->add(*Aux1, *L, *U);
-		CPPUNIT_ASSERT(*Aux1 == *Aux2);
-		*Aux1 = *U;
+	for(unsigned int k = 0; k < calc.size(); k++){
+		CPPUNIT_ASSERT(!(Aux1 == Aux2));
+		calc[k]->add(Aux1, *L, *U);
+		CPPUNIT_ASSERT(Aux1 == Aux2);
+		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
 	}
 }
 
 void CalculatorTest::testTranspose() {
-    (*Aux2)(1, 1) = 4.; (*Aux2)(1, 2) = 0.;
-    (*Aux2)(2, 1) = 3; (*Aux2)(2, 2) = -1.5;
+	Matrix<double> Aux1(2, 2);
+    FullChecksumMatrix<double> Aux1f(Aux1);
+	Matrix<double> Aux2(2, 2);
+    Aux2(1, 1) = 4.; Aux2(1, 2) = 0.;
+    Aux2(2, 1) = 3.; Aux2(2, 2) = -1.5;
+    FullChecksumMatrix<double> Aux2f(Aux2);
 
-	for(unsigned int i = 0; i < calc.size(); i++){
-		CPPUNIT_ASSERT(!(*Aux1 == *Aux2));
-		calc[i]->transpose(*Aux1, *U);
-		CPPUNIT_ASSERT(*Aux1 == *Aux2);
-		*Aux1 = *U;
+	for(unsigned int k = 0; k < calc.size(); k++){
+		CPPUNIT_ASSERT(!(Aux1 == Aux2));
+		calc[k]->transpose(Aux1, *U);
+		CPPUNIT_ASSERT(Aux1 == Aux2);
+		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
 	}
 }
 
 void CalculatorTest::testLU() {
-	for(unsigned int i = 0; i < calc.size(); i++){
+	Matrix<double> Aux1(2, 2);
+	Matrix<double> Aux2(2, 2);
+	Matrix<double> Aux3(2, 2);
+	Matrix<double> Aux4(2, 2);
+
+	Matrix<double> Aux1b(3, 3);
+	Matrix<double> Aux2b(3, 3);
+	Matrix<double> Aux3b(3, 3);
+	Matrix<double> Aux4b(3, 3);
+
+	for(unsigned int k = 0; k < calc.size(); k++){
 		// A
-		calc[i]->mult(*Aux4, *Aux1, *Aux2);
-		calc[i]->mult(*Aux1, *Aux4, *Aux3);
-		CPPUNIT_ASSERT(!(*Aux1 == *A));
-
-		calc[i]->LU(*Aux1, *Aux2, *Aux3, *A);
-
-		calc[i]->mult(*Aux4, *Aux1, *Aux2);
-		calc[i]->mult(*Aux1, *Aux4, *Aux3);
-		if(!(*Aux1 == *A)){
-			cout << "Aux1 :" << Aux1->toString() << endl;
-			cout << "A :" << A->toString() << endl;
+		CPPUNIT_ASSERT(!(Aux1 == *A));
+		calc[k]->LU(Aux1, Aux2, Aux3, *A);
+		calc[k]->mult(Aux4, Aux1, Aux2);
+		calc[k]->mult(Aux1, Aux4, Aux3);
+		CPPUNIT_ASSERT(Aux1 == *A);
+		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) {
+			Aux1(i, j) = 0;
+			Aux2(i, j) = 0;
+			Aux3(i, j) = 0;
 		}
-		CPPUNIT_ASSERT(*Aux1 == *A);
-		*Aux1 = *A;
-		*Aux2 = *A;
-		*Aux3 = *A;
 
 
 		// l'algorithme naif et le processeur (car L ne serait pas une CCM et U une RCM) ne gèrent pas les permutations
-		if(i != 0 && i != calc.size() - 1) {
+		if(k > 1) {
 			// Ab
-			calc[i]->mult(*Aux4b, *Aux1b, *Aux2b);
-			calc[i]->mult(*Aux1b, *Aux4b, *Aux3b);
-			CPPUNIT_ASSERT(!(*Aux1b == *Ab));
-
-			calc[i]->LU(*Aux1b, *Aux2b, *Aux3b, *Ab);
-
-			calc[i]->mult(*Aux4b, *Aux1b, *Aux2b);
-			calc[i]->mult(*Aux1b, *Aux4b, *Aux3b);
-			CPPUNIT_ASSERT(*Aux1b == *Ab);
-			*Aux1b = *Ab;
-			*Aux2b = *Ab;
-			*Aux3b = *Ab;
+			CPPUNIT_ASSERT(!(Aux1b == *Ab));
+			calc[k]->LU(Aux1b, Aux2b, Aux3b, *Ab);
+			calc[k]->mult(Aux4b, Aux1b, Aux2b);
+			calc[k]->mult(Aux1b, Aux4b, Aux3b);
+			CPPUNIT_ASSERT(Aux1b == *Ab);
+			for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) {
+				Aux1b(i, j) = 0;
+				Aux2b(i, j) = 0;
+				Aux3b(i, j) = 0;
+			}
 		}
 	}
 }

@@ -3,33 +3,39 @@
 CPPUNIT_TEST_SUITE_REGISTRATION(BenchmarkTest);
 
 void BenchmarkTest::setUp() {
+    mpf_set_default_prec(128);
 }
 
 void BenchmarkTest::tearDown() {
 }
 
 void BenchmarkTest::testPerf() {
-	CalculatorNaive<PSTL_TYPE> calculatorNaive;
+	CalculatorNaive<double> calculatorNaive;
 	AtlasAdapter atlasAdapter;
 	GotoBlasAdapter gotoBlasAdapter;
 	IntelMKLAdapter intelMKLAdapter;
-	CalculatorBlasLapack<PSTL_TYPE> calculatorAtlas(atlasAdapter);
-	CalculatorBlasLapack<PSTL_TYPE> calculatorGotoBlas(gotoBlasAdapter);
-	CalculatorBlasLapack<PSTL_TYPE> calculatorIntelMKL(intelMKLAdapter);
-	ErrorGenerator<PSTL_TYPE> generator;
+	CalculatorBlasLapack<double> calculatorAtlas(atlasAdapter, 0);
+	CalculatorBlasLapack<double> calculatorGotoBlas(gotoBlasAdapter, 0);
+	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 0);
+	ErrorGenerator<double> generator;
 	pthread_t th;
-	int n = 1500;
-	Matrix<PSTL_TYPE> A(n, n);
-	Matrix<PSTL_TYPE> B(n, n);
-	Matrix<PSTL_TYPE> C1(n, n);
-	FullChecksumMatrix<PSTL_TYPE> C1f(C1);
-	Matrix<PSTL_TYPE> C2(n, n);
-	FullChecksumMatrix<PSTL_TYPE> C2f(C2);
+	int n = 2;
+	Matrix<double> A(n, n);
+	Matrix<double> B(n, n);
+	Matrix<double> C1(n, n);
+	FullChecksumMatrix<double> C1f(C1);
+	Matrix<double> C2(n, n);
+	FullChecksumMatrix<double> C2f(C2);
 	struct timeval start, end;
 	double extensionTime;
 
+	/*
+	 * Soit A * B = C, avec A et B des matrices de taille N * N;
+	 * Pour que les valeur de C soient <= MaxDouble, il faut que max(A) * max(B) * N <= MaxDouble.
+	 * Cad. max(A, B) <= sqrt(MaxDouble / N)
+	 */
 	for(int i = 1; i <= n; i++){
-		for(int j = 1; j <= n; j++) A(i, j) = B(i, j) = fmod(rand(), pow(2, 10));
+		for(int j = 1; j <= n; j++) A(i, j) = B(i, j) = fmod(rand(), /*sqrt(numeric_limits<double>::max() / n)*/10);
 	}
 
 	cout << endl << "Benchmark : matrice " << n << " x " << n << endl;
@@ -38,64 +44,117 @@ void BenchmarkTest::testPerf() {
 	cout << "durée produit matriciel (en secondes) : " << endl;
 
 	gettimeofday(&start, NULL);
-	ColumnChecksumMatrix<PSTL_TYPE> Ac(A);
-	RowChecksumMatrix<PSTL_TYPE> Br(B);
+	ColumnChecksumMatrix<double> Ac(A);
+	RowChecksumMatrix<double> Br(B);
 	gettimeofday(&end, NULL);
 	extensionTime = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 
 	if(n <= 500) {
+		cout << "Ac : " << Ac.toString() << endl;
+		cout << "Br : " << Br.toString() << endl;
+		cout << "C1f : " << C1f.toString() << endl;
+		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
+		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+		cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 		gettimeofday(&start, NULL);
 		calculatorNaive.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
 		cout << "	- Naïf : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		cout << "Ac : " << Ac.toString() << endl;
+		cout << "Br : " << Br.toString() << endl;
+		cout << "C1f : " << C1f.toString() << endl;
+		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
+		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+		cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 	}
 
 	gettimeofday(&start, NULL);
 	calculatorAtlas.mult(C1f, Ac, Br);
 	gettimeofday(&end, NULL);
 	cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
+
+	gettimeofday(&start, NULL);
+	calculatorAtlas.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
+
+	gettimeofday(&start, NULL);
+	calculatorAtlas.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
 	gettimeofday(&start, NULL);
 	calculatorGotoBlas.mult(C1f, Ac, Br);
 	gettimeofday(&end, NULL);
 	cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
 	gettimeofday(&start, NULL);
 	calculatorIntelMKL.mult(C1f, Ac, Br);
 	gettimeofday(&end, NULL);
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 	CPPUNIT_ASSERT(!(C1f == C2f));
-	for(int i = 1; i <= n + 1; i++){
-		for(int j = 1; j <= n + 1; j++) C2f(i, j) = C1f(i, j);
-	}
+	(IMatrix<double>&) C2f = C1f;
 
 	// correction 0 erreurs
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(C1f == C2f);
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();
 	gettimeofday(&end, NULL);
 	cout << "durée extension + correction 0 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(C1f == C2f);
 
 	// correction 1 erreurs
-	th = generator.generateError(C1f, 1, 1, n, 1, n);
+	cout << "C1f : " << C1f.toString() << endl;
+	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
+	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
+	th = generator.generateError(C1f, 1, 1, n + 1, 1, n + 1);
 	pthread_join(th, NULL);
+	cout << "Ac : " << Ac.toString() << endl;
+	cout << "Br : " << Br.toString() << endl;
+	cout << "C1f : " << C1f.toString() << endl;
+	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
+	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
+	CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();
 	gettimeofday(&end, NULL);
 	cout << "durée extension + correction 1 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	cout << "Ac : " << Ac.toString() << endl;
+	cout << "Br : " << Br.toString() << endl;
+	cout << "C1f : " << C1f.toString() << endl;
+	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
+	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(C1f == C2f);
 
 	// correction 2 erreurs (même ligne)
-	th = generator.generateError(C1f, 2, 1, 1, 1, n);
+	th = generator.generateError(C1f, 2, 1, 1, 1, n + 1);
 	pthread_join(th, NULL);
+	CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();
 	gettimeofday(&end, NULL);
 	cout << "durée extension + correction 2 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(C1f == C2f);
 
 }
