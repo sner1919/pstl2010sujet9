@@ -12,7 +12,7 @@ void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) const {
 
 	for(int i = 1; i <= Res.getM(); i++){
 		for(int j = 1; j<= Res.getN(); j++) {
-			PSTL_TYPE_SUM aux = A(i, j); Res(i, j) = aux * x;
+			Res(i, j) = A(i, j).toTypeSum() * x;
 		}
 	}
 }
@@ -25,7 +25,7 @@ void CalculatorNaive<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix
 
 	for(int i = 1; i <= Res.getM(); i++){
 		for(int j = 1; j <= Res.getN(); j++) {
-			PSTL_TYPE_SUM aux = A(i, j); Res(i, j) = aux + B(i, j);
+			Res(i, j) = A(i, j).toTypeSum() + B(i, j).toTypeSum();
 		}
 	}
 }
@@ -52,7 +52,7 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 	for(int i = 1; i <= A.getM(); i++) {
 		c[i-1] = new PSTL_TYPE_SUM[A.getM()];
 		for(int j = 1; j <= A.getM(); j++) {
-			PSTL_TYPE_SUM aux = A(i, j); c[i-1][j-1] = aux;
+			c[i-1][j-1] = A(i, j).toTypeSum();
 
 			// matrice de permutation
 			P(i, j) = i == j ? 1 : 0;
@@ -66,12 +66,12 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 
 			if(i < k) L(i, k) = 0;
 			else if(i == k) L(i, k) = 1;
-			else L(i, k) = c[i-1][k-1] / U(k, k);
+			else L(i, k) = c[i-1][k-1] / U(k, k).toTypeSum();
 		}
 
 		for(int i = 1; i <= A.getM(); i++) {
 			for(int j = 1; j <= A.getM(); j++){
-				PSTL_TYPE_SUM aux = L(i, k); c[i-1][j-1] += aux * -U(k, j);
+				c[i-1][j-1] += L(i, k).toTypeSum() * -U(k, j).toTypeSum();
 			}
 		}
 	}
@@ -95,7 +95,7 @@ template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Re
 		for(int j = 1; j <= Res.getN(); j++) {
 			s = 0;
 			for(int k = 1; k <= A.getN(); k++) {
-				PSTL_TYPE_SUM aux = A(i, k); s += aux * B(k, j);
+				s += A(i, k).toTypeSum() * B(k, j).toTypeSum();
 			}
 			Res(i, j) = s;
 		}

@@ -2,7 +2,20 @@
 #include "settings.hpp"
 #include <gmpxx.h>
 
+/* ---------------- Test d'égalité ---------------
+	utilise la représentation binaire des flottants :
+		- chaque float correspond à un int et chaque double correspond à deux int !!!!!!!!!!
+		=> mieux que les tests d'égalité avec un epsilon absolu ou même relatif
+-------------------------------------------------- */
+int floatToIndex(float a);
+void doubleToIndex(double a, int *a1, int *a0);
+float indexToFloat(int ai);
+double indexToDouble(int a1, int a0);
+bool equal(float a, float b, int eps);
+bool equal(double a, double b, int eps1, int eps0);
+
 typedef mpf_class PSTL_TYPE_SUM;
+#define PSTL_TYPE_SUM_TO_DOUBLE(x) x.get_d()
 
 class PSTL_TYPE_UNION {
 	public:
@@ -16,11 +29,11 @@ class PSTL_TYPE_UNION {
 
 		PSTL_TYPE_UNION(PSTL_TYPE_SUM& x);
 
-		operator double();
+		PSTL_TYPE_SUM toTypeSum();
 
-		operator PSTL_TYPE_SUM();
+		double toDouble();
 
-		PSTL_TYPE_UNION &operator=(const PSTL_TYPE_UNION& x);
+		PSTL_TYPE_UNION& operator=(const PSTL_TYPE_UNION& x);
 
 		PSTL_TYPE_UNION& operator=(const double& x);
 
@@ -43,6 +56,12 @@ class PSTL_TYPE_UNION {
 		bool operator==(const double& x) const;
 
 		bool operator==(const PSTL_TYPE_SUM& x) const;
+
+		bool operator!=(const PSTL_TYPE_UNION& x) const;
+
+		bool operator!=(const double& x) const;
+
+		bool operator!=(const PSTL_TYPE_SUM& x) const;
 
 	    friend ostream& operator<<(ostream& out, const PSTL_TYPE_UNION& x);
 };

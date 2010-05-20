@@ -1,4 +1,5 @@
 #include "ColumnChecksumMatrix.hpp"
+#include "Vector.hpp"
 
 template <class T>
 ColumnChecksumMatrix<T>::ColumnChecksumMatrix(IMatrix<T>& M) :
@@ -13,7 +14,7 @@ columnSummationVector(*(new Vector<PSTL_TYPE_SUM>(this->getN(), true))) {
 
 template <class T>
 ColumnChecksumMatrix<T>::~ColumnChecksumMatrix() {
-	delete dynamic_cast<Vector<T>*>(&columnSummationVector);
+	delete dynamic_cast<Vector<PSTL_TYPE_SUM>*>(&columnSummationVector);
 }
 
 template <class T>
@@ -35,14 +36,14 @@ template <class T>
 PSTL_TYPE_SUM ColumnChecksumMatrix<T>::computeColumnSum(int j) const {
 	PSTL_TYPE_SUM sum = 0;
 
-	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j);
+	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toTypeSum();
 
-	return sum - (*this)(this->getM(), j);
+	return sum - (*this)(this->getM(), j).toTypeSum();
 }
 
 template <class T>
 bool ColumnChecksumMatrix<T>::columnErrorDetection() const {
-	for(int j = 1; j <= this->getN(); j++) if(computeColumnSum(j) != 0) return true;
+	for(int j = 1; j <= this->getN(); j++) if(!equal(PSTL_TYPE_SUM_TO_DOUBLE(computeColumnSum(j)), 0., EPS1, 0)) return true;
 
 	return false;
 }

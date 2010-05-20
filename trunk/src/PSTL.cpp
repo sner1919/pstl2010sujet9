@@ -52,10 +52,16 @@
 #include "Processor.hpp"
 #include "ErrorGenerator.hpp"
 #include <limits>
+#include <cmath>
 using namespace std;
 
 int main(int argc, char* argv[]) {
     try{
+    	/* ----------------------------------- */
+        cout.precision(50);
+        mpf_set_default_prec(128);
+    	/* ----------------------------------- */
+
     	CalculatorNaive<double> calc;
     	ErrorGenerator<double> gen;
     	Processor<double> proc(calc, gen);
@@ -122,18 +128,16 @@ int main(int argc, char* argv[]) {
 
         cout << "CLOCKS_PER_SEC :" << CLOCKS_PER_SEC << endl;
 
-        cout << "The maximum value for type float is:  "
-             << numeric_limits<float>::max( )
-             << endl;
-        cout << "The maximum value for type double is:  "
-             << numeric_limits<double>::max( )
-             << endl;
-        cout << "The maximum value for type int is:  "
-             << numeric_limits<int>::max( )
-             << endl;
-        cout << "The maximum value for type short int is:  "
-             << numeric_limits<short int>::max( )
-             << endl;
+        if (0.1 + 0.2 != 0.3) cout << "0.1 + 0.2 != 0.3 !!!!" << endl;
+
+       cout << "numeric_limits<float>::min() : " << numeric_limits<float>::min() << endl;
+       cout << "numeric_limits<float>::max() : " << numeric_limits<float>::max() << endl;
+       cout << "numeric_limits<float>::epsilon() : " << numeric_limits<float>::epsilon() << endl;
+       cout << "numeric_limits<float>::round_error() : " << numeric_limits<float>::round_error() << endl;
+       cout << "numeric_limits<double>::min() : " << numeric_limits<double>::min() << endl;
+       cout << "numeric_limits<double>::max() : " << numeric_limits<double>::max() << endl;
+       cout << "numeric_limits<double>::epsilon() : " << numeric_limits<double>::epsilon() << endl;
+       cout << "numeric_limits<double>::round_error() : " << numeric_limits<double>::round_error() << endl;
 
         double x1 = pow(2, 60);
         x1 += 1;
@@ -144,6 +148,106 @@ int main(int argc, char* argv[]) {
         x2 += 1;
         x2 -= pow(2, 60);
         cout << "x2 : " << x2 << endl;
+
+        /* ---------------- Test d'égalité ---------------
+			utilise la représentation binaire des flottants :
+				- chaque float correspond à un int et chaque double correspond à deux int !!!!!!!!!!
+				=> mieux que les tests d'égalité avec un epsilon absolu ou même relatif
+        */
+
+
+        cout << "--------------------------" << endl;
+        for(int i = -3; i <= 3; i++) {
+			cout << "*********************" << endl;
+			cout << "i : " << i << endl;
+        	float f = indexToFloat(i);
+			cout << "f = indexToFloat(i) : " << f << endl;
+			cout << "floatToIndex(f) : " << floatToIndex(f) << endl;
+    	}
+
+        int ind[3][2];
+        ind[0][0] = numeric_limits<int>::min();
+        ind[0][1] = 3;
+        ind[1][0] = -2;
+        ind[1][1] = 5;
+        ind[2][0] = numeric_limits<int>::max() - 2;
+        ind[2][1] = 3;
+        for(int i = -2; i <= 2; i++) {
+			for(int k = 0; k < 3; k++) {
+				for(int j = ind[k][0], l = 0; l < ind[k][1]; j++, l++) {
+					cout << "++++++++++++++++++++++++" << endl;
+					cout << "i : " << i << endl;
+					cout << "j : " << j << endl;
+					double d = indexToDouble(i, j);
+					cout << "d = indexToDouble(i, j) : " << d << endl;
+					int a1, a0;
+					doubleToIndex(d, &a1, &a0);
+					cout << "doubleToIndex(d, &a1, &a0)" << endl;
+					cout << "a1 : " << a1 << endl;
+					cout << "a0 : " << a0 << endl;
+				}
+			}
+        }
+
+		cout << "--------------------------" << endl;
+
+		double a = 0.1 + 0.2;
+		double b = 0.3;
+		cout << endl << endl << "a = 0.1 + 0.2 : " << a << endl;
+		int a0, a1;
+		doubleToIndex(a, &a1, &a0);
+		cout << "doubleToIndex(a, &a1, &a0)" << endl;
+		cout << "a1 : " << a1 << endl;
+		cout << "a0 : " << a0 << endl;
+		cout << "indexToDouble(a1, a0) : " << indexToDouble(a1, a0) << endl;
+
+		cout << "b = 0.3 : " << b << endl;
+		int b0, b1;
+		doubleToIndex(b, &b1, &b0);
+		cout << "doubleToIndex(b, &b1, &b0)" << endl;
+		cout << "b1 : " << b1 << endl;
+		cout << "b0 : " << b0 << endl;
+		cout << "indexToDouble(b1, b0) : " << indexToDouble(b1, b0) << endl;
+
+		cout << "a == b : " << (a == b) << endl;
+		cout << "a - b : " << a - b << endl;
+
+		cout << "--------------------------" << endl;
+		int i0 = a0;
+		int i1 = a1;
+		for(int i = -2; i <= 2; i++){
+			a1 = i1 + i;
+			for(int j = -2; j <= 2; j++){
+				a0 = i0 + j;
+				cout << "a1 : " << a1 << endl;
+				cout << "a0 : " << a0 << endl;
+				cout << "indexToDouble(a1, a0) : " << indexToDouble(a1, a0) << endl;
+			}
+		}
+
+		cout << "--------------------------" << endl;
+		double max = numeric_limits<double>::max();
+	    cout << "max = numeric_limits<double>::max() : " << max << endl;
+		doubleToIndex(max, &a1, &a0);
+		cout << "doubleToIndex(max, &a1, &a0)" << endl;
+		cout << "a1 : " << a1 << endl;
+		cout << "a0 : " << a0 << endl;
+		cout << "indexToDouble(a1, a0) : " << indexToDouble(a1, a0) << endl;
+		cout << "indexToDouble(a1, a0-1):" << indexToDouble(a1, a0 - 1) << endl;
+		cout << "--------------------------" << endl;
+
+
+		PSTL_TYPE_SUM a2 = 0.1;
+		a2 += 0.2;
+		PSTL_TYPE_SUM b2 = 0.3;
+		cout << "a2 : " << a2 << endl;
+		cout << "b2 : " << b2 << endl;
+		cout << "a2 - b2 : " << a2 - b2 << endl;
+		cout << "a2.get_d() - b2 : " << a2.get_d() - b2 << endl;
+		PSTL_TYPE_SUM res1 = a2.get_d() - b2;
+		PSTL_TYPE_SUM res2 = a2 - b2;
+		cout << "res1.get_d() : " << res1.get_d() << endl;
+		cout << "res2.get_d() : " << res2.get_d() << endl;
 
     }
     catch(const std::exception& e)

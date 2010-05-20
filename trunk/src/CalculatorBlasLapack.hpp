@@ -2,7 +2,6 @@
 #include "settings.hpp"
 #include "CalculatorNaive.hpp"
 #include "interfaces/IBlasLapackAdapter.hpp"
-#include "interfaces/IFullChecksumMatrix.hpp"
 
 template <class T> class CalculatorBlasLapack : public CalculatorNaive<T> {
 		IBlasLapackAdapter& blasLapackAdapter;

@@ -1,7 +1,6 @@
 #pragma once
 #include "settings.hpp"
 #include "interfaces/ICalculator.hpp"
-#include <stdexcept>
 
 template <class T> class CalculatorNaive : public virtual ICalculator<T> {
 	public:

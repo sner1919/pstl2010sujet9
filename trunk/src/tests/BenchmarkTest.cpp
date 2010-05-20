@@ -1,9 +1,18 @@
 #include "BenchmarkTest.hpp"
+#include <cmath>
+#include <cstdlib>
+#include <sys/time.h>
+#include "../FullChecksumMatrix.hpp"
+#include "../CalculatorNaive.hpp"
+#include "../CalculatorBlasLapack.hpp"
+#include "../AtlasAdapter.hpp"
+#include "../GotoBlasAdapter.hpp"
+#include "../IntelMKLAdapter.hpp"
+#include "../ErrorGenerator.hpp"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(BenchmarkTest);
 
 void BenchmarkTest::setUp() {
-    mpf_set_default_prec(128);
 }
 
 void BenchmarkTest::tearDown() {
@@ -19,7 +28,7 @@ void BenchmarkTest::testPerf() {
 	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 0);
 	ErrorGenerator<double> generator;
 	pthread_t th;
-	int n = 2;
+	int n = 1000;
 	Matrix<double> A(n, n);
 	Matrix<double> B(n, n);
 	Matrix<double> C1(n, n);
@@ -35,7 +44,7 @@ void BenchmarkTest::testPerf() {
 	 * Cad. max(A, B) <= sqrt(MaxDouble / N)
 	 */
 	for(int i = 1; i <= n; i++){
-		for(int j = 1; j <= n; j++) A(i, j) = B(i, j) = fmod(rand(), /*sqrt(numeric_limits<double>::max() / n)*/10);
+		for(int j = 1; j <= n; j++) A(i, j) = B(i, j) = fmod(rand(), /*sqrt(numeric_limits<double>::max() / n)*/1.1);
 	}
 
 	cout << endl << "Benchmark : matrice " << n << " x " << n << endl;
@@ -50,22 +59,10 @@ void BenchmarkTest::testPerf() {
 	extensionTime = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 
 	if(n <= 500) {
-		cout << "Ac : " << Ac.toString() << endl;
-		cout << "Br : " << Br.toString() << endl;
-		cout << "C1f : " << C1f.toString() << endl;
-		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
-		cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 		gettimeofday(&start, NULL);
 		calculatorNaive.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
 		cout << "	- Naïf : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		cout << "Ac : " << Ac.toString() << endl;
-		cout << "Br : " << Br.toString() << endl;
-		cout << "C1f : " << C1f.toString() << endl;
-		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
-		cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 	}
@@ -118,30 +115,14 @@ void BenchmarkTest::testPerf() {
 	CPPUNIT_ASSERT(C1f == C2f);
 
 	// correction 1 erreurs
-	cout << "C1f : " << C1f.toString() << endl;
-	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
-	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 	th = generator.generateError(C1f, 1, 1, n + 1, 1, n + 1);
 	pthread_join(th, NULL);
-	cout << "Ac : " << Ac.toString() << endl;
-	cout << "Br : " << Br.toString() << endl;
-	cout << "C1f : " << C1f.toString() << endl;
-	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
-	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 	CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(!(C1f == C2f));
 	gettimeofday(&start, NULL);
 	C1f.errorCorrection();
 	gettimeofday(&end, NULL);
 	cout << "durée extension + correction 1 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-	cout << "Ac : " << Ac.toString() << endl;
-	cout << "Br : " << Br.toString() << endl;
-	cout << "C1f : " << C1f.toString() << endl;
-	cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-	cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
-	cout << "C1f.computeRowSum(3) : " << C1f.computeRowSum(3) << endl;
 	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	CPPUNIT_ASSERT(C1f == C2f);
 

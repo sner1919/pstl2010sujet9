@@ -1,4 +1,7 @@
 #include "GotoBlasAdapter.hpp"
+#include <cstdlib>
+#include <dlfcn.h>
+
 namespace {
 	extern "C" {
 		#include "../include/gotoblas/cblas.h"

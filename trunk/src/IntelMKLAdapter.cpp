@@ -1,4 +1,7 @@
 #include "IntelMKLAdapter.hpp"
+#include <cstdlib>
+#include <dlfcn.h>
+
 namespace {
 	extern "C" {
 		#include "../include/intelmkl/mkl_types.h"
@@ -24,7 +27,7 @@ IntelMKLAdapter::IntelMKLAdapter() {
 	// open the library
 	api.handle[0] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_core.so", RTLD_LAZY | RTLD_GLOBAL);
 	api.handle[1] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_sequential.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[2] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_intel.so", RTLD_LAZY | RTLD_GLOBAL);
+	api.handle[2] = dlopen("./lib/" MACRO_TO_STR(CPU) "/intelmkl/libmkl_intel.so", RTLD_LAZY);
 	for(int i = 0; i < 3; i++){
 		if (!api.handle[i]) {
 			cerr << "Cannot open library : " << dlerror() << '\n';

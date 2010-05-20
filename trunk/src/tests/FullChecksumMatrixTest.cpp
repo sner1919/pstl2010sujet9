@@ -1,4 +1,5 @@
 #include "FullChecksumMatrixTest.hpp"
+#include <cstdlib>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FullChecksumMatrixTest);
 

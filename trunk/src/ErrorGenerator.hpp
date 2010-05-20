@@ -1,10 +1,6 @@
 #pragma once
 #include "settings.hpp"
 #include "interfaces/IErrorGenerator.hpp"
-#include <pthread.h>
-#include <ctime>
-#include <cstdlib>
-#include <vector>
 
 template <class T> class ErrorGenerator : public IErrorGenerator<T> {
 	struct threadArg {

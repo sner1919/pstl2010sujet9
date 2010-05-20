@@ -2,12 +2,11 @@
 #include "settings.hpp"
 #include "interfaces/IRowChecksumMatrix.hpp"
 #include "Matrix.hpp"
-#include "Vector.hpp"
-#include <stdlib.h>
 
 template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public virtual IRowChecksumMatrix<T> {
 		IMatrix<T>& matrix;
 		IVector<PSTL_TYPE_SUM>& rowSummationVector;
+        bool dataAllocation;
 
 	public:
         /*

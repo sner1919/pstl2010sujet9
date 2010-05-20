@@ -1,4 +1,6 @@
 #include "Processor.hpp"
+#include "FullChecksumMatrix.hpp"
+#include "ErrorGenerator.hpp"
 #include <pthread.h>
 
 template <class T>
