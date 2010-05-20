@@ -1,9 +1,9 @@
 #include <cppunit/TestCase.h>
 #include <cppunit/extensions/HelperMacros.h>
 
-class BenchmarkTest : public CppUnit::TestFixture {
-		CPPUNIT_TEST_SUITE(BenchmarkTest);
-		CPPUNIT_TEST(testPerf);
+class TypesTest : public CppUnit::TestFixture {
+		CPPUNIT_TEST_SUITE(TypesTest);
+		CPPUNIT_TEST(testAll);
 		CPPUNIT_TEST_SUITE_END();
 
 	public:
@@ -11,5 +11,5 @@ class BenchmarkTest : public CppUnit::TestFixture {
 
 		void tearDown();
 
-		void testPerf();
+		void testAll();
 };

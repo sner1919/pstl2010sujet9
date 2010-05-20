@@ -2,8 +2,6 @@
 #include "settings.hpp"
 #include "interfaces/IColumnChecksumMatrix.hpp"
 #include "Matrix.hpp"
-#include "Vector.hpp"
-#include <stdlib.h>
 
 template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public virtual IColumnChecksumMatrix<T> {
 		IMatrix<T>& matrix;

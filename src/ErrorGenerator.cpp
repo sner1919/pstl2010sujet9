@@ -1,4 +1,8 @@
 #include "ErrorGenerator.hpp"
+#include <pthread.h>
+#include <ctime>
+#include <cstdlib>
+#include <vector>
 
 template <class T>
 ErrorGenerator<T>::ErrorGenerator() {
@@ -37,7 +41,7 @@ void* ErrorGenerator<T>::thread(void* arg) {
 		} while(contains);
 
 		// modification d'une valeur
-		do { x = rand(); } while(x == M(l, c));
+		do { x = rand(); } while(M(l, c) == x);
 		M(l, c) = x;
 
 		ids.push_back(id);

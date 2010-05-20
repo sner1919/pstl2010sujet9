@@ -1,8 +1,7 @@
 #pragma once
 #include "settings.hpp"
 #include "interfaces/ICalculator.hpp"
-#include "FullChecksumMatrix.hpp"
-#include "ErrorGenerator.hpp"
+#include "interfaces/IErrorGenerator.hpp"
 
 template <class T> class Processor : public ICalculator<T> {
 		ICalculator<T>& calculator;

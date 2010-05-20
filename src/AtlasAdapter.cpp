@@ -1,4 +1,7 @@
 #include "AtlasAdapter.hpp"
+#include <cstdlib>
+#include <dlfcn.h>
+
 namespace {
 	extern "C" {
 		#include "../include/atlas/cblas.h"
@@ -21,10 +24,10 @@ namespace {
 
 AtlasAdapter::AtlasAdapter() {
 	// open the library
-	api.handle[0] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libatlas.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[1] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libcblas.so", RTLD_LAZY | RTLD_GLOBAL);
-	api.handle[2] = dlopen("./lib/" MACRO_TO_STR(CPU) "/atlas/libclapack.so", RTLD_LAZY | RTLD_GLOBAL);
+	string libs[] = {"libatlas.so", "libcblas.so", "libclapack.so"};
 	for(int i = 0; i < 3; i++){
+		string path = ((string) ("./lib/" MACRO_TO_STR(CPU) "/atlas/")).append(libs[i]);
+		api.handle[i] = (dlopen(path.data(), RTLD_LAZY | RTLD_GLOBAL));
 		if (!api.handle[i]) {
 			cerr << "Cannot open library : " << dlerror() << '\n';
 			exit(1);
@@ -40,14 +43,14 @@ AtlasAdapter::AtlasAdapter() {
 	const char *dlsym_error = dlerror();
 	if (dlsym_error) {
 		cerr << "Cannot load symbols : " << dlsym_error << '\n';
-		for(int i = 0; i < 3; i++) dlclose(api.handle[i]);
+		for(unsigned int i = 0; i < 3; i++) dlclose(api.handle[i]);
 		exit(1);
 	}
 }
 
 AtlasAdapter::~AtlasAdapter() {
 	// close the library
-	for(int i = 0; i < 3; i++) dlclose(api.handle[i]);
+	for(unsigned int i = 0; i < 3; i++) dlclose(api.handle[i]);
 }
 
 void AtlasAdapter::dgemm(const enum CBLAS_ORDER_ Order, const enum CBLAS_TRANSPOSE_ TransA,

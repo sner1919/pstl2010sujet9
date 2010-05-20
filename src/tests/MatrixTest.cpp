@@ -1,4 +1,5 @@
 #include "MatrixTest.hpp"
+#include "../Matrix.hpp"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 
@@ -121,6 +122,6 @@ void MatrixTest::testAll() {
 	CPPUNIT_ASSERT(t2[1] == 3.);
 	CPPUNIT_ASSERT(t2[2] == 2.);
 	CPPUNIT_ASSERT(t2[3] == 1.);
-	delete t2;
+	delete [] t2;
 }
 

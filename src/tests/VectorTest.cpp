@@ -1,4 +1,5 @@
 #include "VectorTest.hpp"
+#include "../Vector.hpp"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(VectorTest);
 

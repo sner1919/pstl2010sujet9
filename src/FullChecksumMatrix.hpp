@@ -3,8 +3,6 @@
 #include "interfaces/IFullChecksumMatrix.hpp"
 #include "RowChecksumMatrix.hpp"
 #include "ColumnChecksumMatrix.hpp"
-#include <stdlib.h>
-#include <vector>
 
 template <class T> class FullChecksumMatrix : public ColumnChecksumMatrix<T>, public RowChecksumMatrix<T>, public virtual IFullChecksumMatrix<T> {
 	public:

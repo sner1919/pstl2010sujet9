@@ -1,4 +1,6 @@
 #include "ErrorGeneratorTest.hpp"
+#include "../ErrorGenerator.hpp"
+#include "../Matrix.hpp"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(ErrorGeneratorTest);
 

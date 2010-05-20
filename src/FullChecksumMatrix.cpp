@@ -1,4 +1,5 @@
 #include "FullChecksumMatrix.hpp"
+#include <vector>
 
 template <class T>
 FullChecksumMatrix<T>::FullChecksumMatrix(IMatrix<T>& M) :
@@ -25,11 +26,11 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 	vector<int> c;
 
 	for(int i = 1; i <= this->getM(); i++){
-		if(this->computeRowSum(i) != 0) r.push_back(i);
+		if(!equal(PSTL_TYPE_SUM_TO_DOUBLE(this->computeRowSum(i)), 0., EPS1, 0)) r.push_back(i);
 	}
 
 	for(int j = 1; j <= this->getN(); j++){
-		if(this->computeColumnSum(j) != 0) c.push_back(j);
+		if(!equal(PSTL_TYPE_SUM_TO_DOUBLE(this->computeColumnSum(j)), 0., EPS1, 0)) c.push_back(j);
 	}
 
 	if(r.size() + c.size() > 0){

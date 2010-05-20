@@ -1,5 +1,7 @@
 #include "CalculatorTest.hpp"
-#include <typeinfo>
+#include "../Processor.hpp"
+#include "../CalculatorNaive.hpp"
+#include "../CalculatorBlasLapack.hpp"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(CalculatorTest);
 

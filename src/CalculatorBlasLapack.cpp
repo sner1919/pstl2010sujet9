@@ -1,4 +1,5 @@
 #include "CalculatorBlasLapack.hpp"
+#include "interfaces/IFullChecksumMatrix.hpp"
 #include <sys/time.h>
 #include <typeinfo>
 
@@ -47,6 +48,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 			1., a, Ac.getN(),
 			b, Br.getN() - 1,
 			0., res, Resf.getN() - 1);
+		gettimeofday(&end, NULL);
 		cout << "	- dgemm : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 
@@ -114,7 +116,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 
 	if(MatrixType == 0) {
 		gettimeofday(&start, NULL);
-		delete res; delete a; delete b;
+		delete [] res; delete [] a; delete [] b;
 		gettimeofday(&end, NULL);
 		cout << "	- delete : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 	}
@@ -133,7 +135,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 
 	Res.fromDouble(a, true);
 
-	delete a;
+	delete [] a;
 }
 
 template <class T>
@@ -151,7 +153,7 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 
 	Res.fromDouble(b, true);
 
-	delete a; delete b;
+	delete [] a; delete [] b;
 }
 
 template <class T>
