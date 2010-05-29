@@ -23,6 +23,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		const IColumnChecksumMatrix<T>& Ac = dynamic_cast<const IColumnChecksumMatrix<T>&>(A);
 		const IRowChecksumMatrix<T>& Br = dynamic_cast<const IRowChecksumMatrix<T>&>(B);
 
+		cout << endl << "+++++++++++++++++++++++++++ Avec extension +++++++++++++++++++++++++++++" << endl;
 		if(MatrixType == 0) {
 			gettimeofday(&start, NULL);
 			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
@@ -65,18 +66,19 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		cout << Ac.getColumnSummationVector().getN() << endl;
 		cout << Br.getM() << endl;
 		cout << Br.getN() << endl;
-		CalculatorNaiveMult<PSTL_TYPE_SUM, PSTL_TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
-		cout << "coucou" << endl;
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
+
 		cout << Resf.getRowSummationVector().getM() << endl;
 		cout << Resf.getRowSummationVector().getN() << endl;
 		cout << Ac.getColumnMatrix().getM() << endl;
 		cout << Ac.getColumnMatrix().getN() << endl;
 		cout << Br.getRowSummationVector().getM() << endl;
 		cout << Br.getRowSummationVector().getN() << endl;
-		CalculatorNaiveMult<PSTL_TYPE_SUM, T, PSTL_TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
+		CalculatorNaiveMult<TYPE_SUM, T, TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
 
 	} catch (bad_cast) {
 
+		cout << endl << "+++++++++++++++++++++++++++ Sans extension +++++++++++++++++++++++++++++" << endl;
 		if(MatrixType == 0) {
 			gettimeofday(&start, NULL);
 			res = new double[Res.getM() * Res.getN()];

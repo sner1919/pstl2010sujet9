@@ -3,6 +3,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <vector>
+#include <cmath>
+#include <limits>
 
 template <class T>
 ErrorGenerator<T>::ErrorGenerator() {
@@ -41,7 +43,7 @@ void* ErrorGenerator<T>::thread(void* arg) {
 		} while(contains);
 
 		// modification d'une valeur
-		do { x = rand(); } while(M(l, c) == x);
+		do { x -= 1; } while(M(l, c) == x);
 		M(l, c) = x;
 
 		ids.push_back(id);

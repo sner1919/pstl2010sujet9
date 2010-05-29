@@ -15,4 +15,4 @@ PSTL_TYPE_UNION Vector<T>::operator()(int i) const {
 }
 
 template class Vector<double>;
-template class Vector<PSTL_TYPE_SUM>;
+template class Vector<TYPE_SUM>;
