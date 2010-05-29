@@ -5,7 +5,7 @@
 int main( int argc, char **argv) {
 	/* ----------------------------------- */
     cout.precision(STREAM_PRECISION);
-    mpf_set_default_prec(512);
+    mpf_set_default_prec(TYPE_SUM_PRECISION);
 	/* ----------------------------------- */
 
 	CppUnit::TextUi::TestRunner runner;

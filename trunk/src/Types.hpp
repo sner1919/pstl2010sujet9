@@ -16,6 +16,7 @@ bool equal(double a, double b, int eps1, int eps0);
 
 typedef mpf_class TYPE_SUM;
 #define TYPE_SUM_TO_DOUBLE(x) x.get_d()
+#define TYPE_SUM_PRECISION 128
 
 class PSTL_TYPE_UNION {
 	public:
