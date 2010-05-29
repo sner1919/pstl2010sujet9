@@ -77,13 +77,13 @@ bool equal(double a, double b, int eps1, int eps0) {
 
 PSTL_TYPE_UNION::PSTL_TYPE_UNION(double& x) : type(0), d(&x) {}
 
-PSTL_TYPE_UNION::PSTL_TYPE_UNION(PSTL_TYPE_SUM& x) : type(1), s(&x) {}
+PSTL_TYPE_UNION::PSTL_TYPE_UNION(TYPE_SUM& x) : type(1), s(&x) {}
 
 double PSTL_TYPE_UNION::toDouble() {
 	return (type == 0 ? *d : s->get_d());
 }
 
-PSTL_TYPE_SUM PSTL_TYPE_UNION::toTypeSum() {
+TYPE_SUM PSTL_TYPE_UNION::toTypeSum() {
 	return (type == 0 ? *d : *s);
 }
 
@@ -99,7 +99,7 @@ PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator=(const double& x) {
 	return *this;
 }
 
-PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator=(const PSTL_TYPE_SUM& x) {
+PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator=(const TYPE_SUM& x) {
 	if(type == 0) *d = x.get_d();
 	else *s = x;
 	return *this;
@@ -107,7 +107,7 @@ PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator=(const PSTL_TYPE_SUM& x) {
 
 PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator+=(const PSTL_TYPE_UNION& x) {
 	if(type == 0) {
-		PSTL_TYPE_SUM aux = *d;
+		TYPE_SUM aux = *d;
 		aux += (x.type == 0 ? *x.d : *x.s);
 		*d = aux.get_d();
 	} else *s += (x.type == 0 ? *x.d : *x.s);
@@ -116,16 +116,16 @@ PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator+=(const PSTL_TYPE_UNION& x) {
 
 PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator+=(const double& x) {
 	if(type == 0) {
-		PSTL_TYPE_SUM aux = *d;
+		TYPE_SUM aux = *d;
 		aux += x;
 		*d = aux.get_d();
 	} else *s += x;
 	return *this;
 }
 
-PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator+=(const PSTL_TYPE_SUM& x) {
+PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator+=(const TYPE_SUM& x) {
 	if(type == 0) {
-		PSTL_TYPE_SUM aux = *d;
+		TYPE_SUM aux = *d;
 		aux += x;
 		*d = aux.get_d();
 	} else *s += x;
@@ -140,7 +140,7 @@ PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator-=(const double& x) {
 	return operator+=(-x);
 }
 
-PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator-=(const PSTL_TYPE_SUM& x) {
+PSTL_TYPE_UNION& PSTL_TYPE_UNION::operator-=(const TYPE_SUM& x) {
 	return operator+=(-x);
 }
 
@@ -152,7 +152,7 @@ bool PSTL_TYPE_UNION::operator==(const double& x) const {
 	return (type == 0 ? *d : *s) == x;
 }
 
-bool PSTL_TYPE_UNION::operator==(const PSTL_TYPE_SUM& x) const {
+bool PSTL_TYPE_UNION::operator==(const TYPE_SUM& x) const {
 	return (type == 0 ? *d : *s) == x.get_d();
 }
 
@@ -164,7 +164,7 @@ bool PSTL_TYPE_UNION::operator!=(const double& x) const {
 	return !operator==(x);
 }
 
-bool PSTL_TYPE_UNION::operator!=(const PSTL_TYPE_SUM& x) const {
+bool PSTL_TYPE_UNION::operator!=(const TYPE_SUM& x) const {
 	return !operator==(x);
 }
 

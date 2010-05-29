@@ -4,8 +4,8 @@
 
 int main( int argc, char **argv) {
 	/* ----------------------------------- */
-    cout.precision(50);
-    mpf_set_default_prec(128);
+    cout.precision(STREAM_PRECISION);
+    mpf_set_default_prec(512);
 	/* ----------------------------------- */
 
 	CppUnit::TextUi::TestRunner runner;

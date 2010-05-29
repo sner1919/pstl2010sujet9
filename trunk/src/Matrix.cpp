@@ -76,6 +76,7 @@ template <class T>
 string Matrix<T>::toString() const {
 	ostringstream oss;
 
+	oss.precision(STREAM_PRECISION);
 	oss << "[" << endl;
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
@@ -141,4 +142,4 @@ void Matrix<T>::toDouble(double* t, bool rowMajor) const {
 }
 
 template class Matrix<double>;
-template class Matrix<PSTL_TYPE_SUM>;
+template class Matrix<TYPE_SUM>;

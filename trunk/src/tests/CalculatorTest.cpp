@@ -72,16 +72,8 @@ void CalculatorTest::testMult() {
 		CPPUNIT_ASSERT(Aux1 == *A);
 		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
 
-		CPPUNIT_ASSERT(!(Aux1f == *Af)); cout << " << " << endl;
-		cout << "k : " << k << endl;
-
-		cout << "Aux1f : " << Aux1f.toString() << endl;
-		cout << "Lc : " << Lc->toString() << endl;
-		cout << "Ur : " << Ur->toString() << endl;
+		CPPUNIT_ASSERT(!(Aux1f == *Af));
 		calc[k]->mult(Aux1f, *Lc, *Ur);
-		cout << "+Aux1f : " << Aux1f.toString() << endl;
-		cout << "+Lc : " << Lc->toString() << endl;
-		cout << "+Ur : " << Ur->toString() << endl;
 		CPPUNIT_ASSERT(Aux1f == *Af);
 		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
 		cout << " >> " << endl;
@@ -91,6 +83,7 @@ void CalculatorTest::testMult() {
 void CalculatorTest::testSMult() {
 	Matrix<double> Aux1(2, 2);
     FullChecksumMatrix<double> Aux1f(Aux1);
+
 	Matrix<double> Aux2(2, 2);
     Aux2(1, 1) = 8.; Aux2(1, 2) = 6.;
     Aux2(2, 1) = 12.; Aux2(2, 2) = 6.;
@@ -102,32 +95,44 @@ void CalculatorTest::testSMult() {
 		CPPUNIT_ASSERT(Aux1 == Aux2);
 		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
 
-		/*CPPUNIT_ASSERT(!(*Aux1f == *Aux2f));
-		calc[k]->mult(*Aux1f, *Af, 2.);
-		CPPUNIT_ASSERT(*Aux1f == *Aux2f);
-		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;*/
+		CPPUNIT_ASSERT(!(Aux1f == Aux2f));
+		calc[k]->mult(Aux1f, *Af, 2.);
+		CPPUNIT_ASSERT(Aux1f == Aux2f);
+		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
 	}
 }
 
 void CalculatorTest::testAdd() {
 	Matrix<double> Aux1(2, 2);
     FullChecksumMatrix<double> Aux1f(Aux1);
+
 	Matrix<double> Aux2(2, 2);
     Aux2(1, 1) = 5.; Aux2(1, 2) = 3.;
     Aux2(2, 1) = 1.5; Aux2(2, 2) = -0.5;
     FullChecksumMatrix<double> Aux2f(Aux2);
+
+	Matrix<double> Aux3(2, 2);
+    Aux3(1, 1) = 9.; Aux3(1, 2) = 6.;
+    Aux3(2, 1) = 7.5; Aux3(2, 2) = 2.5;
+    FullChecksumMatrix<double> Aux3f(Aux3);
 
 	for(unsigned int k = 0; k < calc.size(); k++){
 		CPPUNIT_ASSERT(!(Aux1 == Aux2));
 		calc[k]->add(Aux1, *L, *U);
 		CPPUNIT_ASSERT(Aux1 == Aux2);
 		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
+
+		CPPUNIT_ASSERT(!(Aux1f == Aux3f));
+		calc[k]->add(Aux1f, *Af, Aux2f);
+		CPPUNIT_ASSERT(Aux1f == Aux3f);
+		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
 	}
 }
 
 void CalculatorTest::testTranspose() {
 	Matrix<double> Aux1(2, 2);
     FullChecksumMatrix<double> Aux1f(Aux1);
+
 	Matrix<double> Aux2(2, 2);
     Aux2(1, 1) = 4.; Aux2(1, 2) = 0.;
     Aux2(2, 1) = 3.; Aux2(2, 2) = -1.5;

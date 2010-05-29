@@ -48,9 +48,9 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 	if(!(A.getM() == L.getM() && A.getN() == U.getN()
 		 && A.getM() == A.getN())) throw domain_error("décomposition LU impossible");
 
-	PSTL_TYPE_SUM** c = new PSTL_TYPE_SUM*[A.getM()];
+	TYPE_SUM** c = new TYPE_SUM*[A.getM()];
 	for(int i = 1; i <= A.getM(); i++) {
-		c[i-1] = new PSTL_TYPE_SUM[A.getM()];
+		c[i-1] = new TYPE_SUM[A.getM()];
 		for(int j = 1; j <= A.getM(); j++) {
 			c[i-1][j-1] = A(i, j).toTypeSum();
 
@@ -88,8 +88,7 @@ template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Re
 	if(!(A.getN() == B.getM()
 		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
 
-    mpf_set_default_prec(512);
-	PSTL_TYPE_SUM s;
+    TYPE_SUM s;
 
 	for(int i = 1; i <= Res.getM(); i++) {
 		for(int j = 1; j <= Res.getN(); j++) {
@@ -118,5 +117,5 @@ template <class T1, class T2, class T3, class T4> void CalculatorNaiveLU(IMatrix
 
 }
 
-template void CalculatorNaiveMult(IMatrix<PSTL_TYPE_SUM>&, const IMatrix<PSTL_TYPE_SUM>&, const IMatrix<double>&);
-template void CalculatorNaiveMult(IMatrix<PSTL_TYPE_SUM>&, const IMatrix<double>&, const IMatrix<PSTL_TYPE_SUM>&);
+template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&, const IMatrix<double>&);
+template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<double>&, const IMatrix<TYPE_SUM>&);

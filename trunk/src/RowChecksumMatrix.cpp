@@ -12,7 +12,7 @@ template <class T>
 RowChecksumMatrix<T>::RowChecksumMatrix(IMatrix<T>& M) :
 Matrix<T>(M.getData(), M.getM(), M.getN() + 1),
 matrix(M),
-rowSummationVector(*(new Vector<PSTL_TYPE_SUM>(this->getM(), false))),
+rowSummationVector(*(new Vector<TYPE_SUM>(this->getM(), false))),
 dataAllocation(true) {
 	for(int i = 1; i <= this->getM(); i++) {
 		rowSummationVector(i) = 0;
@@ -22,7 +22,7 @@ dataAllocation(true) {
 
 template <class T>
 RowChecksumMatrix<T>::~RowChecksumMatrix() {
-	if(dataAllocation) delete dynamic_cast<Vector<PSTL_TYPE_SUM>*>(&rowSummationVector);
+	if(dataAllocation) delete dynamic_cast<Vector<TYPE_SUM>*>(&rowSummationVector);
 }
 
 template <class T>
@@ -36,13 +36,13 @@ IMatrix<T>& RowChecksumMatrix<T>::getRowMatrix() const {
 }
 
 template <class T>
-IVector<PSTL_TYPE_SUM>& RowChecksumMatrix<T>::getRowSummationVector() const {
+IVector<TYPE_SUM>& RowChecksumMatrix<T>::getRowSummationVector() const {
 	return rowSummationVector;
 }
 
 template <class T>
-PSTL_TYPE_SUM RowChecksumMatrix<T>::computeRowSum(int i) const {
-	PSTL_TYPE_SUM sum = 0;
+TYPE_SUM RowChecksumMatrix<T>::computeRowSum(int i) const {
+	TYPE_SUM sum = 0;
 
 	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j).toTypeSum();
 
@@ -51,7 +51,7 @@ PSTL_TYPE_SUM RowChecksumMatrix<T>::computeRowSum(int i) const {
 
 template <class T>
 bool RowChecksumMatrix<T>::rowErrorDetection() const {
-	for(int i = 1; i <= this->getM(); i++) if(!equal(PSTL_TYPE_SUM_TO_DOUBLE(computeRowSum(i)), 0., EPS1, 0)) return true;
+	for(int i = 1; i <= this->getM(); i++) if(!equal(TYPE_SUM_TO_DOUBLE(computeRowSum(i)), 0., EPS1, 0)) return true;
 
 	return false;
 }

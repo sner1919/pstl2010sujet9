@@ -10,7 +10,7 @@ LINK = $(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
-OBJ = $(BINDIR)/Types.o $(BINDIR)/Types.o  $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/CalculatorNaive.o $(BINDIR)/CalculatorBlasLapack.o $(BINDIR)/AtlasAdapter.o $(BINDIR)/GotoBlasAdapter.o $(BINDIR)/IntelMKLAdapter.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
+OBJ = $(BINDIR)/Types.o $(BINDIR)/Types.o $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/CalculatorNaive.o $(BINDIR)/CalculatorBlasLapack.o $(BINDIR)/AtlasAdapter.o $(BINDIR)/GotoBlasAdapter.o $(BINDIR)/IntelMKLAdapter.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
 OBJTEST = $(OBJ) $(BINDIR)/tests/TypesTest.o $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/VectorTest.o $(BINDIR)/tests/RowChecksumMatrixTest.o $(BINDIR)/tests/ColumnChecksumMatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o $(BINDIR)/tests/CalculatorTest.o $(BINDIR)/tests/ErrorGeneratorTest.o $(BINDIR)/tests/BenchmarkTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
@@ -18,9 +18,9 @@ PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 all : $(PROGS)
 
 clean :
-	rm -f $(PROGS) $(BINDIR)/*.o $(BINDIR)/tests/*.o
+	rm -f $(PROGS) $(OBJTEST)
 
-.PHONY: all clean
+.PHONY : all clean
 
 # +++++++++++++++++++ Fichiers exécutables +++++++++++++++++++
 $(BINDIR)/PSTL : $(SRCDIR)/PSTL.cpp $(OBJ)

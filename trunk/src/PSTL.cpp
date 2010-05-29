@@ -58,8 +58,8 @@ using namespace std;
 int main(int argc, char* argv[]) {
     try{
     	/* ----------------------------------- */
-        cout.precision(50);
-        mpf_set_default_prec(128);
+        cout.precision(STREAM_PRECISION);
+        mpf_set_default_prec(512);
     	/* ----------------------------------- */
 
     	CalculatorNaive<double> calc;
@@ -237,15 +237,15 @@ int main(int argc, char* argv[]) {
 		cout << "--------------------------" << endl;
 
 
-		PSTL_TYPE_SUM a2 = 0.1;
+		TYPE_SUM a2 = 0.1;
 		a2 += 0.2;
-		PSTL_TYPE_SUM b2 = 0.3;
+		TYPE_SUM b2 = 0.3;
 		cout << "a2 : " << a2 << endl;
 		cout << "b2 : " << b2 << endl;
 		cout << "a2 - b2 : " << a2 - b2 << endl;
 		cout << "a2.get_d() - b2 : " << a2.get_d() - b2 << endl;
-		PSTL_TYPE_SUM res1 = a2.get_d() - b2;
-		PSTL_TYPE_SUM res2 = a2 - b2;
+		TYPE_SUM res1 = a2.get_d() - b2;
+		TYPE_SUM res2 = a2 - b2;
 		cout << "res1.get_d() : " << res1.get_d() << endl;
 		cout << "res2.get_d() : " << res2.get_d() << endl;
 
