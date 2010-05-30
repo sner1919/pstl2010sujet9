@@ -76,7 +76,6 @@ int main(int argc, char* argv[]) {
         Matrix<double> A(2, 2);
 
         cout << "L = " << L.toString() << endl;
-    	cout << "coucou" << endl;
         cout << "LBis = " << LBis.toString() << endl;
         cout << "U = " << U.toString() << endl;
 

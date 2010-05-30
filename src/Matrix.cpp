@@ -103,7 +103,7 @@ int Matrix<T>::distance(const IMatrix<T>& M) const {
 
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
-			if(!equal(fabs((*this)(i, j).toDouble() - M(i, j).toDouble()), 0., EPS1, 0)) n++;
+			if(!equal((*this)(i, j).toDouble(), M(i, j).toDouble(), EPS1, EPS0)) n++;
 		}
 	}
 

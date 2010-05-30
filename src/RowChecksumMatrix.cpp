@@ -50,8 +50,17 @@ TYPE_SUM RowChecksumMatrix<T>::computeRowSum(int i) const {
 }
 
 template <class T>
+bool RowChecksumMatrix<T>::rowErrorDetection(int i) const {
+	TYPE_SUM sum = 0;
+
+	for(int j = 1; j < this->getN(); j++) sum += (*this)(i, j).toTypeSum();
+
+	return !equal(TYPE_SUM_TO_DOUBLE(sum), (*this)(i, this->getN()).toDouble(), EPS1, EPS0);
+}
+
+template <class T>
 bool RowChecksumMatrix<T>::rowErrorDetection() const {
-	for(int i = 1; i <= this->getM(); i++) if(!equal(TYPE_SUM_TO_DOUBLE(computeRowSum(i)), 0., EPS1, 0)) return true;
+	for(int i = 1; i <= this->getM(); i++) if(rowErrorDetection(i)) return true;
 
 	return false;
 }

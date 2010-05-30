@@ -26,6 +26,13 @@ template <class T> class IColumnChecksumMatrix : public virtual IMatrix<T> {
 
         /*
 		 * Indique si une erreur a été détectée dans une colonne.
+		 * @param j l'indice de la ligne
+		 * @return vrai si au moins une erreur a été détectée, faux sinon
+		 */
+        virtual bool columnErrorDetection(int j) const = 0;
+
+        /*
+		 * Indique si une erreur a été détectée dans une colonne.
 		 * @return vrai si au moins une erreur a été détectée, faux sinon
 		 */
         virtual bool columnErrorDetection() const = 0;

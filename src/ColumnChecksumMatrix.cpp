@@ -42,8 +42,16 @@ TYPE_SUM ColumnChecksumMatrix<T>::computeColumnSum(int j) const {
 }
 
 template <class T>
+bool ColumnChecksumMatrix<T>::columnErrorDetection(int j) const {
+	TYPE_SUM sum = 0;
+	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toTypeSum();
+	return !equal(TYPE_SUM_TO_DOUBLE(sum), (*this)(this->getM(),j).toDouble(), EPS1, EPS0);
+}
+
+
+template <class T>
 bool ColumnChecksumMatrix<T>::columnErrorDetection() const {
-	for(int j = 1; j <= this->getN(); j++) if(!equal(TYPE_SUM_TO_DOUBLE(computeColumnSum(j)), 0., EPS1, 0)) return true;
+	for(int j = 1; j <= this->getN(); j++) if(columnErrorDetection(j)) return true;
 
 	return false;
 }
