@@ -8,4 +8,4 @@ using namespace std;
 
 #define STREAM_PRECISION 50
 #define EPS1 0
-#define EPS0 200000
+#define EPS0 1000000
