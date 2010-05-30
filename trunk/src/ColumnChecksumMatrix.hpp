@@ -29,5 +29,8 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
         TYPE_SUM computeColumnSum(int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
+        bool columnErrorDetection(int j) const;
+
+        // implémentation de IColumnChecksumMatrix<T>
         bool columnErrorDetection() const;
 };

@@ -37,5 +37,8 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
         TYPE_SUM computeRowSum(int i) const;
 
         // implémentation de IRowChecksumMatrix<T>
+        bool rowErrorDetection(int i) const;
+
+        // implémentation de IRowChecksumMatrix<T>
         bool rowErrorDetection() const;
 };

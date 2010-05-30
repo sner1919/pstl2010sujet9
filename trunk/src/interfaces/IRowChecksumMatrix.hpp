@@ -25,6 +25,13 @@ template <class T> class IRowChecksumMatrix : public virtual IMatrix<T> {
         virtual TYPE_SUM computeRowSum(int i) const = 0;
 
         /*
+         * Indique si une erreur a été détectée dans une ligne.
+         * @param i l'indice de la ligne
+         * @return vrai si au moins une erreur a été détectée, faux sinon
+         */
+        virtual bool rowErrorDetection(int i) const = 0;
+
+        /*
 		 * Indique si une erreur a été détectée dans une ligne.
 		 * @return vrai si au moins une erreur a été détectée, faux sinon
 		 */

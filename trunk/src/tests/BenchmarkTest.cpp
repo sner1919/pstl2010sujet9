@@ -29,7 +29,7 @@ void BenchmarkTest::testPerf() {
 	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 0);
 	ErrorGenerator<double> generator;
 	pthread_t th;
-	int n = 1;
+	int n = 3000;
 	Matrix<double> A(n, n);
 	Matrix<double> B(n, n);
 	Matrix<double> C1(n, n);
@@ -46,8 +46,8 @@ void BenchmarkTest::testPerf() {
 	 */
 	for(int i = 1; i <= n; i++){
 		for(int j = 1; j <= n; j++) {
-			A(i, j) = fmod(rand(), sqrt(numeric_limits<double>::max() / n));
-			B(i, j) = fmod(rand(), sqrt(numeric_limits<double>::max() / n));
+			A(i, j) = fmod(((float) rand() / (float) RAND_MAX - 0.5) * 2 * numeric_limits<double>::max(), sqrt(numeric_limits<double>::max() / n));
+			B(i, j) = fmod(((float) rand() / (float) RAND_MAX - 0.5) * 2 * numeric_limits<double>::max(), sqrt(numeric_limits<double>::max() / n));
 		}
 	}
 
@@ -63,21 +63,21 @@ void BenchmarkTest::testPerf() {
 	extensionTime = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 
 	if(n <= 500) {
-		cout << "C1f.getColumnSummationVector()(1).toTypeSum().get_prec() : " << C1f.getColumnSummationVector()(1).toTypeSum().get_prec() << endl;
+		/*cout << "C1f.getColumnSummationVector()(1).toTypeSum().get_prec() : " << C1f.getColumnSummationVector()(1).toTypeSum().get_prec() << endl;
 		cout << "Ac : " << Ac.toString() << endl;
 		cout << "Br : " << Br.toString() << endl;
 		cout << "C1f : " << C1f.toString() << endl;
 		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;*/
 		gettimeofday(&start, NULL);
 		calculatorNaive.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
-		cout << "	- Naïf : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		/*cout << "	- Naïf : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		cout << "Ac : " << Ac.toString() << endl;
 		cout << "Br : " << Br.toString() << endl;
 		cout << "C1f : " << C1f.toString() << endl;
 		cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+		cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;*/
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 	}
@@ -109,6 +109,32 @@ void BenchmarkTest::testPerf() {
 	cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
+
+	gettimeofday(&start, NULL);
+	calculatorGotoBlas.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
+
+	gettimeofday(&start, NULL);
+	calculatorGotoBlas.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
+
+	gettimeofday(&start, NULL);
+	calculatorIntelMKL.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+	gettimeofday(&start, NULL);
+	calculatorIntelMKL.mult(C1f, Ac, Br);
+	gettimeofday(&end, NULL);
+	CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+	cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 	gettimeofday(&start, NULL);
 	calculatorIntelMKL.mult(C1f, Ac, Br);

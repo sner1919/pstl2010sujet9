@@ -26,11 +26,11 @@ bool FullChecksumMatrix<T>::errorCorrection() {
 	vector<int> c;
 
 	for(int i = 1; i <= this->getM(); i++){
-		if(!equal(TYPE_SUM_TO_DOUBLE(this->computeRowSum(i)), 0., EPS1, 0)) r.push_back(i);
+		if(this->rowErrorDetection(i)) r.push_back(i);
 	}
 
 	for(int j = 1; j <= this->getN(); j++){
-		if(!equal(TYPE_SUM_TO_DOUBLE(this->computeColumnSum(j)), 0., EPS1, 0)) c.push_back(j);
+		if(this->columnErrorDetection(j)) c.push_back(j);
 	}
 
 	if(r.size() + c.size() > 0){
