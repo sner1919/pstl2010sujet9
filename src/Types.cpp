@@ -1,5 +1,6 @@
 #include "Types.hpp"
 #include <cstdlib>
+#include <limits>
 
 int floatToIndex(float a) {
 	int ai = *(int*) &a;
@@ -73,6 +74,14 @@ bool equal(double a, double b, int eps1, int eps0) {
 	} else {
 		return false;
 	}
+}
+
+double randDouble() {
+	int ai[2];
+
+	for(int i = 0; i < 2; i++) ai[i] = rand() << 16 | (rand() << 16) >> 16;
+
+	return indexToDouble(ai[1], ai[0]);
 }
 
 TYPE_UNION::TYPE_UNION(double& x) : type(0), d(&x) {}
