@@ -10,5 +10,5 @@ template <class T> class IVector : public virtual IMatrix<T> {
 		 * @param i l'indice
 		 * @return l'élément à l'indice i
 		 */
-		virtual PSTL_TYPE_UNION operator()(int i) const = 0;
+		virtual TYPE_UNION operator()(int i) const = 0;
 };

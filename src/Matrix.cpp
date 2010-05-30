@@ -48,8 +48,8 @@ bool Matrix<T>::getDataAllocation() const {
 }
 
 template <class T>
-PSTL_TYPE_UNION Matrix<T>::operator()(int i, int j) const {
-	PSTL_TYPE_UNION v(data[(i - 1) * getN() + (j - 1)]);
+TYPE_UNION Matrix<T>::operator()(int i, int j) const {
+	TYPE_UNION v(data[(i - 1) * getN() + (j - 1)]);
 	return v;
 }
 

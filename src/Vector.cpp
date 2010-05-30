@@ -10,7 +10,7 @@ template <class T>
 Vector<T>::Vector(T* data, int m, bool line) : Matrix<T>(data, line ? 1 : m, line ? m : 1), line(line) {}
 
 template <class T>
-PSTL_TYPE_UNION Vector<T>::operator()(int i) const {
+TYPE_UNION Vector<T>::operator()(int i) const {
 	return Matrix<T>::operator()(1, i);
 }
 

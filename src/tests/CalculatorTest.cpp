@@ -76,7 +76,6 @@ void CalculatorTest::testMult() {
 		calc[k]->mult(Aux1f, *Lc, *Ur);
 		CPPUNIT_ASSERT(Aux1f == *Af);
 		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
-		cout << " >> " << endl;
 	}
 }
 

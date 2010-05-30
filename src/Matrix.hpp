@@ -45,7 +45,7 @@ class Matrix : public virtual IMatrix<T> {
         bool getDataAllocation() const;
 
         // implémentation de IMatrix<T>
-        PSTL_TYPE_UNION operator()(int i, int j) const;
+        TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IMatrix<T>
         IMatrix<T>& operator=(const IMatrix<T>& M);

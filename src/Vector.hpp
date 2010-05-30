@@ -30,5 +30,5 @@ class Vector : public Matrix<T>, public virtual IVector<T> {
 		Vector(T* data, int m, bool line);
 
         // implémentation de IVector<T>
-		PSTL_TYPE_UNION operator()(int i) const;
+		TYPE_UNION operator()(int i) const;
 };

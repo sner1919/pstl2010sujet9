@@ -24,9 +24,9 @@ void BenchmarkTest::testPerf() {
 	AtlasAdapter atlasAdapter;
 	GotoBlasAdapter gotoBlasAdapter;
 	IntelMKLAdapter intelMKLAdapter;
-	CalculatorBlasLapack<double> calculatorAtlas(atlasAdapter, 0);
-	CalculatorBlasLapack<double> calculatorGotoBlas(gotoBlasAdapter, 0);
-	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 0);
+	CalculatorBlasLapack<double> calculatorAtlas(atlasAdapter, 1);
+	CalculatorBlasLapack<double> calculatorGotoBlas(gotoBlasAdapter, 1);
+	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 1);
 	ErrorGenerator<double> generator;
 	pthread_t th;
 	int n = 3000;

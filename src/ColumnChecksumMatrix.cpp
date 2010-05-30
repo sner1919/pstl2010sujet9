@@ -18,7 +18,7 @@ ColumnChecksumMatrix<T>::~ColumnChecksumMatrix() {
 }
 
 template <class T>
-PSTL_TYPE_UNION ColumnChecksumMatrix<T>::operator()(int i, int j) const {
+TYPE_UNION ColumnChecksumMatrix<T>::operator()(int i, int j) const {
 	return i == this->getM() ? columnSummationVector(j) : matrix(i, j);
 }
 
@@ -44,8 +44,10 @@ TYPE_SUM ColumnChecksumMatrix<T>::computeColumnSum(int j) const {
 template <class T>
 bool ColumnChecksumMatrix<T>::columnErrorDetection(int j) const {
 	TYPE_SUM sum = 0;
+
 	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toTypeSum();
-	return !equal(TYPE_SUM_TO_DOUBLE(sum), (*this)(this->getM(),j).toDouble(), EPS1, EPS0);
+
+	return !equal(TYPE_SUM_TO_DOUBLE(sum), (*this)(this->getM(), j).toDouble(), EPS1, EPS0);
 }
 
 
