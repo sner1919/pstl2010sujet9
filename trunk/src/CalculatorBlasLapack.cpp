@@ -119,15 +119,55 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 	// Vérifications
 	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
 
-	double *a = new double[A.getM() * A.getN()];
+	double *res;
 
-	A.toDouble(a, true);
+	try {
 
-	blasLapackAdapter.dscal(Res.getM() * Res.getN(), x, a, 1);
+		IFullChecksumMatrix<T>& Resf = dynamic_cast<IFullChecksumMatrix<T>&>(Res);
+		const IFullChecksumMatrix<T>& Af = dynamic_cast<const IFullChecksumMatrix<T>&>(A);
 
-	Res.fromDouble(a, true);
+		if(MatrixType == 0) {
+			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
 
-	delete [] a;
+			Af.getRowMatrix().toDouble(res, true);
+		} else {
+			res = Resf.getRowMatrix().getData();
+
+			copy(Af.getRowMatrix().getData(), Af.getRowMatrix().getData() + (Resf.getM() - 1) * (Resf.getN() - 1), res);
+		}
+
+		blasLapackAdapter.dscal((Resf.getM() - 1) * (Resf.getN() - 1), x, res, 1);
+
+		if(MatrixType == 0) {
+			Resf.getRowMatrix().fromDouble(res, true);
+		}
+
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), x);
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getRowSummationVector(), Af.getRowSummationVector(), x);
+
+	} catch (bad_cast) {
+
+		if(MatrixType == 0) {
+			res = new double[Res.getM() * Res.getN()];
+
+			A.toDouble(res, true);
+		} else {
+			res = Res.getData();
+
+			copy(A.getData(), A.getData() + Res.getM() * Res.getN(), res);
+		}
+
+		blasLapackAdapter.dscal(Res.getM() * Res.getN(), x, res, 1);
+
+		if(MatrixType == 0) {
+			Res.fromDouble(res, true);
+		}
+
+	}
+
+	if(MatrixType == 0) {
+		delete [] res;
+	}
 }
 
 template <class T>
@@ -136,16 +176,62 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 	if(!(A.getM() == B.getM() && A.getM() == Res.getM()
 		 && A.getN() == B.getN() && A.getN() == Res.getN())) throw domain_error("addition impossible");
 
-	double *a = new double[A.getM() * A.getN()], *b = new double[B.getM() * B.getN()];
+	double *res, *a;
 
-	A.toDouble(a, true);
-	B.toDouble(b, true);
+	try {
 
-	blasLapackAdapter.daxpy(Res.getM() * Res.getN(), 1, a, 1, b, 1);
+		IFullChecksumMatrix<T>& Resf = dynamic_cast<IFullChecksumMatrix<T>&>(Res);
+		const IFullChecksumMatrix<T>& Af = dynamic_cast<const IFullChecksumMatrix<T>&>(A);
+		const IFullChecksumMatrix<T>& Bf = dynamic_cast<const IFullChecksumMatrix<T>&>(B);
 
-	Res.fromDouble(b, true);
+		if(MatrixType == 0) {
+			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
+			a = new double[(Af.getM() - 1) * (Af.getN() - 1)];
 
-	delete [] a; delete [] b;
+			Bf.getRowMatrix().toDouble(res, true);
+			Af.getRowMatrix().toDouble(a, true);
+		} else {
+			res = Resf.getRowMatrix().getData();
+			a = Af.getRowMatrix().getData();
+
+			copy(Bf.getRowMatrix().getData(), Bf.getRowMatrix().getData() + (Resf.getM() - 1) * (Resf.getN() - 1), res);
+		}
+
+		blasLapackAdapter.daxpy((Resf.getM() - 1) * (Resf.getN() - 1), 1, a, 1, res, 1);
+
+		if(MatrixType == 0) {
+			Resf.getRowMatrix().fromDouble(res, true);
+		}
+
+		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), Bf.getColumnSummationVector());
+		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getRowSummationVector(), Af.getRowSummationVector(), Bf.getRowSummationVector());
+
+	} catch (bad_cast) {
+
+		if(MatrixType == 0) {
+			res = new double[Res.getM() * Res.getN()];
+			a = new double[A.getM() * A.getN()];
+
+			B.toDouble(res, true);
+			A.toDouble(a, true);
+		} else {
+			res = Res.getData();
+			a = A.getData();
+
+			copy(B.getData(), B.getData() + Res.getM() * Res.getN(), res);
+		}
+
+		blasLapackAdapter.daxpy(Res.getM() * Res.getN(), 1, a, 1, res, 1);
+
+		if(MatrixType == 0) {
+			Res.fromDouble(res, true);
+		}
+
+	}
+
+	if(MatrixType == 0) {
+		delete [] res; delete [] a;
+	}
 }
 
 template <class T>

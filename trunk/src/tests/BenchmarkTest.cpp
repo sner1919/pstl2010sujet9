@@ -29,7 +29,7 @@ void BenchmarkTest::testPerf() {
 	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 1);
 	ErrorGenerator<double> generator;
 	pthread_t th;
-	int n = 3000;
+	int n = 100;
 	Matrix<double> A(n, n);
 	Matrix<double> B(n, n);
 	Matrix<double> C1(n, n);

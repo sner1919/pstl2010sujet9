@@ -7,27 +7,12 @@ void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatri
 
 template <class T>
 void CalculatorNaive<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) const {
-	// Vérifications
-	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
-
-	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j<= Res.getN(); j++) {
-			Res(i, j) = A(i, j).toTypeSum() * x;
-		}
-	}
+	CalculatorNaiveMult<T, T, T>(Res, A, x);
 }
 
 template <class T>
 void CalculatorNaive<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
-	// Vérifications
-	if(!(A.getM() == B.getM() && A.getM() == Res.getM()
-		 && A.getN() == B.getN() && A.getN() == Res.getN())) throw domain_error("addition impossible");
-
-	for(int i = 1; i <= Res.getM(); i++){
-		for(int j = 1; j <= Res.getN(); j++) {
-			Res(i, j) = A(i, j).toTypeSum() + B(i, j).toTypeSum();
-		}
-	}
+	CalculatorNaiveAdd<T, T, T>(Res, A, B);
 }
 
 template <class T>
@@ -83,6 +68,7 @@ void CalculatorNaive<T>::LU(IMatrix<T>& P, IMatrix<T>& L, IMatrix<T>& U, const I
 
 template class CalculatorNaive<double>;
 
+/* +++++++++++++++++++++++ fonctions template  +++++++++++++++++++++++++++ */
 template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B) {
 	// Vérifications
 	if(!(A.getN() == B.getM()
@@ -102,20 +88,34 @@ template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Re
 }
 
 template <class T1, class T2, class T3> void CalculatorNaiveMult(IMatrix<T1>& Res, const IMatrix<T2>& A, T3 x) {
+	// Vérifications
+	if(!(Res.getM() == A.getM() && Res.getN() == A.getN())) throw domain_error("produit impossible");
 
+	for(int i = 1; i <= Res.getM(); i++){
+		for(int j = 1; j<= Res.getN(); j++) {
+			Res(i, j) = A(i, j).toTypeSum() * x;
+		}
+	}
 }
 
 template <class T1, class T2, class T3> void CalculatorNaiveAdd(IMatrix<T1>& Res, const IMatrix<T2>& A, const IMatrix<T3>& B) {
+	// Vérifications
+	if(!(A.getM() == B.getM() && A.getM() == Res.getM()
+		 && A.getN() == B.getN() && A.getN() == Res.getN())) throw domain_error("addition impossible");
 
+	for(int i = 1; i <= Res.getM(); i++){
+		for(int j = 1; j <= Res.getN(); j++) {
+			Res(i, j) = A(i, j).toTypeSum() + B(i, j).toTypeSum();
+		}
+	}
 }
+/* ----------------------------------------------------------------------- */
 
-template <class T1, class T2, class T3> void CalculatorNaiveTranspose(IMatrix<T1>& Res, const IMatrix<T2>& A) {
-
-}
-
-template <class T1, class T2, class T3, class T4> void CalculatorNaiveLU(IMatrix<T1>& P, IMatrix<T2>& L, IMatrix<T3>& U, const IMatrix<T4>& A) {
-
-}
-
+/* +++++++++++++++++++++++ instanciation des fonctions template pour CalculatorBlasLapack +++++++++++++++++++++++++++ */
 template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&, const IMatrix<double>&);
 template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<double>&, const IMatrix<TYPE_SUM>&);
+
+template void CalculatorNaiveMult(IMatrix<TYPE_SUM>& Res, const IMatrix<TYPE_SUM>& A, double x);
+
+template void CalculatorNaiveAdd(IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&);
+/* ------------------------------------------------------------------------------------------------------------------ */
