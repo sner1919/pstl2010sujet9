@@ -60,21 +60,11 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 			cout << "	- fromDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		}
 
-		cout << Resf.getColumnSummationVector().getM() << endl;
-		cout << Resf.getColumnSummationVector().getN() << endl;
-		cout << Ac.getColumnSummationVector().getM() << endl;
-		cout << Ac.getColumnSummationVector().getN() << endl;
-		cout << Br.getM() << endl;
-		cout << Br.getN() << endl;
+		gettimeofday(&start, NULL);
 		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
-
-		cout << Resf.getRowSummationVector().getM() << endl;
-		cout << Resf.getRowSummationVector().getN() << endl;
-		cout << Ac.getColumnMatrix().getM() << endl;
-		cout << Ac.getColumnMatrix().getN() << endl;
-		cout << Br.getRowSummationVector().getM() << endl;
-		cout << Br.getRowSummationVector().getN() << endl;
 		CalculatorNaiveMult<TYPE_SUM, T, TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
+		gettimeofday(&end, NULL);
+		cout << "	- CalculatorNaiveMult : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 	} catch (bad_cast) {
 

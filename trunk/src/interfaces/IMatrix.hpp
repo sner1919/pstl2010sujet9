@@ -35,7 +35,7 @@ template <class T> class IMatrix {
 		 * @param j l'indice de colonne
 		 * @return l'élément à l'indice i, j
 		 */
-        virtual PSTL_TYPE_UNION operator()(int i, int j) const = 0;
+        virtual TYPE_UNION operator()(int i, int j) const = 0;
 
 		/*
 		 * Affecte le contenu d'une autre matrice au contenu de celle-ci.

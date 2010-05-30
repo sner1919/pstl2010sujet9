@@ -26,7 +26,7 @@ RowChecksumMatrix<T>::~RowChecksumMatrix() {
 }
 
 template <class T>
-PSTL_TYPE_UNION RowChecksumMatrix<T>::operator()(int i, int j) const {
+TYPE_UNION RowChecksumMatrix<T>::operator()(int i, int j) const {
 	return j == this->getN() ? rowSummationVector(i) : matrix(i, j);
 }
 

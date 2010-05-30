@@ -43,7 +43,7 @@ void* ErrorGenerator<T>::thread(void* arg) {
 		} while(contains);
 
 		// modification d'une valeur
-		do { x -= 1; } while(M(l, c) == x);
+		do { x = ((float) rand() / (float) RAND_MAX - 0.5) * 2 * numeric_limits<double>::max(); } while(M(l, c) == x);
 		M(l, c) = x;
 
 		ids.push_back(id);

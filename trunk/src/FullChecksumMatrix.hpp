@@ -15,7 +15,7 @@ template <class T> class FullChecksumMatrix : public ColumnChecksumMatrix<T>, pu
         ~FullChecksumMatrix();
 
         // redéfinition de Matrix<T>
-        PSTL_TYPE_UNION operator()(int i, int j) const;
+        TYPE_UNION operator()(int i, int j) const;
 
         // implémentation de IFullChecksumMatrix<T>
         bool errorCorrection();

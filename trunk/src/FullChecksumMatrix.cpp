@@ -13,7 +13,7 @@ FullChecksumMatrix<T>::~FullChecksumMatrix() {
 }
 
 template <class T>
-PSTL_TYPE_UNION FullChecksumMatrix<T>::operator()(int i, int j) const {
+TYPE_UNION FullChecksumMatrix<T>::operator()(int i, int j) const {
 	return ColumnChecksumMatrix<T>::operator()(i, j);
 }
 
