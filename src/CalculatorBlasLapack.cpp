@@ -3,6 +3,8 @@
 #include <sys/time.h>
 #include <typeinfo>
 
+double dgemm, calculChecksums;
+
 template <class T>
 CalculatorBlasLapack<T>::CalculatorBlasLapack(IBlasLapackAdapter& blasLapackAdapter, int MatrixType) : blasLapackAdapter(blasLapackAdapter), MatrixType(MatrixType) {
 	if(MatrixType == 1 && typeid(T) != typeid(double)) throw domain_error("le type 1 n'est compatible qu'avec les matrices de double");
@@ -50,7 +52,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 			b, Br.getN() - 1,
 			0., res, Resf.getN() - 1);
 		gettimeofday(&end, NULL);
-		cout << "	- dgemm : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		dgemm = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+		cout << "	- dgemm : " << dgemm << endl;
 
 
 		if(MatrixType == 0) {
@@ -64,7 +67,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
 		CalculatorNaiveMult<TYPE_SUM, T, TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
 		gettimeofday(&end, NULL);
-		cout << "	- CalculatorNaiveMult : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		calculChecksums = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+		cout << "	- CalculatorNaiveMult : " << calculChecksums << endl;
 
 	} catch (bad_cast) {
 

@@ -12,6 +12,8 @@
 #include <limits>
 #include <fstream>
 
+extern double dgemm, calculChecksums;
+
 CPPUNIT_TEST_SUITE_REGISTRATION(BenchmarkTest);
 
 void BenchmarkTest::setUp() {
@@ -30,9 +32,15 @@ void BenchmarkTest::testPerf() {
 	CalculatorBlasLapack<double> calculatorIntelMKL(intelMKLAdapter, 1);
 	ErrorGenerator<double> generator;
 	pthread_t th;
+	ofstream naiveFile ("./benchmark/" MACRO_TO_STR(CPU) "Naif.data", ios::out | ios::trunc);
 	ofstream atlasFile ("./benchmark/" MACRO_TO_STR(CPU) "Atlas.data", ios::out | ios::trunc);
+	ofstream intelMKLFile ("./benchmark/" MACRO_TO_STR(CPU) "IntelMKL.data", ios::out | ios::trunc);
+	ofstream gotoBlasFile ("./benchmark/" MACRO_TO_STR(CPU) "GotoBlas.data", ios::out | ios::trunc);
+	ofstream calculChecksumsFile ("./benchmark/" MACRO_TO_STR(CPU) "CalculChecksums.data", ios::out | ios::trunc);
+	ofstream extensionFile ("./benchmark/" MACRO_TO_STR(CPU) "Extension.data", ios::out | ios::trunc);
+	ofstream correctionFile ("./benchmark/" MACRO_TO_STR(CPU) "Correction.data", ios::out | ios::trunc);
 	if(!atlasFile) cerr << "Impossible d'ouvrir le fichier !" << endl;
-	int nMax = 10;
+	int nMax = 300;
 
 
 	for(int n = nMax / 10; n <= nMax; n += nMax / 10) {
@@ -44,20 +52,39 @@ void BenchmarkTest::testPerf() {
 		Matrix<double> C2(n, n);
 		FullChecksumMatrix<double> C2f(C2);
 		struct timeval start, end;
-		double extensionTime;
+		double t;
 
 		cout << endl << "Benchmark : matrice " << n << " x " << n << endl;
 
 		/*
+		 * Initialisation de A et B
+		 *
 		 * Soit A * B = C, avec A et B des matrices de taille N * N;
 		 *
+		 * Overflow :
 		 * Pour que les valeur de C soient <= MaxDouble, il faut que max(A) * max(B) * N <= MaxDouble.
 		 * Cad. max(A, B) <= sqrt(MaxDouble / N)
+		 *
+		 * Underflow :
+		 * Pour que les valeur de C ne soient pas dans l'intervalle ]0, MinDoublePositive[, il faut que min(A) * min(B) * N >= MinDoublePositive si min(A, B) > 0.
+		 * Cad. min(A, B) >= sqrt(MinDoublePositive / N)
 		 */
 		for(int i = 1; i <= n; i++){
 			for(int j = 1; j <= n; j++) {
-				A(i, j) = fmod(randDouble(), sqrt(numeric_limits<double>::max() / (double) MAX(n, 2)));
-				B(i, j) = fmod(randDouble(), sqrt(numeric_limits<double>::max() / (double) MAX(n, 2)));
+				double v[2];
+
+				for(int k = 0; k < 2; k++) {
+					v[k] = randDouble();
+					// underflow
+					double lim = sqrt(numeric_limits<double>::min() / (double) MAX(n, 2));
+					if((v[k] > 0 && v[k] < lim) || (v[k] < 0 && v[k] > -lim)) v[k] = 1. / v[k];
+
+					// overflow
+					v[k] = fmod(v[k], sqrt(numeric_limits<double>::max() / (double) MAX(n, 2)));
+				}
+
+				A(i, j) = v[0];
+				B(i, j) = v[1];
 			}
 		}
 
@@ -68,9 +95,11 @@ void BenchmarkTest::testPerf() {
 		ColumnChecksumMatrix<double> Ac(A);
 		RowChecksumMatrix<double> Br(B);
 		gettimeofday(&end, NULL);
-		extensionTime = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+		t = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+		cout << "durée extension : " << t << endl;
+		extensionFile << n << " " <<  t << endl;
 
-		if(n <= 500) {
+		if(n <= 300) {
 			/*cout << "Ac : " << Ac.toString() << endl;
 			cout << "Br : " << Br.toString() << endl;
 			cout << "C1f : " << C1f.toString() << endl;
@@ -79,12 +108,14 @@ void BenchmarkTest::testPerf() {
 			gettimeofday(&start, NULL);
 			calculatorNaive.mult(C1f, Ac, Br);
 			gettimeofday(&end, NULL);
-			cout << "	- Naïf : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-			cout << "Ac : " << Ac.toString() << endl;
+			t = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+			cout << "	- Naïf : " << t << endl;
+			naiveFile << n << " " <<  t << endl;
+			/*cout << "Ac : " << Ac.toString() << endl;
 			cout << "Br : " << Br.toString() << endl;
 			cout << "C1f : " << C1f.toString() << endl;
 			cout << "C1f.computeRowSum(1) : " << C1f.computeRowSum(1) << endl;
-			cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;
+			cout << "C1f.computeRowSum(2) : " << C1f.computeRowSum(2) << endl;*/
 			CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 			for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 		}
@@ -93,21 +124,8 @@ void BenchmarkTest::testPerf() {
 		calculatorAtlas.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
 		cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		atlasFile << n << " " <<  (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		/*for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
-
-		gettimeofday(&start, NULL);
-		calculatorAtlas.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
-		cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
-
-		gettimeofday(&start, NULL);
-		calculatorAtlas.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
-		cout << "	- Atlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		atlasFile << n << " " <<  dgemm << endl;
+		calculChecksumsFile << n << " " <<  calculChecksums << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
@@ -115,47 +133,19 @@ void BenchmarkTest::testPerf() {
 		calculatorGotoBlas.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
 		cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
-
-		gettimeofday(&start, NULL);
-		calculatorGotoBlas.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
-		cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
-
-		gettimeofday(&start, NULL);
-		calculatorGotoBlas.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
-		cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		gotoBlasFile << n << " " <<  dgemm << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
 		gettimeofday(&start, NULL);
 		calculatorIntelMKL.mult(C1f, Ac, Br);
 		gettimeofday(&end, NULL);
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-
-		gettimeofday(&start, NULL);
-		calculatorIntelMKL.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
+		intelMKLFile << n << " " <<  dgemm << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
-		gettimeofday(&start, NULL);
-		calculatorIntelMKL.mult(C1f, Ac, Br);
-		gettimeofday(&end, NULL);
-		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;*/
-
-		cout << "C1f : " << C1f.toString() << endl;
-		cout << "C2f : " << C2f.toString() << endl;
 		CPPUNIT_ASSERT(!(C1f == C2f));
 		(IMatrix<double>&) C2f = C1f;
-
-		cout << "durée extension : " << extensionTime << endl;
 
 		// correction 0 erreurs
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
@@ -163,7 +153,7 @@ void BenchmarkTest::testPerf() {
 		gettimeofday(&start, NULL);
 		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
-		cout << "durée extension + correction 0 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		cout << "durée correction 0 erreurs (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		CPPUNIT_ASSERT(C1f == C2f);
 
@@ -175,7 +165,7 @@ void BenchmarkTest::testPerf() {
 		gettimeofday(&start, NULL);
 		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
-		cout << "durée extension + correction 1 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		cout << "durée correction 1 erreurs (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		CPPUNIT_ASSERT(C1f == C2f);
 
@@ -187,7 +177,9 @@ void BenchmarkTest::testPerf() {
 		gettimeofday(&start, NULL);
 		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
-		cout << "durée extension + correction 2 erreurs (en secondes) : " << extensionTime + (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+		t = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
+		cout << "durée correction 2 erreurs (en secondes) : " << t << endl;
+		correctionFile << n << " " <<  t << endl;
 		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		CPPUNIT_ASSERT(C1f == C2f);
 
