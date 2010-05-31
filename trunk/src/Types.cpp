@@ -1,6 +1,7 @@
 #include "Types.hpp"
 #include <cstdlib>
 #include <limits>
+#include <cmath>
 
 int floatToIndex(float a) {
 	int ai = *(int*) &a;
@@ -77,9 +78,14 @@ bool equal(double a, double b, int eps1, int eps0) {
 }
 
 double randDouble() {
+	int exp = ((double) rand() / ((double) RAND_MAX + 1) - 0.5) * 2;
+	return ((double) rand() / ((double) RAND_MAX + 1) - 0.5) * 2 * pow(2., exp);
+}
+
+double randDouble2() {
 	int ai[2];
 
-	for(int i = 0; i < 2; i++) ai[i] = rand() << 16 | (rand() << 16) >> 16;
+	for(int i = 0; i < 2; i++) ai[i] = (rand() << 16) xor rand();
 
 	return indexToDouble(ai[1], ai[0]);
 }

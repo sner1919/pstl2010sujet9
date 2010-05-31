@@ -14,6 +14,7 @@ double indexToDouble(int a1, int a0);
 bool equal(float a, float b, int eps);
 bool equal(double a, double b, int eps1, int eps0);
 double randDouble();
+double randDouble2();
 
 typedef mpf_class TYPE_SUM;
 #define TYPE_SUM_TO_DOUBLE(x) x.get_d()
