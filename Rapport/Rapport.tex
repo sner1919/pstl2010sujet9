@@ -196,19 +196,18 @@ l’erreur et ensuite d’essayer de la corriger.
 
 \section{Détection et Correction}
 La question posée à ce stade serait: ``comment pourrait-t-on détecter une erreur en se basant sur cette extension ?''
-La réponse normalement serait de dire que par définition l’emploi d’un \textit{checksum} a pour but principal de 
+Par définition l’emploi d’un \textit{checksum} a pour but principal de 
 détecter l’existence d’une erreur dans l’information qu’il encode. D’ailleurs il s’agit de l’étymologie même du mot 
 dans lequel ``check'' signifie vérification en anglais et ``sum'' signifie somme ou sommation.
 \paragraph*{} 
-Ainsi, une erreur peut être détectée dans une ligne par exemple en effectuant la somme des éléments de cette ligne 
+Ainsi, une erreur peut être détectée dans une ligne en effectuant la somme des éléments de cette ligne 
 et en comparant le résultat au \textit{checksum} de cette ligne déjà calculé suite à l’extension de la matrice vers 
 une \textit{Full Checksum Matrix}. Une erreur dans ce cas correspondrait à une inégalité des deux nombres comparés. 
 On détectera ainsi, que dans la ligne concernée, une erreur doit être signalée et effectivement, par la suite être traitée.
 \paragraph*{}
 Un problème se pose. A moins qu’il ne s’agisse d’une ligne avec un seul élément (ce qui nous intéresse pas) l’encodage 
-à un haut niveau pose l’inconvénient qu’une erreur dans une ligne ou une colonne ne donne aucune précision sur 
-l’emplacement exact de l’erreur dans cette ligne ou colonne. Or nous désirons plus de précision sur l’emplacement 
-exact de l’erreur.
+à ce niveau pose l’inconvénient qu’une erreur dans une ligne ou une colonne ne donne aucune précision sur son
+emplacement exact. Or nous avons besoin de conna\^itre celui-ci.
 \paragraph*{}
 Si une erreur survient dans la matrice d’information un \textit{checksum} de ligne et \textit{checksum} de colonnes 
 la mettront en évidence.\newline
@@ -249,10 +248,10 @@ l’exécution de ces calculs et de la correction. Nous sommes en face d’un pr
 \paragraph*{}
 Mais quel langage objet choisir ? Deux langages de programmation orientés objets se présentent à l’appel : Java et C++. 
 Java est issu de C++ et présente plus de sureté au niveau de la gestion de mémoire du à l’absence des pointeurs. 
-Il offre le mécanisme des interfaces facilitant la tache du développeur. Par contre il est beaucoup plus lent que le C++. 
+Il offre le mécanisme des interfaces facilitant la tache du développeur. Par contre il est plus lent que le C++. 
 Dans le cadre du développement d’un système concernant une tache aussi répétitive et bas niveau que le calcul matriciel, 
-nous désirons avoir en main le langage produisant le programme le plus efficace possible. Dans ce cas \textbf{C++} répondrait mieux 
-à cet offre. Même s’il est moins tolérant que Java à une mauvaise conception c'est pas problème vu que nous tacherons de réaliser 
+nous désirons avoir en main le langage produisant le programme le plus efficace possible. Dans ce cas \textbf{C++} répond mieux 
+à notre demande et parait le meilleur choix. Nous tacherons maintenant de réaliser 
 une conception qui a le gout d’être efficace tout en étant simple et logique.
 
 \section{Conception}
@@ -275,7 +274,7 @@ classe sont toutes précédées du mot clé virtual qui fait d’elles des fonct
 dans les classes filles.
 \paragraph*{}
 Dans nos explications nous utiliserons alors le terme interface pour qualifier ces contrats. Tout le squelette de la 
-conception se fera alors à travers ces interfaces. Elles sont toutes distinguées par un préfixe \textcolor{red}{« I »} précédent leur nom. 
+conception se fera alors à travers ces interfaces. Elles sont toutes distinguées par un préfixe \textcolor{red}{« I »} précédant leur nom. 
 A chaque interface (classe abstraite) correspondra au moins une implémentation (classe concrète) du même nom sans le 
 préfixe « I ».
 \paragraph*{}
@@ -289,7 +288,7 @@ Les données numériques à traiter au sein du calcul matriciel sont les flottan
 de flottants sont possibles. Le choix de la représentation dépend principalement de la précision avec laquelle nous voulons
 stocker nos données. On peut citer les types de base : les flottants a simple precision, double précision représentant des réels
 à 32 et 64 bits respectivement. Pour une précision encore plus importante il existe des bilibothèques permettant d'étendre
-arbitrairement cette précision comme GMP (Gnum Multiple Precision Arithmetic Library).
+arbitrairement cette précision comme GMP (GNU Multiple Precision Arithmetic Library) \cite{GMP}.
 Pour ne pas avoir à limiter notre système à un seul type de données, il faudra implémenter ce système pour effectuer un 
 calcul sur toutes les représentations de flottants possible. Le traitement de ces données (addition, multiplication, division, etc.) est invariant. 
 Il est donc inutile d’implémenter deux versions d’un objet juste pour modifier le type de données en entrée. On veut réussir 
@@ -305,9 +304,11 @@ La déclaration des paramètres \textit{template} se fait de la manière suivant
 \paragraph*{}
 Bien que le \textit{template} soit un mécanisme très pratique, il soulève un problème d’instanciation assez important. 
 Les \textit{templates} doivent impérativement être définis lors de leur instanciation pour que le compilateur puisse générer 
-le code de l’instance. Ceci signifie que la déclaration et la définition des différentes fonctions membres doit être réalisé 
-au sein d’un même fichier. En temps normal, moins nous avons de fichiers sources mieux on se porte. Pour garder leur savoir 
-faire à la distribution d’une bibliothèque les développeurs fournissent juste les déclarations de leur code. Par contre 
+le code de l’instance. Ceci signifie que la déclaration et la définition des différentes fonctions membres doit être réalisée 
+au sein d’un même fichier. Ce qui n'est pas pratique pour la compilation séparée des différentes unités car le code source doit
+\^etre inclus en m\^eme temps que la déclaration par les unités qui l'utilise. Ce qui fait que on ne profite pas de la liaison dynamique et qu'on
+obtient des fichiers objets plus gros. D'autre part pour garder leur savoir 
+faire certains développeurs ne désirent fournir que les déclarations de leur code à la distribution d’une bibliothèque. Par contre 
 avec les \textit{templates} cela n’est pas possible étant donné que les déclarations et les définitions sont dans le même 
 fichier.\newline
 La solution proposée à ce problème est d’effectuer l’instanciation explicite du \textit{template} dans la partie 
@@ -345,21 +346,21 @@ Ainsi, nous aurons l’arbre de la figure \ref{fig:Diag1}.\newline
 \end{figure}
 
 \paragraph*{}
-Avant de nous arrêter sur le problème que peut poser une pareille structure, nous voulons juste dire que chacune 
-des interfaces sera implémentée par une classe qui respectera le contrat, ainsi au cas où une classe doit être remplacée 
-dans la suite du projet on aura pas des problèmes de compatibilité avec les autres classes.
+Avant de nous arrêter sur le problème que peut poser une pareille structure, nous soulignons le fait que chacune 
+des interfaces sera implémentée par une classe qui respectera le contrat, ainsi dans le cas où une classe devrait être remplacée 
+dans la suite du projet nous n'auront point de problèmes de compatibilité avec les autres classes.
 L’arbre des classes d’implémentation de ces interfaces est calqué sur l’arbre des interfaces et nous obtenons alors, 
 le diagramme de la figure \ref{fig:Diag2}.\newline
-Dans ce diagramme les flèches pointillées reflètent les liens d’implémentation des interfaces même si en C++ ce lien 
-doit être le même que celui de l’héritage, nous avons voulus faire la distinction.
+Dans ce diagramme les flèches pointillées reflètent les liens d’implémentation des interfaces, même si en C++ ce lien 
+doit être le même que celui de l’héritage, nous avons voulu en faire la distinction.
 
 \subsubsection{Le Problème du diamant}
 La structure de l’arbre faite ci-dessus est dite une structure d’héritage en diamant. Elle pose quelques problèmes à la 
 compilation.\newline
 Vu que FCM hérite de CCM et RCM et les deux héritent à leur tour de \textit{Matrix}, FCM peut contenir deux copies des membres 
-de classes \textit{Matrix} dont elle hérite indirectement (1 copie des membres hérités par CCM et un autre des membre 
+de classes \textit{Matrix} dont elle hérite indirectement (une copie des membres hérités par CCM et une autre des membres 
 hérités par RCM). Quand nous faisons appel à une fonction de la classe \textit{Matrix} à partir d’une instance FCM, 
-celle-ci possédant deux sous objets \textit{Matrix}, le compilateur aura un choix ambiguë à faire et ne saura alors 
+celle-ci possédant deux sous objets \textit{Matrix}, le compilateur aura un choix ambiguë à faire et ne saura alors pas
 laquelle des deux choisir. Alors il signalera cette ambigüité.
 \paragraph*{}
 Encore une fois le mot clé \textbf{\textit{virtual}} est la solution au problème.  En utilisant \textit{virtual} dans la  
@@ -373,12 +374,20 @@ au constructeur de \textit{Matrix} pour que son instanciation soit complète sin
 Toutes les matrices étendues possèdent au moins un vecteur de sommation. Pour cela, nous avons choisis de faire de 
 ce vecteur un objet. Nous créons donc l’interface \textbf{\textit {IVector}} qui représentera ce vecteur. Celui-ci sera 
 naturellement un champ des classes d’implémentation relatives aux interfaces des matrices étendues. Ce champ aura la 
-possibilité d’être visité et modifié dans ces classes. Un vecteur étant tout simplement une matrice à une seule colonne 
+possibilité d’être accédé et modifié dans ces classes. Un vecteur étant tout simplement une matrice à une seule colonne 
 ou bien une seule ligne, \textit{IVector} héritera alors de \textit{IMatrix}.
 
+\subsubsection{Accesseurs}
+Nous avons choisi de redéfinir l'opérateur \textit{(i, j)} pour pouvoir accéder à un élément de la matrice.
+Cependant un problème se pose, celui du type de retour.
+Car comme nous allons le voir dans la section \ref{sec:prec} du chapitre \ref{chap:arith} le type des élément des checksums n'est pas le
+m\^eme que celui des éléments de la matrice originale.
+Nous devons donc définir un nouveau type \textit{TypeUnion} dont les opérateurs sont surchargés et qui contient
+l'union de ces deux types, afin de pouvoir renvoyer deux types de valeurs et ceci de façon quasi-transparente.
+
 \subsection{Processeurs et Calculs}
-On sait que dans une machine les calculs sont effectués dans le processeur ou CPU. Autre que la tache des calculs 
-arithmétiques celui ci gère la tolérance aux fautes. Le système de tolérance aux fautes que nous réalisons est un 
+On sait que dans une machine les calculs sont en général effectués dans le processeur ou CPU (ou alors par un GPU).
+Autre que la tache des calculs arithmétiques celui ci gère la tolérance aux fautes. Le système de tolérance aux fautes que nous réalisons est un 
 système logiciel. Donc nous sommes dans l’obligation de simuler les différentes tâches du processeur : du calcul, 
 en passant par la détection d’erreur, la correction de ces erreurs, arrivant même à la génération d’erreurs. Ces 
 fonctionnalités sont distribuées sur tout le système. Ainsi, c’est la classe \textbf{\textit{FullChecksumMatrix}} qui 
@@ -394,11 +403,12 @@ de la figure \ref{fig:Diag3}.\newline
   \label{fig:Diag3}
 \end{figure}
 \paragraph*{}
-L’implémentation de cette interface peut être effectuée de plusieurs manières différentes. On pourra utiliser 
+L’implémentation de cette interface peut être effectuée de plusieurs manières. On pourra utiliser 
 des bibliothèques déjà faites pour l’implémenter et ainsi profiter des propriétés et des avantages présentés 
-par ces bibliothèques - Parmi ces bibliothèques nous citons \textbf{ATLAS}, \textbf{GotoBlas} et \textbf{IntelMkl} - 
+par ces bibliothèques - Parmi ces bibliothèques nous citons \textbf{ATLAS} \cite{ATLAS}, \textbf{GotoBLAS} \cite{GotoBLAS}, \textbf{IntelMKL} \cite{IntelMKL}
+ou \textbf{MPACK} \cite{MPACK} pour la précision étendue - 
 ou bien essayer d’implémenter nos propres algorithmes. Puis on pourra comparer les implémentations entre-elles pour choisir 
-la plus performante. Pour réaliser ce but nous devons avoir la possibilité de choisir l’implémentation que nous 
+la plus performante. Pour réaliser ceci nous devons avoir la possibilité de choisir l’implémentation que nous 
 voulons à l’assemblage. Les différentes implémentations de \textit{ICalculator} auront un nom préfixé par \textit{Calculator}. 
 Notre solution utilise le mécanisme de \textbf{délégation} et le patron de conception (design pattern) \textbf{\textit{Strategy}}. 
 Il s’agit d’un patron de conception de type comportemental grâce auquel des algorithmes peuvent être sélectionnés à la 
@@ -408,15 +418,15 @@ Ainsi une classe \textbf{\textit{Processor}}, dont le nom reflète la fonctionna
 le travail. On déclare dans cette classe un champ de type \textit{ICalculator}. Ce champ pouvant être n’importe quel 
 type de calculateur on le choisit à la construction du processeur. A chaque fois que nous appelons une fonction de calcul 
 dans la classe \textbf{\textit{Processor}}, celle-ci procèdera à l'extension des matrices avant de délèguer le calcul à la 
-classe stockée dans ce champ qui s’occupera du reste. Puis, le processeur appellera la fonction de vérification et 
-correction d’erreurs sur la matrice résultat. Toutes les matrices résultats sont stockées dans leur forme de FCM, 
-c’est pour cette raison que cette fonction est dans la classe \textit{FullChecksumMatrix}.
+classe stockée dans ce champ qui s’occupera du reste. Puis, le processeur appellera la fonction de vérification ou 
+correction d’erreurs sur la matrice résultat. La fonction de correction étant dans la classe \textit{FullChecksumMatrix} et
+les fonctions de détections dans les classes \textit{RowChecksumMatrix} et \textit{ColumnChecksumMatrix}.
 
 \subsection{Génération d'erreurs}
 Bien que le vrai processeur de l’ordinateur puisse produire des erreurs, on peut attendre indéfiniment jusqu'à ce 
 qu’une erreur soit produite. Cette attente n’est pas le seul problème. Si on n’est pas notifié qu’une faute a été 
 induite à un calcul, on peut croire que le système que nous avons réalisé fonctionne parfaitement tant qu’aucune 
-erreur n’apparaisse, et que ce système est systématiquement entrain de corriger les éventuelles erreurs qui apparaissent 
+erreur n’apparait, et que ce système est systématiquement en train de corriger les éventuelles erreurs qui apparaissent 
 d’une manière silencieuse. Ayant déjà simuler les calculs qu’effectue un processeur rien nous interdit de simuler la 
 génération des erreurs. Si nous avons ce mécanisme en main, nous pourrions avoir le contrôle de la génération d’erreurs. 
 On peut ainsi injecter une faute dans le calcul quand nous le désirons et observer la réaction du système pour traiter 
@@ -433,7 +443,7 @@ faire constamment sans arrêter les calculs, en d’autres termes faire de la g�
 vraisemblable, il faudra que son exécution s’effectue en tâche de fond.
 \newline
 Ceci est possible grâce à ce que nous appelons les \textbf{\textit{Threads}}. Pour présenter rapidement les \textit{threads}, 
-on peut dire que c’est un mécanisme de lancement de pseudo processus très légers qui partagent la même mémoire virtuelle que 
+on peut dire que c’est un mécanisme de lancement de pseudo processus légers qui partagent la même mémoire virtuelle que 
 le processus principal. Leur intérêt réside dans le fait que plusieurs threads ou fils d’exécution peuvent être lancés en 
 même temps. Ils s’exécutent en parallèle et communiquent entre eux grâce à l’API du langage grâce auquel nous les lançons.
 La fonction de génération d’erreurs sera alors lancée pour s’exécuter en tache de fond grâce à un thread. La tache principale 
@@ -450,9 +460,15 @@ La méthode de génération d’erreurs generateError() prend 6 arguments :
  \item \textbf{jMax} la borne supérieure de l'intervalle de colonne
 \end{itemize}
 Les erreurs sont générées aléatoirement et itérativement dans la sous matrice déterminée par les deux intervalles de 
-ligne et de colonne. Ainsi, deux erreurs peuvent tomber à la suite dans la même case et le nombre d’erreurs que nous 
+ligne et de colonne. Deux erreurs peuvent donc tomber à la suite dans la même case et le nombre d’erreurs que nous 
 voulons injecté sera réduit de la sorte. Pour éviter ce problème nous stockons les indices des cases changés aux 
 itérations précédentes.
+
+\subsection{Tests unitaires}
+La bibliothèque \textbf{CppUnit} \cite{CppUnit} à massivement été utilisée afin de tester notre code.
+Elle permet d'effectuer des test unitaires pour le C++.\newline
+Celle-ci est donc nécessaire pour compiler et executer notre implémentation.\newline
+Les tests unitaires représentent une grande partie de ce projet : 4200 lignes de code dont 1700 lignes de tests.
 
 \chapter{Autour de la correction d'erreur}
 Nous avons déjà expliqué le principe qui réside derrière la correction d’erreurs. Cette correction utilise la propriété 
@@ -464,7 +480,7 @@ la correction n’est pas certaine ou bien ne peut pas être effectuée.
 \paragraph*{}
 On sait que pour détecter une faute dans une ligne ou une colonne,  on calcule la somme de celle-ci et on la compare à la 
 valeur du \textit{checksum} stocké dans la matrice étendue. Si les deux sont égaux alors y a éventuellement de très grandes 
-chances qu’il n’ y pas d’erreur dans cette ligne. Cette incertitude est due au fait que plusieurs erreurs peuvent se masquer 
+chances qu’il n’ y ait pas d’erreur dans cette ligne. Cette incertitude est due au fait que plusieurs erreurs peuvent se masquer 
 les unes les autres c.-à-d. que plusieurs éléments sont faux mais leur somme reste inchangée. Soit $x_1, x_2,\ldots x_n$ 
 les valeurs des éléments présents dans une ligne ou bien une colonne et $c$ la valeur du \textit{checksum} de cette ligne 
 ou colonne. nous devons vérifier l’égalité suivante : \[x_1 + x_2 + \ldots + x_n = c\]
@@ -475,8 +491,7 @@ première écriture on devra effectuer plusieurs tests pour savoir si l’erreur
 la matrice d’information, alors que l’utilisation de la deuxième ne fait aucune hypothèse sur le type de l’élément erroné. 
 Quand l’égalité n’est pas respectée la ligne ou la colonne entière est considérée fausse. C’est l’intersection de cette 
 ligne ou colonne avec les autres qui déterminera l’emplacement de l’erreur. L’erreur par la suite sera traitée selon cet 
-emplacement facilement trouvé. S’il s’agit du \textit{checksum} on le remplacera par la somme de la ligne, sinon on ajoutera 
-la différence trouvée par l’égalité à l’élément en erreur.
+emplacement facilement trouvé. S’il s’agit du \textit{checksum} on lui retranche la somme de la ligne, sinon on ajoute cette somme.
 \paragraph*{}
 D’une manière générale le travail consiste à résoudre un système contenant les équations des lignes et colonnes non valides. 
 Le nombre d’équations est alors égal au nombre de ces lignes et colonnes et le nombre d’inconnues est celui des intersections 
@@ -489,8 +504,8 @@ alors, il s’agit dans ce cas de résoudre un système de deux équations à un
 Tant que le nombre d’inconnues est strictement inférieur au nombre d’équations le système a une solution unique.Donc 
 dans le cas d’une seule erreur la correction est possible.
 
-\section{Deux erreurs}
-\subsection{Deux erreurs dans la même ligne ou la même colonne}
+\section{Plusieurs erreurs}
+\subsection{Plusieurs erreurs sur la même ligne ou la même colonne}
 Soit une matrice à $m$ lignes et $n$ colonnes. Supposons que nous avons deux erreurs dans la même ligne de la matrice. 
 Deux cas sont possibles :
 \begin{itemize}
@@ -518,8 +533,8 @@ Nous avons alors $n$ intersections d’où $n$ inconnues.\newline
 On sait qu'un système de $n+1$ équations à $n$ inconnues admet une solution unique. Alors dans ce cas la correction de 
 la matrice est possible.
 
-\subsection{Deux erreurs pas sur la même ligne ou la même colonne}
-Dans le cas où les deux erreurs ne sont pas dans la même ligne ou bien la même colonne, celles-ci ne peuvent pas s’annuler. 
+\subsection{Plusieurs erreurs sur plusieurs lignes et plusieurs colonnes}
+Supposons que nous avons deux erreurs qui ne sont pas dans la même ligne ou bien la même colonne, celles-ci ne peuvent pas s’annuler. 
 Alors nous aurons deux inégalités au niveau des lignes et deux autres au niveau des colonnes. Ces inégalités permettent 
 alors d’avoir un système à quatre équations. Grâce aux quatre intersections entre les lignes et les colonnes en questions 
 nous obtenons quatre inconnues.\newline
@@ -533,35 +548,103 @@ minimisation du nombre d’erreurs.
 \paragraph*{}
 Donc, la solution que nous proposons est la suivante :\newline
 On suppose que deux des quatre éléments aux intersections sont faux. On fixe ainsi les deux autres à leur valeur dans 
-la matrice. On tente une correction de ces deux erreurs dans la matrice, puis on teste si tous les vecteurs de sommation 
-des lignes et des colonnes correspondantes à ces éléments sont valides. Si c'est le cas, on s'arrete ici, car la correction
-est valide. Sinon on fixe l'autre couple d'éléments, puis on tente une correction. Si aucun couple ne permet d'avoir une 
-correction valide, on effectue le même travail mais cette fois-ci en fixant des triplets d'éléments. Dans tous les cas, on 
-s'arrete à la premiere correction valide et celle-ci sera la solution optimale.
-Si par malheur aucune correction est valide on dit que la correction n'est pas possible car le système admet plusieurs solutions 
-pour quatre inconnues.
+la matrice (deux possibilités). On tente une correction de ces deux erreurs dans la matrice, puis on teste si tous les vecteurs de sommation 
+des lignes et des colonnes correspondant à ces éléments sont valides. Si ce n'est pas le cas on effectue le même travail mais cette fois-ci
+en fixant des triplets d'éléments (quatre possibilités). Dans tous les cas, on 
+s'arrete à la premiere correction valide et celle-ci sera probablement la bonne.
+Mais le "probablement" nous dissuade de le faire car le remède pourrait \^etre pire que la maladie.
 
 \subsection*{}
-Nous avons alors énuméré tous les cas possibles jusqu'à deux erreurs.
+Nous pouvont ainsi conclure que la technique nous permet de corriger jusqu'a $n$ erreurs sur la même ligne
+ou $m$ erreurs sur la même colonne mais pas sur plusieurs lignes ou colonnes simultanément.
 
-\section{Taille des conteneurs de données}
-Nous remarquons que le nombre d'erreurs détéctées est parfois plus grand que le nombre d'erreurs réel.
-\paragraph*{}
+\chapter{Arithmétique flottante}
+\label{sec:arith}
+
+\section{Représentation des flottants}
+La norme IEEE 754 spécifie deux formats de nombres en virgule flottante et les opérations associées.
+Les deux formats fixés par la norme IEEE 754 sont sur 32 bits (simple précision) et 64 bits (double précision).
+Les nombres à virgule flottante sont caractérisés pas un signe $S$, une mantisse $M$ et un exposant $E$.
+Le format est décrit sur la figure \ref{fig:IEEE754} (avec $1 \preceq M \prec 2$).
+\begin{figure}
+\center
+\includegraphics[scale=0.5]{IEEE754.jpg}
+\caption{Flottants IEEE 754}
+\label{fig:IEEE754}
+\end{figure}
+
+\section{Test d'égalité}
+Pour compenser le manque de précision dû aux nombres non représentables sur le coeur de la matrice résultat on utilise un test d'égalité avec une marge de tolérance
+qui est basée sur la représentation des flottants IEEE 754 et l'ordre lexicographique \cite{float} qu'il est possible d'obtenir en les transformant en entier (deux entiers pour les doubles).\newline
+Cette technique est meilleure que les comparaisons avec un epsilon absolu ou relatif, car elle utilise l'univers des flottants représentables.\newline
+En effet il est beaucoup plus judicieux de dire qu'on autorise une marge d'erreur de $n$ flottants avant ou après, que d'avoir une marge d'erreur en valeur qui n'utilise
+pas le fait que beaucoup ou non de flottants sont représentables dans cette plage (le format implique que plus on se rapproche de 0, plus le nombre de flottants représentables est grand).\newline
+Nous avons adapté cette technique aux doubles ce qui nous permet d'obtenir deux epsilons qui sont des entiers sur 32 bits, et une bijection entre deux entiers et un double.
+
+\section{Précision des checksums}
+\label{sec:prec}
+Nous remarquons que le nombre d'erreurs détectées est parfois plus grand que le nombre d'erreurs réelles.
 Ceci est dû à la taille des conteneurs des valeurs des éléments et surtout à la valeur du \textit{checksum} qui ne
-correspond pas toujours à la somme de sa ligne ou sa colonne. Les flottants doubles sont stockés sur 64 bits en C++ alors
-si jamais un nombre doit etre stockée sur plus de 64 bits sa valeur est tronquée et ne correspond donc plus à la vrai
-valeur calculée\newline
-Par exemple, dans un calcul en flottants IEEE double précision, $(2^{60}+1)-2^{60}$  ne donne pas 1, mais 0. La raison est que 
-$2^{60}+1$ n'est pas représentable exactement et est approché par $2^{60}$.
+correspond pas toujours à la somme de sa ligne ou sa colonne. Les flottants sont stockés sur un certain nombre de bits, alorser
+si jamais un nombre doit etre stockée sur plus de bits sa valeur est tronquée (suivant un certain mode d'arrondi) et ne correspond donc plus à la vrai
+valeur calculée. On dit alors que la valeur n'est pas représentable par un flottant de cette taille\newline
+Par exemple, dans un calcul en flottants IEEE double précision, $(2^{60}+1)-2^{60}$ ne donne pas 1, mais 0. La raison est que 
+$2^{60}+1$ n'est pas représentable exactement et est approché par $2^{60}$.\newline
+Si la valeur est plus grande que la plus grande valeur représentable, on parle d'\textit{overflow}.
+Et si elle est entre 0 et la plus petite valeur représentable, on parle d'\textit{underflow}.
 \paragraph*{}
-Pour contourner cette erreur, il suffit d'avoir plus de bits pour stocker les nombres. Dans la deuxième partie de notre
-projet nous utiliserons une bibliothèque de sur-précision pour stocker nos résultats. Nous examinons pour l'instant
-la bibliothèque GMP.
+Pour contourner ces problèmes lors de la sommation des lignes et des colonnes, il suffit d'accorder plus de bits aux checksums.
+Nous avons donc utilisé une bibliothèque de calcul multi-précision pour stocker les checksums
+et les calculs intermédiaires.
+La solution retenue est la bibliothèque \textbf{GMP (GNU Multiple Precision Arithmetic Library)} \cite{GMP}.
+\paragraph*{}
+Nous devons donc maintenant utiliser une bibliothèque implémentant le BLAS pour des calculs multi-précision (impliquant les checksums).
+\textbf{MPACK} \cite{MPACK} a été la solution retenue.
+
+\chapter{Tests de performances}
+\label{sec:benchmark}
+Les tests de performances ont été effectués pour le produit de deux matrices de taille $n \times n$.\newline
+Les différentes librairies ont pu \^etre appelées durant la m\^eme exécution gr\^ace à la \textit{libc} et à la fonction de chargement dynamique
+de librairies partagées \textit{dlopen()} et assimilées.\newline
+En ce qui concerne les mesures temporelles, celles-ci ont été effectuées en utilisant la fonction \textit{gettimeofday()}.
+
+\section{Matériel utilisé}
+Une machine virtuelle simple coeur avec 1Go de mémoire vive a été utilisée pour illustrer le peu de ressources nécessaires à l'utilisation de la technique.\newline
+Une machine récente avec une architecture multi-coeurs aurait montré des performances largement meilleures mais n'aurait pas rendu les tests de performances plus parlants
+sur le co\^ut de la technique.
+
+\section{Les différentes implémentations du BLAS}
+Le Basic Linear Algebra Subprograms (BLAS) est un ensemble de fonctions standardisées (interface de programmation) réalisant des opérations de base de l'algèbre linéaire comme des multiplications de vecteurs ou de matrices. Largement utilisées pour le calcul haute performance, ces fonctions ont été implémentées de manière très optimisée.\newline
+La très célèbre fonction \textit{dgemm} est utilisée par notre implémentation et représente le produit matriciel sans l'utilisation de la technique de correction d'erreurs.
+
+\section{La technique ABFT \cite{Huang} que nous avons implémentée}
+Trois étapes sont nécessaires :
+\begin{itemize}
+\item L'extention de la matrice originale : le co\^ut représente celui de la sommation
+\item Le produit : le co\^ut représente celui du calcul de la matrice résultat et de ses checksums
+\item La detection/correction : le co\^ut représente celui de la sommation
+\end{itemize}
+
+\subsection{Checksums doubles}
+Ici le surplus de mémoire nécessaire est négligeable en comparaison à la mémoire utilisée par la matrice originale (de l'ordre de $n + m$).
+
+\subsection{Checksums GMP}
+\subsubsection{Calcul des checksums résultats en utilisant l'algorithme naïf (multi-precision)}
+Ici le calcul du coeur de la matrice résultat est effectué par \textbf{ATLAS} \cite{ATLAS},
+et le calcul des checksums résultats par l'algorithme naïf qui permet d'effectuer des calculs avec plusieurs types
+sans allouer de mémoire supplémentaire.\newline
+Surco\^ut en mémoire toujours négligeable (de l'ordre de $n + m$ mais avec une plus forte constante que pour les checksums doubles).
+
+\subsubsection{Calcul de toute la matrice résultat en utilisant \textbf{MPACK} \cite{MPACK}}
+Le produit est effectué en convertisant les doubles de la matrice d'information en types étendu et en appliquant la fonction \textit{rgemm}
+avant de convertir le coeur de la matrice résultat en doubles.\newline
+Surco\^ut en mémoire important (de l'ordre de $n \times m$).
+
 
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
-Nous avons abordé dans ce rapport, d'abord le principe de l'ABFT présenté par K.-H. Huang et J.A. Abraham. Ensuite, nous avons
-discuté de nos choix d'implémentation de cet algorithme partant du choix du langage, passant par la conception par contrats,
+Nous avons abordé dans ce rapport, d'abord le principe de l'ABFT \cite{Huang} présenté par K.-H. Huang et J.A. Abraham. Ensuite, nous avons
+discuté de nos choix d'implémentation de cet algorithme partant du choix du langage, en passant par la conception par contrats,
 les types génériques et la simulation de génération d'erreurs ainsi que les solutions possibles au problèmes que nous pose cette
 implémentation comme le patron de conception \textit{Strategy}, et les fonctions virtuelles pures. Enfin, nous avons étudié en 
 détail la capacité de cet algorithme à détecter et à corriger les erreurs.
@@ -570,9 +653,8 @@ Cette dernière partie reflète les limites de cette méthode. Ainsi on peut cor
 cependant la correction concernant deux erreurs dépend de plusieurs facteurs dont certains que nous avons fixé pour permettre
 cette correction. Il s'agit de la limite de l'utilisation des propriétés du \textit{checksum}.
 \paragraph*{}
-Nous savons maintenant que plus il y a de la redondance plus nous pouvons corriger des erreurs.
-Nous remplacerons alors dans la deuxième partie de notre projet le \textit{checksum} par une méthode conduisant à plus de 
-redondances de manière à avoir un système qui tolère plus de fautes.
+Le code source et disponible sur le site \textbf{http://pstl2010sujet9.googlecode.com/} et il peut \^etre récupéré avec la commande\newline
+\textbf{svn checkout http://pstl2010sujet9.googlecode.com/svn/trunk/ pstl2010sujet9-read-only}
 
 \begin{thebibliography}{1}
 
@@ -596,13 +678,17 @@ http://math-atlas.sourceforge.net/.
 GotoBLAS2,
 http://www.tacc.utexas.edu/tacc-projects/.
 
-\bibitem{intelMKL}
+\bibitem{IntelMKL}
 Intel® Math Kernel Library (Intel® MKL),
 http://software.intel.com/en-us/intel-mkl/.
 
 \bibitem{MPACK}
 The MPACK : Multiple precision arithmetic BLAS (MBLAS) and LAPACK (MLAPACK),
 http://mplapack.sourceforge.net/.
+
+\bibitem{GMP}
+GMP (GNU Multiple Precision Arithmetic Library),
+http://gmplib.org/.
 
 \bibitem{float}
 Bruce Dawson,
