@@ -34,15 +34,18 @@ void CalculatorTest::setUp() {
     atlasAdapter = new AtlasAdapter;
     gotoBlasAdapter = new GotoBlasAdapter;
     intelMKLAdapter = new IntelMKLAdapter;
+    mPackAdapter = new MPackAdapter;
 
     calc.push_back(new CalculatorNaive<double>);
     calc.push_back(new Processor<double>(*calc[0], *g));
     calc.push_back(new CalculatorBlasLapack<double>(*atlasAdapter, 0));
     calc.push_back(new CalculatorBlasLapack<double>(*gotoBlasAdapter, 0));
     calc.push_back(new CalculatorBlasLapack<double>(*intelMKLAdapter, 0));
+    calc.push_back(new CalculatorBlasLapack<double>(*mPackAdapter, 0));
     calc.push_back(new CalculatorBlasLapack<double>(*atlasAdapter, 1));
     calc.push_back(new CalculatorBlasLapack<double>(*gotoBlasAdapter, 1));
     calc.push_back(new CalculatorBlasLapack<double>(*intelMKLAdapter, 1));
+    calc.push_back(new CalculatorBlasLapack<double>(*mPackAdapter, 1));
 }
 
 void CalculatorTest::tearDown() {
@@ -69,11 +72,21 @@ void CalculatorTest::testMult() {
 	for(unsigned int k = 0; k < calc.size(); k++){
 		CPPUNIT_ASSERT(!(Aux1 == *A));
 		calc[k]->mult(Aux1, *L, *U);
+		if(!(Aux1 == *A)) {
+			cerr << "i : " << k << endl;
+			cerr << "Aux1 : " << Aux1.toString() << endl;
+			cerr << "A : " << A->toString() << endl;
+		}
 		CPPUNIT_ASSERT(Aux1 == *A);
 		for(int i = 1; i <= 2; i++) for(int j = 1; j <= 2 ; j++) Aux1(i, j) = 0;
 
 		CPPUNIT_ASSERT(!(Aux1f == *Af));
 		calc[k]->mult(Aux1f, *Lc, *Ur);
+		if(!(Aux1f == *Af)) {
+			cerr << "i : " << k << endl;
+			cerr << "Aux1f : " << Aux1f.toString() << endl;
+			cerr << "Af : " << Af->toString() << endl;
+		}
 		CPPUNIT_ASSERT(Aux1f == *Af);
 		for(int i = 1; i <= 3; i++) for(int j = 1; j <= 3 ; j++) Aux1f(i, j) = 0;
 	}

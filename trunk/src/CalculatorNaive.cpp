@@ -112,10 +112,9 @@ template <class T1, class T2, class T3> void CalculatorNaiveAdd(IMatrix<T1>& Res
 /* ----------------------------------------------------------------------- */
 
 /* +++++++++++++++++++++++ instanciation des fonctions template pour CalculatorBlasLapack +++++++++++++++++++++++++++ */
-template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&, const IMatrix<double>&);
-template void CalculatorNaiveMult(IMatrix<TYPE_SUM>&, const IMatrix<double>&, const IMatrix<TYPE_SUM>&);
+template void CalculatorNaiveMult(IMatrix<double>&, const IMatrix<double>&, const IMatrix<double>&);
 
-template void CalculatorNaiveMult(IMatrix<TYPE_SUM>& Res, const IMatrix<TYPE_SUM>& A, double x);
+template void CalculatorNaiveMult(IMatrix<double>& Res, const IMatrix<double>& A, double x);
 
-template void CalculatorNaiveAdd(IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&, const IMatrix<TYPE_SUM>&);
+template void CalculatorNaiveAdd(IMatrix<double>&, const IMatrix<double>&, const IMatrix<double>&);
 /* ------------------------------------------------------------------------------------------------------------------ */

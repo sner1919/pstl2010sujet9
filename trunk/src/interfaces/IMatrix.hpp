@@ -79,11 +79,25 @@ template <class T> class IMatrix {
         virtual int weight() const = 0;
 
 		/*
+		 * Remplit la matrice à partir d'un tableau de flottants multi-précision.
+		 * @param t le tableau de flottants multi-précision
+		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
+		 */
+        virtual void fromTypeSum(const TYPE_SUM* t, bool rowMajor) = 0;
+
+		/*
+		 * Remplit un tableau de flottants multi-précision à partir de la matrice.
+		 * @param t le tableau de flottants multi-précision
+		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
+		 */
+        virtual void toTypeSum(TYPE_SUM* t, bool rowMajor) const = 0;
+
+		/*
 		 * Remplit la matrice à partir d'un tableau de flottants double précision.
 		 * @param t le tableau de flottants double précision
 		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
 		 */
-        virtual void fromDouble(double* t, bool rowMajor) = 0;
+        virtual void fromDouble(const double* t, bool rowMajor) = 0;
 
 		/*
 		 * Remplit un tableau de flottants double précision à partir de la matrice.
@@ -91,7 +105,6 @@ template <class T> class IMatrix {
 		 * @param rowMajor indique si les éléments sont rangés ligne par ligne
 		 */
         virtual void toDouble(double* t, bool rowMajor) const = 0;
-
 
 		/*
 		 * Donne une représentation textuelle de la matrice.

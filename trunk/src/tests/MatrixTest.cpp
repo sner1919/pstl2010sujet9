@@ -8,8 +8,8 @@ void MatrixTest::setUp() {}
 void MatrixTest::tearDown() {}
 
 void MatrixTest::testAll() {
-    double LData[2][2] = {{1., 0.}, {1.5, 1.}};
-    double UData[2][2] = {{4., 3.}, {0., -1.5}};
+    double LData[2][2] = {{1., 1.5}, {0., 1.}};
+    double UData[2][2] = {{4., 0.}, {3., -1.5}};
 
     // constructeurs
     Matrix<double> L(LData[0], 2, 2);

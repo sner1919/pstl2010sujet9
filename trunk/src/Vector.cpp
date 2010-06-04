@@ -11,7 +11,7 @@ Vector<T>::Vector(T* data, int m, bool line) : Matrix<T>(data, line ? 1 : m, lin
 
 template <class T>
 TYPE_UNION Vector<T>::operator()(int i) const {
-	return Matrix<T>::operator()(1, i);
+	return Matrix<T>::operator()(line ? 1 : i, line ? i : 1);
 }
 
 template class Vector<double>;

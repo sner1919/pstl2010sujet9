@@ -252,7 +252,7 @@ Il offre le mécanisme des interfaces facilitant la tache du développeur. Par c
 Dans le cadre du développement d’un système concernant une tache aussi répétitive et bas niveau que le calcul matriciel, 
 nous désirons avoir en main le langage produisant le programme le plus efficace possible. Dans ce cas \textbf{C++} répond mieux 
 à notre demande et parait le meilleur choix. Nous tacherons maintenant de réaliser 
-une conception qui a le gout d’être efficace tout en étant simple et logique.
+une conception qui a le goût d’être efficace tout en étant simple et logique.
 
 \section{Conception}
 \subsection{Contrats}
@@ -380,7 +380,7 @@ ou bien une seule ligne, \textit{IVector} héritera alors de \textit{IMatrix}.
 \subsubsection{Accesseurs}
 Nous avons choisi de redéfinir l'opérateur \textit{(i, j)} pour pouvoir accéder à un élément de la matrice.
 Cependant un problème se pose, celui du type de retour.
-Car comme nous allons le voir dans la section \ref{sec:prec} du chapitre \ref{chap:arith} le type des élément des checksums n'est pas le
+Car comme nous allons le voir dans la section \ref{sec:prec} du chapitre \ref{chap:arith} le type des éléments des checksums n'est pas le
 m\^eme que celui des éléments de la matrice originale.
 Nous devons donc définir un nouveau type \textit{TypeUnion} dont les opérateurs sont surchargés et qui contient
 l'union de ces deux types, afin de pouvoir renvoyer deux types de valeurs et ceci de façon quasi-transparente.
@@ -559,7 +559,7 @@ Nous pouvont ainsi conclure que la technique nous permet de corriger jusqu'a $n$
 ou $m$ erreurs sur la même colonne mais pas sur plusieurs lignes ou colonnes simultanément.
 
 \chapter{Arithmétique flottante}
-\label{sec:arith}
+\label{chap:arith}
 
 \section{Représentation des flottants}
 La norme IEEE 754 spécifie deux formats de nombres en virgule flottante et les opérations associées.

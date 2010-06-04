@@ -2,15 +2,15 @@
 CPU = VMWareCore1
 CXX = g++
 CXXFLAGS = -W -Wall -g -D CPU=$(CPU) ${DEBUGFLAG} #rq : ${DEBUGFLAG} ajouté à la configuration de construction "Debug" dans eclipse cdt
-LDFLAGS = #-L./lib/$(CPU)/atlas/ -Wl,--rpath,./lib/$(CPU)/atlas/ -L./lib/$(CPU)/gotoblas/ -Wl,--rpath,./lib/$(CPU)/gotoblas/ -L./lib/$(CPU)/intelmkl/ -Wl,--rpath,./lib/$(CPU)/intelmkl/ 
-LDLIBS = -lm -lpthread -lgmpxx -lgmp -ldl #-lclapack -lcblas -latlas -lgoto2 -lgfortran -Wl,--start-group -lmkl_intel -lmkl_sequential -lmkl_core -Wl,--end-group
-INCLUDES =
+LDFLAGS = -L./lib/$(CPU)/mpack -Wl,--rpath,./lib/$(CPU)/mpack/ #-L./lib/$(CPU)/atlas/ -Wl,--rpath,./lib/$(CPU)/atlas/ -L./lib/$(CPU)/gotoblas/ -Wl,--rpath,./lib/$(CPU)/gotoblas/ -L./lib/$(CPU)/intelmkl/ -Wl,--rpath,./lib/$(CPU)/intelmkl/
+LDLIBS = -lm -lpthread -lgmpxx -lgmp -ldl -fopenmp -lmblas_gmp -lmlapack_gmp #-lclapack -lcblas -latlas -lgoto2 -lgfortran -Wl,--start-group -lmkl_intel -lmkl_sequential -lmkl_core -Wl,--end-group -lmlapack_double -lmblas_double
+INCLUDES = -I./include/mpack/
 PREPROCESS_AND_COMPIL = $(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 LINK = $(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 SRCDIR = ./src
 IFACEDIR = $(SRCDIR)/interfaces
 BINDIR = ./bin
-OBJ = $(BINDIR)/Types.o $(BINDIR)/Types.o $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/CalculatorNaive.o $(BINDIR)/CalculatorBlasLapack.o $(BINDIR)/AtlasAdapter.o $(BINDIR)/GotoBlasAdapter.o $(BINDIR)/IntelMKLAdapter.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
+OBJ = $(BINDIR)/Types.o $(BINDIR)/Types.o $(BINDIR)/Matrix.o $(BINDIR)/Vector.o $(BINDIR)/RowChecksumMatrix.o $(BINDIR)/ColumnChecksumMatrix.o $(BINDIR)/FullChecksumMatrix.o $(BINDIR)/CalculatorNaive.o $(BINDIR)/CalculatorBlasLapack.o $(BINDIR)/AtlasAdapter.o $(BINDIR)/GotoBlasAdapter.o $(BINDIR)/IntelMKLAdapter.o $(BINDIR)/MPackAdapter.o $(BINDIR)/Processor.o $(BINDIR)/ErrorGenerator.o
 OBJTEST = $(OBJ) $(BINDIR)/tests/TypesTest.o $(BINDIR)/tests/MatrixTest.o $(BINDIR)/tests/VectorTest.o $(BINDIR)/tests/RowChecksumMatrixTest.o $(BINDIR)/tests/ColumnChecksumMatrixTest.o $(BINDIR)/tests/FullChecksumMatrixTest.o $(BINDIR)/tests/CalculatorTest.o $(BINDIR)/tests/ErrorGeneratorTest.o $(BINDIR)/tests/BenchmarkTest.o
 PROGS = $(BINDIR)/PSTL $(BINDIR)/tests/PSTLTest
 
@@ -58,6 +58,7 @@ CalculatorBlasLapackDep = $(SRCDIR)/CalculatorBlasLapack.hpp $(CalculatorNaiveDe
 AtlasAdapterDep = $(SRCDIR)/AtlasAdapter.hpp $(IBlasLapackAdapterDep)
 GotoBlasAdapterDep = $(SRCDIR)/GotoBlasAdapter.hpp $(IBlasLapackAdapterDep)
 IntelMKLAdapterDep = $(SRCDIR)/IntelMKLAdapter.hpp $(IBlasLapackAdapterDep)
+MpackAdapterDep = $(SRCDIR)/MpackAdapter.hpp $(IBlasLapackAdapterDep)
 ProcessorDep = $(SRCDIR)/Processor.hpp $(ICalculatorDep) $(IErrorGeneratorDep)
 ErrorGeneratorDep = $(SRCDIR)/ErrorGenerator.hpp $(IErrorGeneratorDep)
 
@@ -72,6 +73,7 @@ $(BINDIR)/CalculatorBlasLapack.o : $(CalculatorBlasLapackDep) $(IFullChecksumMat
 $(BINDIR)/AtlasAdapter.o : $(AtlasAdapterDep)
 $(BINDIR)/GotoBlasAdapter.o : $(GotoBlasAdapterDep)
 $(BINDIR)/IntelMKLAdapter.o : $(IntelMKLAdapterDep)
+$(BINDIR)/MpackAdapter.o : $(MpackAdapterDep)
 $(BINDIR)/Processor.o : $(ProcessorDep) $(FullChecksumMatrixDep) $(ErrorGeneratorDep)
 $(BINDIR)/ErrorGenerator.o : $(ErrorGeneratorDep)
 
@@ -81,7 +83,7 @@ VectorTestDep : $(SRCDIR)/tests/VectorTest.hpp
 RowChecksumMatrixTestDep : $(SRCDIR)/tests/RowChecksumMatrixTest.hpp $(RowChecksumMatrixDep)
 ColumnChecksumMatrixTestDep : $(SRCDIR)/tests/ColumnChecksumMatrixTest.hpp $(ColumnChecksumMatrixDep)
 FullChecksumMatrixTestDep : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)
-CalculatorTestDep : $(SRCDIR)/tests/CalculatorTest.hpp $(MatrixDep) $(ICalculatorDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(ErrorGeneratorDep) $(FullChecksumMatrixDep)
+CalculatorTestDep : $(SRCDIR)/tests/CalculatorTest.hpp $(MatrixDep) $(ICalculatorDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(MPackAdapterDep) $(ErrorGeneratorDep) $(FullChecksumMatrixDep)
 ErrorGeneratorTestDep : $(SRCDIR)/tests/ErrorGeneratorTest.hpp
 BenchmarkTestDep : $(SRCDIR)/tests/BenchmarkTest.hpp
 
@@ -93,4 +95,4 @@ $(BINDIR)/tests/ColumnChecksumMatrixTest.o : $(ColumnChecksumMatrixTestDep)
 $(BINDIR)/tests/FullChecksumMatrixTest.o : $(FullChecksumMatrixTestDep)
 $(BINDIR)/tests/CalculatorTest.o : $(CalculatorTestDep) $(ProcessorDep) $(CalculatorNaiveDep) $(CalculatorBlasLapackDep)
 $(BINDIR)/tests/ErrorGeneratorTest.o : $(ErrorGeneratorTestDep) $(ErrorGeneratorDep) $(MatrixDep)
-$(BINDIR)/tests/BenchmarkTest.o : $(BenchmarkTestDep) $(FullChecksumMatrixDep) $(CalculatorNaiveDep) $(CalculatorBlasLapackDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(ErrorGeneratorDep)
+$(BINDIR)/tests/BenchmarkTest.o : $(BenchmarkTestDep) $(FullChecksumMatrixDep) $(CalculatorNaiveDep) $(CalculatorBlasLapackDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(MPackAdapterDep) $(ErrorGeneratorDep)
