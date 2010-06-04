@@ -5,7 +5,7 @@
 
 template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public virtual IColumnChecksumMatrix<T> {
 		IMatrix<T>& matrix;
-		IVector<double>& columnSummationVector;
+		IVector<TYPE_SUM>& columnSummationVector;
 
 	public:
         /*
@@ -23,10 +23,10 @@ template <class T> class ColumnChecksumMatrix : public virtual Matrix<T>, public
         IMatrix<T>& getColumnMatrix() const;
 
         // implémentation de IColumnChecksumMatrix<T>
-        IVector<double>& getColumnSummationVector() const;
+        IVector<TYPE_SUM>& getColumnSummationVector() const;
 
         // implémentation de IColumnChecksumMatrix<T>
-        double computeColumnSum(int j) const;
+        TYPE_SUM computeColumnSum(int j) const;
 
         // implémentation de IColumnChecksumMatrix<T>
         bool columnErrorDetection(int j) const;

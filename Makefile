@@ -77,15 +77,15 @@ $(BINDIR)/MpackAdapter.o : $(MpackAdapterDep)
 $(BINDIR)/Processor.o : $(ProcessorDep) $(FullChecksumMatrixDep) $(ErrorGeneratorDep)
 $(BINDIR)/ErrorGenerator.o : $(ErrorGeneratorDep)
 
-TypesTestDep : $(SRCDIR)/tests/TypesTest.hpp
-MatrixTestDep : $(SRCDIR)/tests/MatrixTest.hpp
-VectorTestDep : $(SRCDIR)/tests/VectorTest.hpp
-RowChecksumMatrixTestDep : $(SRCDIR)/tests/RowChecksumMatrixTest.hpp $(RowChecksumMatrixDep)
-ColumnChecksumMatrixTestDep : $(SRCDIR)/tests/ColumnChecksumMatrixTest.hpp $(ColumnChecksumMatrixDep)
-FullChecksumMatrixTestDep : $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)
-CalculatorTestDep : $(SRCDIR)/tests/CalculatorTest.hpp $(MatrixDep) $(ICalculatorDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(MPackAdapterDep) $(ErrorGeneratorDep) $(FullChecksumMatrixDep)
-ErrorGeneratorTestDep : $(SRCDIR)/tests/ErrorGeneratorTest.hpp
-BenchmarkTestDep : $(SRCDIR)/tests/BenchmarkTest.hpp
+TypesTestDep = $(SRCDIR)/tests/TypesTest.hpp
+MatrixTestDep = $(SRCDIR)/tests/MatrixTest.hpp
+VectorTestDep = $(SRCDIR)/tests/VectorTest.hpp
+RowChecksumMatrixTestDep = $(SRCDIR)/tests/RowChecksumMatrixTest.hpp $(RowChecksumMatrixDep)
+ColumnChecksumMatrixTestDep = $(SRCDIR)/tests/ColumnChecksumMatrixTest.hpp $(ColumnChecksumMatrixDep)
+FullChecksumMatrixTestDep = $(SRCDIR)/tests/FullChecksumMatrixTest.hpp $(FullChecksumMatrixDep)
+CalculatorTestDep = $(SRCDIR)/tests/CalculatorTest.hpp $(MatrixDep) $(ICalculatorDep) $(AtlasAdapterDep) $(GotoBlasAdapterDep) $(IntelMKLAdapterDep) $(MPackAdapterDep) $(ErrorGeneratorDep) $(FullChecksumMatrixDep)
+ErrorGeneratorTestDep = $(SRCDIR)/tests/ErrorGeneratorTest.hpp
+BenchmarkTestDep = $(SRCDIR)/tests/BenchmarkTest.hpp
 
 $(BINDIR)/tests/TypesTest.o : $(TypesTestDep) $(TypesDep)
 $(BINDIR)/tests/MatrixTest.o : $(MatrixTestDep) $(MatrixDep)

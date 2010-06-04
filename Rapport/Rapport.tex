@@ -254,7 +254,7 @@ nous désirons avoir en main le langage produisant le programme le plus efficace
 à notre demande et parait le meilleur choix. Nous tacherons maintenant de réaliser 
 une conception qui a le goût d’être efficace tout en étant simple et logique.
 
-\section{Conception}
+\section{Choix de conception}
 \subsection{Contrats}
 \paragraph*{}
 Dans cette partie nous proposons de réaliser une conception du système à réaliser. Sachant que ce dernier évoluera tout 
@@ -470,6 +470,30 @@ Elle permet d'effectuer des test unitaires pour le C++.\newline
 Celle-ci est donc nécessaire pour compiler et executer notre implémentation.\newline
 Les tests unitaires représentent une grande partie de ce projet : 4200 lignes de code dont 1700 lignes de tests.
 
+\section{Organisation}
+Voici les différentes vues de notre projet.\newline
+Remarque : les patrons de conception \textit{Strategy} et \textit{Bridge} ont été utilisés.\newline
+
+\begin{figure}[h]
+\includegraphics[scale=0.4]{interfaces.pdf}
+\caption{Les interfaces}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[scale=0.4]{diag2.pdf}
+\caption{Les types}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[scale=0.25]{diag3.pdf}
+\caption{Les types et interfaces correspondantes}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[scale=0.2]{diag4.pdf}
+\caption{Les types, interfaces et opérations associées}
+\end{figure}
+
 \chapter{Autour de la correction d'erreur}
 Nous avons déjà expliqué le principe qui réside derrière la correction d’erreurs. Cette correction utilise la propriété 
 du \textit{checksum} pour détecter une erreur et profite de la redondance d’information pour tenter une correction de 
@@ -496,7 +520,7 @@ emplacement facilement trouvé. S’il s’agit du \textit{checksum} on lui retr
 D’une manière générale le travail consiste à résoudre un système contenant les équations des lignes et colonnes non valides. 
 Le nombre d’équations est alors égal au nombre de ces lignes et colonnes et le nombre d’inconnues est celui des intersections 
 entre ces lignes et ces colonnes.\newline
-Déterminer le nombre de solutions pour ce système permet de discuter de la possibilité ou pas d’une correction.
+Déterminer le nombre de solutions pour ce système permet de discuter de la possibilité ou non d’une correction.
 
 \section{Une erreur}
 S’il existe une seule erreur, nous avons alors une ligne et une colonne non valides. Vu que nous avons une intersection 
@@ -615,9 +639,17 @@ sur le co\^ut de la technique.
 
 \section{Les différentes implémentations du BLAS}
 Le Basic Linear Algebra Subprograms (BLAS) est un ensemble de fonctions standardisées (interface de programmation) réalisant des opérations de base de l'algèbre linéaire comme des multiplications de vecteurs ou de matrices. Largement utilisées pour le calcul haute performance, ces fonctions ont été implémentées de manière très optimisée.\newline
-La très célèbre fonction \textit{dgemm} est utilisée par notre implémentation et représente le produit matriciel sans l'utilisation de la technique de correction d'erreurs.
+La célèbre fonction \textit{dgemm} est utilisée par notre implémentation et représente le produit matriciel sans l'utilisation de la technique de correction d'erreurs.\newline
+rq : \textbf{MPACK} \cite{MPACK} à été construit à partir d'une version d'\textbf{ATLAS} \cite{ATLAS} précompilée\newline
+(Voir figure \ref{fig:blas})
+\begin{figure}
+\center
+\includegraphics[scale=0.4]{../benchmarkImages/blas.pdf}
+\caption{Produit BLAS (dgemm) de deux matrices n x n de doubles}
+\label{fig:blas}
+\end{figure}
 
-\section{La technique ABFT \cite{Huang} que nous avons implémentée}
+\section{La technique ABFT \cite{Huang} que nous avons implémenté}
 Trois étapes sont nécessaires :
 \begin{itemize}
 \item L'extention de la matrice originale : le co\^ut représente celui de la sommation
@@ -626,32 +658,65 @@ Trois étapes sont nécessaires :
 \end{itemize}
 
 \subsection{Checksums doubles}
-Ici le surplus de mémoire nécessaire est négligeable en comparaison à la mémoire utilisée par la matrice originale (de l'ordre de $n + m$).
+Ici le surplus de mémoire nécessaire est négligeable en comparaison à la mémoire utilisée par la matrice originale (de l'ordre de $n + m$).\newline
+Pour obtenir le co\^ut total de la methode il faut additionner l'extension de la matrice, le produit BLAS et la détection/correction d'erreurs.\newline
+On remarque que l'application de la technique ABFT \cite{Huang} provoque un surcoût total d'environs 25\% pour le produit matriciel avec checksums doubles.\newline
+(Voir figure \ref{fig:double})
+\begin{figure}
+\center
+\includegraphics[scale=0.4]{../benchmarkImages/double.pdf}
+\caption{Extension + détection/correction sur deux matrices $n \times n$ de doubles}
+\label{fig:double}
+\end{figure}
 
-\subsection{Checksums GMP}
-\subsubsection{Calcul des checksums résultats en utilisant l'algorithme naïf (multi-precision)}
+\subsection{Checksums \textbf{GMP} \cite{GMP}}
 Ici le calcul du coeur de la matrice résultat est effectué par \textbf{ATLAS} \cite{ATLAS},
-et le calcul des checksums résultats par l'algorithme naïf qui permet d'effectuer des calculs avec plusieurs types
-sans allouer de mémoire supplémentaire.\newline
-Surco\^ut en mémoire toujours négligeable (de l'ordre de $n + m$ mais avec une plus forte constante que pour les checksums doubles).
+et le calcul des checksums résultats par deux produits matrice-vecteur.
+Surco\^ut en mémoire toujours négligeable (de l'ordre de $n + m$ mais avec une plus forte constante que pour les checksums doubles).\newline
+Pour obtenir le co\^ut total de la methode il faut additionner l'extension de la matrice, le produit BLAS, le calcul des checksums GMP, et la détection/correction d'erreurs.\newline
+Le surcoût rien que pour les deux sommations (extension et détection/correction) est de plus de 80\% pour le produit matriciel avec checksums GMP.\newline
+(Voir figure \ref{fig:gmp})
+\begin{figure}
+\center
+\includegraphics[scale=0.4]{../benchmarkImages/gmp.pdf}
+\caption{Extension + détection/correction sur deux matrices $n \times n$ avec checksums GMP}
+\label{fig:gmp}
+\end{figure}
 
-\subsubsection{Calcul de toute la matrice résultat en utilisant \textbf{MPACK} \cite{MPACK}}
-Le produit est effectué en convertisant les doubles de la matrice d'information en types étendu et en appliquant la fonction \textit{rgemm}
-avant de convertir le coeur de la matrice résultat en doubles.\newline
-Surco\^ut en mémoire important (de l'ordre de $n \times m$).
+\subsubsection{Calcul des checksums résultats en utilisant l'algorithme naïf (multi-precision)}
+L'algorithme naïf  permet d'effectuer des calculs avec plusieurs types sans allouer de mémoire supplémentaire.\newline
+Le surcoût pour le calcul des checksums est d'environs 175\% pour le produit matriciel avec checksums GMP.\newline
+(Voir figure \ref{fig:naif})
+\begin{figure}
+\center
+\includegraphics[scale=0.4]{../benchmarkImages/naif.pdf}
+\caption{Calcul des checksums GMP avec l'algorithme naïf sur deux matrices $n \times n$}
+\label{fig:naif}
+\end{figure}
+
+\subsubsection{Calcul des checksums résultats en utilisant \textbf{MPACK} \cite{MPACK}}
+Le produit est effectué en convertisant la matrice d'information en type étendu et en effectuant deux appels à \textit{Rgemv} (produit matrice-vecteur de réels)
+avant de convertir le résultat en doubles.\newline
+Surco\^ut en mémoire important (de l'ordre de $n \times m$).\newline
+Les appels à \textit{Rgemv} sont plus rapides que l'application de l'algorithme naïf mais les conversions de type et les
+transferts de mémoire rendent cette methode de calcul des checksums encore moins efficace que la précédente.\newline
+Cette méthode est donc inenvisageable à moins de disposer à la base d'une matrice avec des éléments GMP.\newline
+rq : \textbf{MPACK} \cite{MPACK} à été construit à partir d'une version d'\textbf{ATLAS} \cite{ATLAS} précompilée\newline
+(Voir figure \ref{fig:mpack})
+\begin{figure}
+\center
+\includegraphics[scale=0.4]{../benchmarkImages/mpack.pdf}
+\caption{Calcul des checksums GMP (conversions + deux Rgemv) avec MPack sur deux matrices $n \times n$}
+\label{fig:mpack}
+\end{figure}
 
 
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
-Nous avons abordé dans ce rapport, d'abord le principe de l'ABFT \cite{Huang} présenté par K.-H. Huang et J.A. Abraham. Ensuite, nous avons
-discuté de nos choix d'implémentation de cet algorithme partant du choix du langage, en passant par la conception par contrats,
-les types génériques et la simulation de génération d'erreurs ainsi que les solutions possibles au problèmes que nous pose cette
-implémentation comme le patron de conception \textit{Strategy}, et les fonctions virtuelles pures. Enfin, nous avons étudié en 
-détail la capacité de cet algorithme à détecter et à corriger les erreurs.
-\paragraph*{}
-Cette dernière partie reflète les limites de cette méthode. Ainsi on peut corriger avec certitude seulement une erreur,
-cependant la correction concernant deux erreurs dépend de plusieurs facteurs dont certains que nous avons fixé pour permettre
-cette correction. Il s'agit de la limite de l'utilisation des propriétés du \textit{checksum}.
+Nous avons présenté dans ce rapport le principe de l'ABFT \cite{Huang} de K.-H. Huang et J.A. Abraham. Nous avons ensuite explicité les différentes étapes et choix
+d'implémentation de cet algorithme.
+Les possibilités et limites de cet algorithme ont également été évoquées en passant par ses liens avec l'arithmétique flottante.
+D'autre part les analyses de performances nous permettent d'affirmer que cette solution est envisageable dans la pratique, si les checksums sont stockés sous forme de flottants double précision.
 \paragraph*{}
 Le code source et disponible sur le site \textbf{http://pstl2010sujet9.googlecode.com/} et il peut \^etre récupéré avec la commande\newline
 \textbf{svn checkout http://pstl2010sujet9.googlecode.com/svn/trunk/ pstl2010sujet9-read-only}

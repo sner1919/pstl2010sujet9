@@ -45,10 +45,10 @@ void BenchmarkTest::testPerf() {
 	ofstream extensionFile ("./benchmark/" MACRO_TO_STR(CPU) "Extension.data", ios::out | ios::trunc);
 	ofstream correctionFile ("./benchmark/" MACRO_TO_STR(CPU) "Correction.data", ios::out | ios::trunc);
 	if(!atlasFile) cerr << "Impossible d'ouvrir le fichier !" << endl;
-	int nMax = 4000;
+	int nMax = 100;
 
 
-	for(int n = nMax / 10; n <= nMax; n += nMax / 10) {
+	for(int n = nMax / 10 * 9; n <= nMax; n += nMax / 10) {
 
 		Matrix<double> A(n, n);
 		Matrix<double> B(n, n);
@@ -132,7 +132,7 @@ void BenchmarkTest::testPerf() {
 		atlasFile << n << " " <<  dgemm << endl;
 		calculChecksumsFile << n << " " <<  calculChecksums << endl;
 		calculChecksumsMPackFile << n << " " <<  calculChecksumsMPack << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
 		gettimeofday(&start, NULL);
@@ -140,7 +140,7 @@ void BenchmarkTest::testPerf() {
 		gettimeofday(&end, NULL);
 		cout << "	- GotoBlas : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		gotoBlasFile << n << " " <<  dgemm << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		for(int i = 1; i <= n + 1; i++) for(int j = 1; j <= n + 1 ; j++) C1f(i, j) = 0;
 
 		gettimeofday(&start, NULL);
@@ -148,55 +148,55 @@ void BenchmarkTest::testPerf() {
 		gettimeofday(&end, NULL);
 		cout << "	- IntelMKL : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		intelMKLFile << n << " " <<  dgemm << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 
-		if(n <= 2000) {
+		if(n <= 2400) {
 			gettimeofday(&start, NULL);
 			calculatorMPack.mult(C1f, Ac, Br);
 			gettimeofday(&end, NULL);
 			cout << "	- Mpack : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 			mPackFile << n << " " <<  dgemm << endl;
-			//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+			CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
 		}
 
-		//CPPUNIT_ASSERT(!(C1f == C2f));
+		CPPUNIT_ASSERT(!(C1f == C2f));
 		(IMatrix<double>&) C2f = C1f;
 
 		// correction 0 erreurs
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(C1f == C2f);
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(C1f == C2f);
 		gettimeofday(&start, NULL);
-		//C1f.errorCorrection();
+		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
 		cout << "durée correction 0 erreurs (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(C1f == C2f);
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(C1f == C2f);
 
 		// correction 1 erreurs
 		th = generator.generateError(C1f, 1, 1, n + 1, 1, n + 1);
 		pthread_join(th, NULL);
-		//CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(!(C1f == C2f));
+		CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(!(C1f == C2f));
 		gettimeofday(&start, NULL);
-		//C1f.errorCorrection();
+		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
 		cout << "durée correction 1 erreurs (en secondes) : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(C1f == C2f);
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(C1f == C2f);
 
 		// correction 2 erreurs (même ligne)
 		th = generator.generateError(C1f, 2, 1, 1, 1, n + 1);
 		pthread_join(th, NULL);
-		//CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(!(C1f == C2f));
+		CPPUNIT_ASSERT(C1f.columnErrorDetection() && C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(!(C1f == C2f));
 		gettimeofday(&start, NULL);
 		C1f.errorCorrection();
 		gettimeofday(&end, NULL);
 		t = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 		cout << "durée correction 2 erreurs (en secondes) : " << t << endl;
 		correctionFile << n << " " <<  t << endl;
-		//CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
-		//CPPUNIT_ASSERT(C1f == C2f);
+		CPPUNIT_ASSERT(!C1f.columnErrorDetection() && !C1f.rowErrorDetection());
+		CPPUNIT_ASSERT(C1f == C2f);
 
 	}
 }

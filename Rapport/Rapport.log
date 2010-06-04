@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.6.2)  3 JUN 2010 14:00
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.6.2)  4 JUN 2010 08:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -279,75 +279,138 @@ s Ma-tri-ces et de leurs
 <ICalculator.pdf, id=70, 491.8375pt x 170.6375pt>
 File: ICalculator.pdf Graphic file (type pdf)
  <use ICalculator.pdf>
-[12] [13 <./ICalculator.pdf>] [14]
+[12] [13 <./ICalculator.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 474--476
+
+ []
+
+[14] <interfaces.pdf, id=84, 903.375pt x 260.975pt>
+File: interfaces.pdf Graphic file (type pdf)
+ <use interfaces.pdf>
+Overfull \hbox (16.3436pt too wide) in paragraph at lines 478--479
+[][] 
+ []
+
+<diag2.pdf, id=85, 1057.9525pt x 732.7375pt>
+File: diag2.pdf Graphic file (type pdf)
+ <use diag2.pdf>
+Overfull \hbox (78.17351pt too wide) in paragraph at lines 483--484
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<diag3.pdf, id=86, 1606.0pt x 933.4875pt>
+File: diag3.pdf Graphic file (type pdf)
+ <use diag3.pdf>
+Overfull \hbox (56.49902pt too wide) in paragraph at lines 488--489
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<diag4.pdf, id=87, 2148.025pt x 1304.875pt>
+File: diag4.pdf Graphic file (type pdf)
+ <use diag4.pdf>
+Overfull \hbox (84.5974pt too wide) in paragraph at lines 493--494
+[][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[15 <./interfaces.pdf>] [16 <./diag2.pdf> <./diag3.pdf>] [17 <./diag4.pdf>]
 Chapitre 3.
 
-LaTeX Warning: Command \textendash invalid in math mode on input line 487.
+LaTeX Warning: Command \textendash invalid in math mode on input line 511.
 
 
-Overfull \hbox (4.94493pt too wide) in paragraph at lines 487--495
+Overfull \hbox (4.94493pt too wide) in paragraph at lines 511--519
 \OT1/cmr/m/n/10 Bien que les deux ^^Secritures soient compl^^Retement ^^Sequiva
 lentes la deuxi^^Reme pr^^Sesente
  []
 
-[15
+[18
 
-] [16] [17]
+] [19] [20]
 Chapitre 4.
-<IEEE754.jpg, id=95, 833.36343pt x 146.04562pt>
+<IEEE754.jpg, id=124, 833.36343pt x 146.04562pt>
 File: IEEE754.jpg Graphic file (type jpg)
  <use IEEE754.jpg>
-Overfull \hbox (71.6807pt too wide) in paragraph at lines 571--572
+Overfull \hbox (71.6807pt too wide) in paragraph at lines 595--596
  [] 
  []
 
-[18
+[21
 
- <./IEEE754.jpg>] [19]
+ <./IEEE754.jpg>] [22]
 Chapitre 5.
+<../benchmarkImages/blas.pdf, id=131, 845.1575pt x 597.23125pt>
+File: ../benchmarkImages/blas.pdf Graphic file (type pdf)
 
-Overfull \hbox (4.46182pt too wide) in paragraph at lines 617--619
-\OT1/cmr/m/n/10 La tr^^Res c^^Sel^^Rebre fonc-tion \OT1/cmr/m/it/10 dgemm \OT1/
-cmr/m/n/10 est utilis^^See par notre impl^^Sementation et repr^^Sesente
+<use ../benchmarkImages/blas.pdf>
+Overfull \hbox (43.36107pt too wide) in paragraph at lines 652--652
+[]\OT1/cmr/bx/n/14.4 La tech-nique ABFT [[]] que nous avons impl^^Sement^^Se 
  []
 
+[23
 
-Overfull \hbox (50.75273pt too wide) in paragraph at lines 620--620
-[]\OT1/cmr/bx/n/14.4 La tech-nique ABFT [[]] que nous avons impl^^Sement^^See 
+] <../benchmarkImages/double.pdf, id=136, 845.1575pt x 597.23125pt>
+File: ../benchmarkImages/double.pdf Graphic file (type pdf)
+
+<use ../benchmarkImages/double.pdf>
+<../benchmarkImages/gmp.pdf, id=137, 845.1575pt x 597.23125pt>
+File: ../benchmarkImages/gmp.pdf Graphic file (type pdf)
+
+<use ../benchmarkImages/gmp.pdf>
+Overfull \hbox (1.66725pt too wide) in paragraph at lines 673--685
+\OT1/cmr/m/n/10 Le surco^ut rien que pour les deux som-ma-tions (ex-ten-sion et
+ d^^Setection/correction)
  []
 
-[20
+<../benchmarkImages/naif.pdf, id=138, 845.1575pt x 597.23125pt>
+File: ../benchmarkImages/naif.pdf Graphic file (type pdf)
 
-] [21]
-Overfull \hbox (26.13387pt too wide) in paragraph at lines 656--658
+<use ../benchmarkImages/naif.pdf> [24 <../benchmarkImages/blas.pdf, page is rot
+ated 90 degrees>] [25 <../benchmarkImages/double.pdf, page is rotated 90 degree
+s> <../benchmarkImages/gmp.pdf, page is rotated 90 degrees>]
+<../benchmarkImages/mpack.pdf, id=154, 845.1575pt x 597.23125pt>
+File: ../benchmarkImages/mpack.pdf Graphic file (type pdf)
+
+<use ../benchmarkImages/mpack.pdf> [26 <../benchmarkImages/naif.pdf, page is ro
+tated 90 degrees>] [27 <../benchmarkImages/mpack.pdf, page is rotated 90 degree
+s>]
+Overfull \hbox (26.13387pt too wide) in paragraph at lines 721--723
  \OT1/cmr/m/n/10 Le code source et disponible sur le site \OT1/cmr/bx/n/10 http
  ://pstl2010sujet9.googlecode.com/
  []
 
 
-Overfull \hbox (52.5548pt too wide) in paragraph at lines 656--658
+Overfull \hbox (52.5548pt too wide) in paragraph at lines 721--723
 \OT1/cmr/bx/n/10 svn check-out http ://pstl2010sujet9.googlecode.com/svn/trunk/
  pstl2010sujet9-
  []
 
-[22
+[28
 
 ]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 682.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 747.
 
  (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 682.
- [23
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 747.
+ [29
 
 ] (./Rapport.aux) ) 
 Here is how much of TeX's memory you used:
- 4136 strings out of 495061
- 51251 string characters out of 1182622
+ 4187 strings out of 495061
+ 52288 string characters out of 1182622
  135010 words of memory out of 3000000
- 7284 multiletter control sequences out of 15000+50000
+ 7325 multiletter control sequences out of 15000+50000
  10282 words of font info for 36 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  30i,8n,37p,397b,589s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -364,9 +427,9 @@ mf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/
 fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texmf-texlive/fonts/type1/
 public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
 onts/cm/cmtt12.pfb>
-Output written on Rapport.pdf (25 pages, 619790 bytes).
+Output written on Rapport.pdf (31 pages, 646843 bytes).
 PDF statistics:
- 159 PDF objects out of 1000 (max. 8388607)
+ 218 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 86 words of extra memory for PDF output out of 10000 (max. 10000000)
 
