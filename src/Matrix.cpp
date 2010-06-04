@@ -49,7 +49,7 @@ bool Matrix<T>::getDataAllocation() const {
 
 template <class T>
 TYPE_UNION Matrix<T>::operator()(int i, int j) const {
-	TYPE_UNION v(data[(i - 1) * getN() + (j - 1)]);
+	TYPE_UNION v(data[(j - 1) * getM() + (i - 1)]);
 	return v;
 }
 
@@ -124,7 +124,7 @@ int Matrix<T>::weight() const {
 }
 
 template <class T>
-void Matrix<T>::fromDouble(double* t, bool rowMajor) {
+void Matrix<T>::fromDouble(const double* t, bool rowMajor) {
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
 			(*this)(i, j) = t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))];
@@ -137,6 +137,24 @@ void Matrix<T>::toDouble(double* t, bool rowMajor) const {
 	for(int i = 1; i <= getM(); i++){
 		for(int j = 1; j <= getN(); j++){
 			t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))] = (*this)(i, j).toDouble();
+		}
+	}
+}
+
+template <class T>
+void Matrix<T>::fromTypeSum(const TYPE_SUM* t, bool rowMajor) {
+	for(int i = 1; i <= getM(); i++){
+		for(int j = 1; j <= getN(); j++){
+			(*this)(i, j) = TYPE_SUM_TO_DOUBLE(t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))]);
+		}
+	}
+}
+
+template <class T>
+void Matrix<T>::toTypeSum(TYPE_SUM* t, bool rowMajor) const {
+	for(int i = 1; i <= getM(); i++){
+		for(int j = 1; j <= getN(); j++){
+			t[(rowMajor ? (i - 1) * getN() + (j - 1) : (j - 1) * getM() + (i - 1))] = ((*this)(i, j).type == 0 ? DOUBLE_TO_TYPE_SUM(*(*this)(i, j).d) : *(*this)(i, j).s);
 		}
 	}
 }

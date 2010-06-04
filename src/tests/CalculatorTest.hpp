@@ -5,6 +5,7 @@
 #include "../AtlasAdapter.hpp"
 #include "../GotoBlasAdapter.hpp"
 #include "../IntelMKLAdapter.hpp"
+#include "../MPackAdapter.hpp"
 #include "../ErrorGenerator.hpp"
 #include "../FullChecksumMatrix.hpp"
 #include <vector>
@@ -26,6 +27,7 @@ class CalculatorTest : public CppUnit::TestFixture {
 		AtlasAdapter *atlasAdapter;
 		GotoBlasAdapter *gotoBlasAdapter;
 		IntelMKLAdapter *intelMKLAdapter;
+		MPackAdapter *mPackAdapter;
 		vector< ICalculator<double>* > calc;
 
 	public:

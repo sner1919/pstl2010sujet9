@@ -15,14 +15,14 @@ template <class T> class IRowChecksumMatrix : public virtual IMatrix<T> {
 		 * Donne le vecteur de sommation des lignes de la matrice.
 		 * @return le vecteur de sommation
 		 */
-        virtual IVector<TYPE_SUM>& getRowSummationVector() const = 0;
+        virtual IVector<double>& getRowSummationVector() const = 0;
 
         /*
 		 * Effectue la sommation d'une ligne de la matrice.
 		 * @param i l'indice de la ligne
 		 * @return le résultat de la sommation
 		 */
-        virtual TYPE_SUM computeRowSum(int i) const = 0;
+        virtual double computeRowSum(int i) const = 0;
 
         /*
          * Indique si une erreur a été détectée dans une ligne.

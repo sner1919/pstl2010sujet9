@@ -10,8 +10,8 @@ void ColumnChecksumMatrixTest::setUp() {
     L2 = new Matrix<double>(*L);
 
 	UData = new double[4];
-    UData[0] = 4.; UData[1] = 3.;
-    UData[2] = 0.; UData[3] = -1.5;
+    UData[0] = 4.; UData[2] = 3.;
+    UData[1] = 0.; UData[3] = -1.5;
     U = new Matrix<double>(UData, 2, 2);
 
     Lc = new ColumnChecksumMatrix<double>(*L);

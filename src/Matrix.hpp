@@ -24,7 +24,7 @@ class Matrix : public virtual IMatrix<T> {
 
         /*
          * Crée une matrice à partir d'un contenu existant (utilisation de la même zone mémoire).
-         * @param data le contenu sous la forme d'un tableau, où les données sont rangées lignes par lignes
+         * @param data le contenu sous la forme d'un tableau, où les données sont rangées colonnes pas colonnes (column major)
          * @param m le nombre de lignes
          * @param n le nombre de colonnes
          */
@@ -57,10 +57,16 @@ class Matrix : public virtual IMatrix<T> {
         string toString() const;
 
         // implémentation de IMatrix<T>
-        void fromDouble(double* t, bool rowMajor);
+        void fromDouble(const double* t, bool rowMajor);
 
         // implémentation de IMatrix<T>
         void toDouble(double* t, bool rowMajor) const;
+
+        // implémentation de IMatrix<T>
+        void fromTypeSum(const TYPE_SUM* t, bool rowMajor);
+
+        // implémentation de IMatrix<T>
+        void toTypeSum(TYPE_SUM* t, bool rowMajor) const;
 
         // implémentation de IMatrix<T>
         int locationId(int i, int j) const;

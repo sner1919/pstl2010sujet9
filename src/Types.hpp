@@ -18,6 +18,7 @@ double randDouble2();
 
 typedef mpf_class TYPE_SUM;
 #define TYPE_SUM_TO_DOUBLE(x) x.get_d()
+#define DOUBLE_TO_TYPE_SUM(x) mpf_class(x, 64)
 #define TYPE_SUM_PRECISION 1024
 
 class TYPE_UNION {

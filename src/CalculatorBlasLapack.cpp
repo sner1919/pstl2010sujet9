@@ -2,8 +2,10 @@
 #include "interfaces/IFullChecksumMatrix.hpp"
 #include <sys/time.h>
 #include <typeinfo>
+#include "../include/mpack/mblas_gmp.h"
+#include "../include/mpack/mlapack_gmp.h"
 
-double dgemm, calculChecksums;
+double dgemm, calculChecksums, calculChecksumsMPack;
 
 template <class T>
 CalculatorBlasLapack<T>::CalculatorBlasLapack(IBlasLapackAdapter& blasLapackAdapter, int MatrixType) : blasLapackAdapter(blasLapackAdapter), MatrixType(MatrixType) {
@@ -12,11 +14,12 @@ CalculatorBlasLapack<T>::CalculatorBlasLapack(IBlasLapackAdapter& blasLapackAdap
 
 template <class T>
 void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const IMatrix<T>& B) const {
-	// Vérifications
+ 	// Vérifications
 	if(!(A.getN() == B.getM()
 		 && Res.getM() == A.getM() && Res.getN() == B.getN())) throw domain_error("produit impossible");
 
-	struct timeval start, end;
+	struct timeval start, start2, end;
+
 	double *res, *a, *b;
 
 	try {
@@ -26,6 +29,9 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		const IRowChecksumMatrix<T>& Br = dynamic_cast<const IRowChecksumMatrix<T>&>(B);
 
 		cout << endl << "+++++++++++++++++++++++++++ Avec extension +++++++++++++++++++++++++++++" << endl;
+
+		/* +++++++++++++++++++++++++++++++++++++++++++++++++++++++ Produit Hybride +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+
 		if(MatrixType == 0) {
 			gettimeofday(&start, NULL);
 			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
@@ -35,8 +41,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 			cout << endl << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 			gettimeofday(&start, NULL);
-			Ac.getColumnMatrix().toDouble(a, true);
-			Br.getRowMatrix().toDouble(b, true);
+			Ac.getColumnMatrix().toDouble(a, false);
+			Br.getRowMatrix().toDouble(b, false);
 			gettimeofday(&end, NULL);
 			cout << "	- toDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		} else {
@@ -46,11 +52,11 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		}
 
 		gettimeofday(&start, NULL);
-		blasLapackAdapter.dgemm(CblasRowMajor_, CblasNoTrans_, CblasNoTrans_,
+		/*blasLapackAdapter.dgemm(CblasColMajor_, CblasNoTrans_, CblasNoTrans_,
 			Ac.getM() - 1, Br.getN() - 1, Ac.getN(),
-			1., a, Ac.getN(),
-			b, Br.getN() - 1,
-			0., res, Resf.getN() - 1);
+			1., a, Ac.getM() - 1,
+			b, Br.getM(),
+			0., res, Resf.getM() - 1);*/
 		gettimeofday(&end, NULL);
 		dgemm = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 		cout << "	- dgemm : " << dgemm << endl;
@@ -58,17 +64,87 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 
 		if(MatrixType == 0) {
 			gettimeofday(&start, NULL);
-			Resf.getRowMatrix().fromDouble(res, true);
+			Resf.getRowMatrix().fromDouble(res, false);
 			gettimeofday(&end, NULL);
 			cout << "	- fromDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		}
 
-		gettimeofday(&start, NULL);
-		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
-		CalculatorNaiveMult<TYPE_SUM, T, TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
+		gettimeofday(&start2, NULL);
+
+		/* ++++++++++++++++++ utilisation du calculateur Naïf +++++++++++++++ */
+		//CalculatorNaiveMult<double, double, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
+		//CalculatorNaiveMult<double, T, double>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
 		gettimeofday(&end, NULL);
 		calculChecksums = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
-		cout << "	- CalculatorNaiveMult : " << calculChecksums << endl;
+		cout << "	- calculChecksums : " << calculChecksums << endl;
+		/* ------------------------------------------------------------------ */
+
+		/* ++++++++++++++++++ utilisation de MPack +++++++++++++++ */
+		/* ++++++++++++++++++ Resf.getColumnSummationVector() +++++++++++++++ */
+		/*mpf_set_default_prec(64);
+		mpf_class *res, *a, *x;
+
+		gettimeofday(&start, NULL);
+		res = new mpf_class[Resf.getN()];
+		x = new mpf_class[Ac.getN()];
+		a = new mpf_class[Br.getM() * Br.getN()];
+		gettimeofday(&end, NULL);
+		cout << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Ac.getColumnSummationVector().toTypeSum(x, false);
+		Br.toTypeSum(a, false);
+		gettimeofday(&end, NULL);
+		cout << "	- toTypeSum : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Rgemv("Transpose", (mpackint) Br.getM(), (mpackint) Br.getN(), (mpf_class) 1.,
+			 a, (mpackint) Br.getM(), x, (mpackint) 1,
+			 (mpf_class) 0., res, (mpackint) 1);
+		gettimeofday(&end, NULL);
+		cout << "	- Rgemv : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Resf.getColumnSummationVector().fromTypeSum(res, false);
+		gettimeofday(&end, NULL);
+		cout << "	- fromTypeSum : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		delete [] res; delete [] a; delete [] x;*/
+
+		/* ++++++++++++++++++ Resf.getRowSummationVector() +++++++++++++++ */
+
+		/*gettimeofday(&start, NULL);
+		res = new mpf_class[Resf.getM() - 1];
+		a = new mpf_class[Ac.getColumnMatrix().getM() * Ac.getColumnMatrix().getN()];
+		x = new mpf_class[Br.getM()];
+		gettimeofday(&end, NULL);
+		cout << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Ac.getColumnMatrix().toTypeSum(a, false);
+		Br.getRowSummationVector().toTypeSum(x, false);
+		gettimeofday(&end, NULL);
+		cout << "	- toTypeSum : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Rgemv("NoTranspose", (mpackint) Ac.getColumnMatrix().getM(), (mpackint) Ac.getColumnMatrix().getN(), (mpf_class) 1.,
+			 a, (mpackint) Ac.getColumnMatrix().getM(), x, (mpackint) 1,
+			 (mpf_class) 0., res, (mpackint) 1);
+		gettimeofday(&end, NULL);
+		cout << "	- Rgemv : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		gettimeofday(&start, NULL);
+		Resf.getRowSummationVector().fromTypeSum(res, false);
+		gettimeofday(&end, NULL);
+		cout << "	- fromTypeSum : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
+
+		delete [] res; delete [] a; delete [] x;*/
+		/* ------------------------------------------------------- */
+
+		/*gettimeofday(&end, NULL);
+		calculChecksumsMPack = end.tv_sec - start2.tv_sec + (end.tv_usec - start2.tv_usec) / 1000000.0;
+		cout << "	- calculChecksumsMPack : " << calculChecksumsMPack << endl;*/
+		/* ----------------------------------------------------------------------------------------------------------------------------------------- */
 
 	} catch (bad_cast) {
 
@@ -82,8 +158,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 			cout << endl << "	- alloc : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 			gettimeofday(&start, NULL);
-			A.toDouble(a, true);
-			B.toDouble(b, true);
+			A.toDouble(a, false);
+			B.toDouble(b, false);
 			gettimeofday(&end, NULL);
 			cout << "	- toDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		} else {
@@ -93,17 +169,17 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		}
 
 		gettimeofday(&start, NULL);
-		blasLapackAdapter.dgemm(CblasRowMajor_, CblasNoTrans_, CblasNoTrans_,
+		blasLapackAdapter.dgemm(CblasColMajor_, CblasNoTrans_, CblasNoTrans_,
 			A.getM(), B.getN(), A.getN(),
-			1., (const double *) a, A.getN(),
-			(const double *) b, B.getN(),
-			0., res, Res.getN());
+			1., (const double *) a, A.getM(),
+			(const double *) b, B.getM(),
+			0., res, Res.getM());
 		gettimeofday(&end, NULL);
 		cout << "	- dgemm : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 
 		if(MatrixType == 0) {
 			gettimeofday(&start, NULL);
-			Res.fromDouble(res, true);
+			Res.fromDouble(res, false);
 			gettimeofday(&end, NULL);
 			cout << "	- fromDouble : " << (end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0) << endl;
 		}
@@ -133,7 +209,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 		if(MatrixType == 0) {
 			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
 
-			Af.getRowMatrix().toDouble(res, true);
+			Af.getRowMatrix().toDouble(res, false);
 		} else {
 			res = Resf.getRowMatrix().getData();
 
@@ -143,18 +219,18 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 		blasLapackAdapter.dscal((Resf.getM() - 1) * (Resf.getN() - 1), x, res, 1);
 
 		if(MatrixType == 0) {
-			Resf.getRowMatrix().fromDouble(res, true);
+			Resf.getRowMatrix().fromDouble(res, false);
 		}
 
-		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), x);
-		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getRowSummationVector(), Af.getRowSummationVector(), x);
+		CalculatorNaiveMult<double, double, T>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), x);
+		CalculatorNaiveMult<double, double, T>(Resf.getRowSummationVector(), Af.getRowSummationVector(), x);
 
 	} catch (bad_cast) {
 
 		if(MatrixType == 0) {
 			res = new double[Res.getM() * Res.getN()];
 
-			A.toDouble(res, true);
+			A.toDouble(res, false);
 		} else {
 			res = Res.getData();
 
@@ -164,7 +240,7 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 		blasLapackAdapter.dscal(Res.getM() * Res.getN(), x, res, 1);
 
 		if(MatrixType == 0) {
-			Res.fromDouble(res, true);
+			Res.fromDouble(res, false);
 		}
 
 	}
@@ -192,8 +268,8 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 			res = new double[(Resf.getM() - 1) * (Resf.getN() - 1)];
 			a = new double[(Af.getM() - 1) * (Af.getN() - 1)];
 
-			Bf.getRowMatrix().toDouble(res, true);
-			Af.getRowMatrix().toDouble(a, true);
+			Bf.getRowMatrix().toDouble(res, false);
+			Af.getRowMatrix().toDouble(a, false);
 		} else {
 			res = Resf.getRowMatrix().getData();
 			a = Af.getRowMatrix().getData();
@@ -204,11 +280,11 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 		blasLapackAdapter.daxpy((Resf.getM() - 1) * (Resf.getN() - 1), 1, a, 1, res, 1);
 
 		if(MatrixType == 0) {
-			Resf.getRowMatrix().fromDouble(res, true);
+			Resf.getRowMatrix().fromDouble(res, false);
 		}
 
-		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), Bf.getColumnSummationVector());
-		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getRowSummationVector(), Af.getRowSummationVector(), Bf.getRowSummationVector());
+		CalculatorNaiveAdd<double, double, double>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), Bf.getColumnSummationVector());
+		CalculatorNaiveAdd<double, double, double>(Resf.getRowSummationVector(), Af.getRowSummationVector(), Bf.getRowSummationVector());
 
 	} catch (bad_cast) {
 
@@ -216,8 +292,8 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 			res = new double[Res.getM() * Res.getN()];
 			a = new double[A.getM() * A.getN()];
 
-			B.toDouble(res, true);
-			A.toDouble(a, true);
+			B.toDouble(res, false);
+			A.toDouble(a, false);
 		} else {
 			res = Res.getData();
 			a = A.getData();
@@ -228,7 +304,7 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 		blasLapackAdapter.daxpy(Res.getM() * Res.getN(), 1, a, 1, res, 1);
 
 		if(MatrixType == 0) {
-			Res.fromDouble(res, true);
+			Res.fromDouble(res, false);
 		}
 
 	}
