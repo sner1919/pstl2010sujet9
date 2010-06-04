@@ -1,0 +1,38 @@
+\select@language {french}
+\contentsline {chapter}{\numberline {1}Principe}{2}
+\contentsline {section}{\numberline {1.1}Introduction}{2}
+\contentsline {section}{\numberline {1.2}Encodage et Matrices}{4}
+\contentsline {section}{\numberline {1.3}Extensions Vs. Op\IeC {\'e}rations}{4}
+\contentsline {section}{\numberline {1.4}D\IeC {\'e}tection et Correction}{6}
+\contentsline {chapter}{\numberline {2}Impl\IeC {\'e}mentation}{8}
+\contentsline {section}{\numberline {2.1}Choix du Langage}{8}
+\contentsline {section}{\numberline {2.2}Choix de conception}{8}
+\contentsline {subsection}{\numberline {2.2.1}Contrats}{8}
+\contentsline {subsection}{\numberline {2.2.2}Types G\IeC {\'e}n\IeC {\'e}riques}{9}
+\contentsline {subsection}{\numberline {2.2.3}Matrices}{10}
+\contentsline {subsubsection}{Le Probl\IeC {\`e}me du diamant}{11}
+\contentsline {subsubsection}{Vecteurs de Sommation}{12}
+\contentsline {subsubsection}{Accesseurs}{12}
+\contentsline {subsection}{\numberline {2.2.4}Processeurs et Calculs}{12}
+\contentsline {subsection}{\numberline {2.2.5}G\IeC {\'e}n\IeC {\'e}ration d'erreurs}{13}
+\contentsline {subsubsection}{Remarque sur l\IeC {\textquoteright }impl\IeC {\'e}mentation de la m\IeC {\'e}thode de g\IeC {\'e}n\IeC {\'e}ration d\IeC {\textquoteright }erreurs }{14}
+\contentsline {subsection}{\numberline {2.2.6}Tests unitaires}{14}
+\contentsline {section}{\numberline {2.3}Organisation}{15}
+\contentsline {chapter}{\numberline {3}Autour de la correction d'erreur}{18}
+\contentsline {section}{\numberline {3.1}Une erreur}{19}
+\contentsline {section}{\numberline {3.2}Plusieurs erreurs}{19}
+\contentsline {subsection}{\numberline {3.2.1}Plusieurs erreurs sur la m\IeC {\^e}me ligne ou la m\IeC {\^e}me colonne}{19}
+\contentsline {subsection}{\numberline {3.2.2}Plusieurs erreurs sur plusieurs lignes et plusieurs colonnes}{20}
+\contentsline {chapter}{\numberline {4}Arithm\IeC {\'e}tique flottante}{21}
+\contentsline {section}{\numberline {4.1}Repr\IeC {\'e}sentation des flottants}{21}
+\contentsline {section}{\numberline {4.2}Test d'\IeC {\'e}galit\IeC {\'e}}{21}
+\contentsline {section}{\numberline {4.3}Pr\IeC {\'e}cision des checksums}{22}
+\contentsline {chapter}{\numberline {5}Tests de performances}{23}
+\contentsline {section}{\numberline {5.1}Mat\IeC {\'e}riel utilis\IeC {\'e}}{23}
+\contentsline {section}{\numberline {5.2}Les diff\IeC {\'e}rentes impl\IeC {\'e}mentations du BLAS}{23}
+\contentsline {section}{\numberline {5.3}La technique ABFT \cite {Huang} que nous avons impl\IeC {\'e}ment\IeC {\'e}}{23}
+\contentsline {subsection}{\numberline {5.3.1}Checksums doubles}{24}
+\contentsline {subsection}{\numberline {5.3.2}Checksums \textbf {GMP} \cite {GMP}}{24}
+\contentsline {subsubsection}{Calcul des checksums r\IeC {\'e}sultats en utilisant l'algorithme na\IeC {\"\i }f (multi-precision)}{26}
+\contentsline {subsubsection}{Calcul des checksums r\IeC {\'e}sultats en utilisant \textbf {MPACK} \cite {MPACK}}{26}
+\contentsline {chapter}{Conclusion}{28}
