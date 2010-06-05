@@ -5,7 +5,7 @@ template <class T>
 ColumnChecksumMatrix<T>::ColumnChecksumMatrix(IMatrix<T>& M) :
 Matrix<T>(M.getData(), M.getM() + 1, M.getN()),
 matrix(M),
-columnSummationVector(*(new Vector<double>(this->getN(), true))) {
+columnSummationVector(*(new Vector<TYPE_SUM>(this->getN(), true))) {
 	for(int j = 1; j <= this->getN(); j++) {
 		columnSummationVector(j) = 0;
 		columnSummationVector(j) = computeColumnSum(j);
@@ -14,7 +14,7 @@ columnSummationVector(*(new Vector<double>(this->getN(), true))) {
 
 template <class T>
 ColumnChecksumMatrix<T>::~ColumnChecksumMatrix() {
-	delete dynamic_cast<Vector<double>*>(&columnSummationVector);
+	delete dynamic_cast<Vector<TYPE_SUM>*>(&columnSummationVector);
 }
 
 template <class T>
@@ -28,26 +28,26 @@ IMatrix<T>& ColumnChecksumMatrix<T>::getColumnMatrix() const {
 }
 
 template <class T>
-IVector<double>& ColumnChecksumMatrix<T>::getColumnSummationVector() const {
+IVector<TYPE_SUM>& ColumnChecksumMatrix<T>::getColumnSummationVector() const {
 	return columnSummationVector;
 }
 
 template <class T>
-double ColumnChecksumMatrix<T>::computeColumnSum(int j) const {
-	double sum = 0;
+TYPE_SUM ColumnChecksumMatrix<T>::computeColumnSum(int j) const {
+	TYPE_SUM sum = 0;
 
-	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toDouble();
+	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toTypeSum();
 
-	return sum - (*this)(this->getM(), j).toDouble();
+	return sum - (*this)(this->getM(), j).toTypeSum();
 }
 
 template <class T>
 bool ColumnChecksumMatrix<T>::columnErrorDetection(int j) const {
-	double sum = 0;
+	TYPE_SUM sum = 0;
 
-	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toDouble();
+	for(int i = 1; i < this->getM(); i++) sum += (*this)(i, j).toTypeSum();
 
-	return !equal(sum, (*this)(this->getM(), j).toDouble(), EPS1, EPS0);
+	return !equal(TYPE_SUM_TO_DOUBLE(sum), (*this)(this->getM(), j).toDouble(), EPS1, EPS0);
 }
 
 
