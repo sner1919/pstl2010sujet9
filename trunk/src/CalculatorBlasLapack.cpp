@@ -52,11 +52,11 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		}
 
 		gettimeofday(&start, NULL);
-		/*blasLapackAdapter.dgemm(CblasColMajor_, CblasNoTrans_, CblasNoTrans_,
+		blasLapackAdapter.dgemm(CblasColMajor_, CblasNoTrans_, CblasNoTrans_,
 			Ac.getM() - 1, Br.getN() - 1, Ac.getN(),
 			1., a, Ac.getM() - 1,
 			b, Br.getM(),
-			0., res, Resf.getM() - 1);*/
+			0., res, Resf.getM() - 1);
 		gettimeofday(&end, NULL);
 		dgemm = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 		cout << "	- dgemm : " << dgemm << endl;
@@ -72,8 +72,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, const I
 		gettimeofday(&start2, NULL);
 
 		/* ++++++++++++++++++ utilisation du calculateur Naïf +++++++++++++++ */
-		//CalculatorNaiveMult<double, double, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
-		//CalculatorNaiveMult<double, T, double>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Ac.getColumnSummationVector(), Br);
+		CalculatorNaiveMult<TYPE_SUM, T, TYPE_SUM>(Resf.getRowSummationVector(), Ac.getColumnMatrix(), Br.getRowSummationVector());
 		gettimeofday(&end, NULL);
 		calculChecksums = end.tv_sec - start.tv_sec + (end.tv_usec - start.tv_usec) / 1000000.0;
 		cout << "	- calculChecksums : " << calculChecksums << endl;
@@ -222,8 +222,8 @@ void CalculatorBlasLapack<T>::mult(IMatrix<T>& Res, const IMatrix<T>& A, T x) co
 			Resf.getRowMatrix().fromDouble(res, false);
 		}
 
-		CalculatorNaiveMult<double, double, T>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), x);
-		CalculatorNaiveMult<double, double, T>(Resf.getRowSummationVector(), Af.getRowSummationVector(), x);
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), x);
+		CalculatorNaiveMult<TYPE_SUM, TYPE_SUM, T>(Resf.getRowSummationVector(), Af.getRowSummationVector(), x);
 
 	} catch (bad_cast) {
 
@@ -283,8 +283,8 @@ void CalculatorBlasLapack<T>::add(IMatrix<T>& Res, const IMatrix<T>& A, const IM
 			Resf.getRowMatrix().fromDouble(res, false);
 		}
 
-		CalculatorNaiveAdd<double, double, double>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), Bf.getColumnSummationVector());
-		CalculatorNaiveAdd<double, double, double>(Resf.getRowSummationVector(), Af.getRowSummationVector(), Bf.getRowSummationVector());
+		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getColumnSummationVector(), Af.getColumnSummationVector(), Bf.getColumnSummationVector());
+		CalculatorNaiveAdd<TYPE_SUM, TYPE_SUM, TYPE_SUM>(Resf.getRowSummationVector(), Af.getRowSummationVector(), Bf.getRowSummationVector());
 
 	} catch (bad_cast) {
 

@@ -5,7 +5,7 @@
 
 template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public virtual IRowChecksumMatrix<T> {
 		IMatrix<T>& matrix;
-		IVector<double>& rowSummationVector;
+		IVector<TYPE_SUM>& rowSummationVector;
         bool dataAllocation;
 
 	public:
@@ -31,10 +31,10 @@ template <class T> class RowChecksumMatrix : public virtual Matrix<T>, public vi
         IMatrix<T>& getRowMatrix() const;
 
         // implémentation de IRowChecksumMatrix<T>
-        IVector<double>& getRowSummationVector() const;
+        IVector<TYPE_SUM>& getRowSummationVector() const;
 
         // implémentation de IRowChecksumMatrix<T>
-        double computeRowSum(int i) const;
+        TYPE_SUM computeRowSum(int i) const;
 
         // implémentation de IRowChecksumMatrix<T>
         bool rowErrorDetection(int i) const;
